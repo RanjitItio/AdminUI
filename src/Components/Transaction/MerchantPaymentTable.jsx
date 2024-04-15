@@ -214,7 +214,7 @@ function getStatusColor(status){
 
 
 
-export default function TransferTable({headCells, rows, TableName}) {
+export default function MerchantPaymentTable({headCells, rows, TableName}) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -289,6 +289,7 @@ export default function TransferTable({headCells, rows, TableName}) {
   const [dateFormat, setDateFormt] = React.useState('')
   const [currency, setCurrency] = React.useState('');
   const [wStatus, setwStatus] = React.useState('')
+  const [payMethod, setPaymethod] =  React.useState('');
 
 
   const handleDateFormatChange = (event)=> {
@@ -302,6 +303,20 @@ export default function TransferTable({headCells, rows, TableName}) {
   const handleStausChange = (event)=> {
     setwStatus(event.target.value)
   }
+
+  const handelPaymentMethodChange = (event)=> {
+    setPaymethod(event.target.value)
+  }
+
+  
+  const PaymentMethods = [
+    {value: 'Bank'},
+    {value: 'Crypto'},
+    {value: 'Card'},
+    {value: 'Stripe'},
+    {value: 'Paypal'},
+    {value: 'UPI'},
+  ]
 
   
   const getLastSevenDays = ()=> {
@@ -341,7 +356,7 @@ export default function TransferTable({headCells, rows, TableName}) {
   return (
     <Box sx={{ width: '100%' }}>
 
-        <Paper sx={{ width: '100%', height: '90px', mb: 2 }} className='shadow rounded border border-primary'>
+        <Paper sx={{ width: '100%', height: '90px', mb: 2 }} className='shadow rounded border border-dark'>
             <FormControl sx={{minWidth: 170, marginTop: '14px', marginLeft: '10px'}} >
                 <InputLabel id="demo-simple-select-helper-label">Pick a date range</InputLabel>
                 <Select labelId="demo-simple-select-label" id="demo-simple-select" value={dateFormat} label="DateFormat" onChange={handleDateFormatChange}>
@@ -369,13 +384,20 @@ export default function TransferTable({headCells, rows, TableName}) {
                 </Select>
             </FormControl>  
 
-            <TextField sx={{marginTop: '14px', marginLeft: '10px'}}  id="outlined-basic" label="Enter user name" variant="outlined" />
+            <FormControl sx={{minWidth: 165, marginTop: '14px', marginLeft: '10px'}} >
+                <InputLabel id="demo-simple-select-helper-label">Payment Method</InputLabel>
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={payMethod} label="Payment Method" onChange={handelPaymentMethodChange}>
+                    {PaymentMethods.map((pm, index)=> (
+                        <MenuItem key={index} value={pm.value}>{pm.value}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
 
             <Button sx={{marginTop: '20px', marginRight: '10px', float: 'right'}} variant="contained">Filter</Button>
         </Paper>
-        
 
-      <Paper sx={{ mb: 2, marginTop: '30px', transition: 'width 20px' }} className='shadow-lg rounded border border-primary' >
+
+      <Paper sx={{ mb: 2, marginTop: '30px', transition: 'width 20px' }} className='shadow-lg rounded border border-dark' >
         <EnhancedTableToolbar numSelected={selected.length} TableName={TableName} />
 
         <TableContainer component={Paper} >
@@ -422,17 +444,18 @@ export default function TransferTable({headCells, rows, TableName}) {
                     <TableCell component="th" id={labelId} scope="row" padding="none">
                       {row.id}
                     </TableCell>
+                    <TableCell align="left" padding="none">{row.date}</TableCell>
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
                       {row.user}
                     </TableCell>
-                    <TableCell align="left" padding="none">{row.date}</TableCell>
+                    <TableCell align="left">{row.merchant}</TableCell>
                     <TableCell align="left">{row.amount}</TableCell>
                     <TableCell align="left">{row.fees}</TableCell>
                     <TableCell align="left" style={{color: parseFloat(row.total) >= 0 ? 'green' : 'red'}}>
                         {row.total}
                     </TableCell>
                     <TableCell align="left">{row.currency}</TableCell>
-                    <TableCell align="left">{row.receiver}</TableCell>
+                    <TableCell align="left">{row.payment_method}</TableCell>
                     <TableCell align="left" style={{color: getStatusColor(row.status)}}>
                         {row.status}
                     </TableCell>

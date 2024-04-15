@@ -15,6 +15,9 @@ import AllTransactionData from "./Components/Transaction/AllTransaction";
 import AllDepositDetail from "./Components/Transaction/Deposit";
 import Withdrawls from "./Components/Transaction/Withdrawl";
 import TransferDetails from "./Components/Transaction/Transfer";
+import CurrencyExchange from "./Components/Transaction/CurrencyExchange";
+import RequestPaymentDetails from "./Components/Transaction/RequestPayment";
+import MerchantPaymentDetails from "./Components/Transaction/MerchantPayment";
 
 
 
@@ -56,6 +59,9 @@ function App() {
                 <Route exact path="/admin/deposits/" element={<AllDepositDetail open={open} />} ></Route>
                 <Route exact path="/admin/withdrawls/" element={<Withdrawls open={open} />} ></Route>
                 <Route exact path="/admin/transfers/" element={<TransferDetails open={open} />} ></Route>
+                <Route exact path="/admin/exchanges/" element={<CurrencyExchange open={open} />} ></Route>
+                <Route exact path="/admin/request-payments/" element={<RequestPaymentDetails open={open} />} ></Route>
+                <Route exact path="/admin/merchant-payments/" element={<MerchantPaymentDetails open={open} />} ></Route>
               </Routes>
 
             </Box>

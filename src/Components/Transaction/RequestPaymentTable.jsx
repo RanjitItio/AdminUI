@@ -214,7 +214,7 @@ function getStatusColor(status){
 
 
 
-export default function TransferTable({headCells, rows, TableName}) {
+export default function RequestPaymentTable({headCells, rows, TableName}) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -426,10 +426,12 @@ export default function TransferTable({headCells, rows, TableName}) {
                       {row.user}
                     </TableCell>
                     <TableCell align="left" padding="none">{row.date}</TableCell>
-                    <TableCell align="left">{row.amount}</TableCell>
-                    <TableCell align="left">{row.fees}</TableCell>
-                    <TableCell align="left" style={{color: parseFloat(row.total) >= 0 ? 'green' : 'red'}}>
-                        {row.total}
+                    <TableCell align="left" style={{color: parseFloat(row.requested_amount) >= 0 ? 'green' : 'red'}}>
+                        {row.requested_amount}
+                        {console.log(parseFloat(row.requested_amount))}
+                    </TableCell>
+                    <TableCell align="left" style={{color: parseFloat(row.accepted_amount) >= 0 ? 'green' : 'red'}}>
+                        {row.accepted_amount}
                     </TableCell>
                     <TableCell align="left">{row.currency}</TableCell>
                     <TableCell align="left">{row.receiver}</TableCell>

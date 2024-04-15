@@ -214,7 +214,7 @@ function getStatusColor(status){
 
 
 
-export default function TransferTable({headCells, rows, TableName}) {
+export default function CurrencyExchangeTable({headCells, rows, TableName}) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -431,8 +431,9 @@ export default function TransferTable({headCells, rows, TableName}) {
                     <TableCell align="left" style={{color: parseFloat(row.total) >= 0 ? 'green' : 'red'}}>
                         {row.total}
                     </TableCell>
-                    <TableCell align="left">{row.currency}</TableCell>
-                    <TableCell align="left">{row.receiver}</TableCell>
+                    <TableCell align="left">{row.rate}</TableCell>
+                    <TableCell align="left">{row.from}</TableCell>
+                    <TableCell align="left">{row.to}</TableCell>
                     <TableCell align="left" style={{color: getStatusColor(row.status)}}>
                         {row.status}
                     </TableCell>
