@@ -52,7 +52,7 @@ function UpperNavbar({handleDrawerOpen, open}){
   return(
     <>
     <CssBaseline />
-      <AppBar position="fixed" open={open} >
+      <AppBar position="fixed" open={open} style={{backgroundColor: '#0f3785'}}>
         <Toolbar>
           <IconButton
             color="inherit"

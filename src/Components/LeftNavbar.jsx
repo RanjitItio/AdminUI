@@ -36,6 +36,7 @@ import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDo
 import KeyboardDoubleArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowLeftOutlined';
 import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
 import FingerprintOutlinedIcon from '@mui/icons-material/FingerprintOutlined';
+import GoogleIcon from '@mui/icons-material/Google';
 
 
 
@@ -109,9 +110,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 
 
+
 export default function LeftNavbar({handleDrawerClose, open}) {
   const theme = useTheme();
   const [dropDown, setDropdown] = React.useState({});
+
 
   const handleClick = (index) => {
     setDropdown(prevOpen => ({ ...prevOpen, [index]: !prevOpen[index] }));
@@ -132,19 +135,20 @@ export default function LeftNavbar({handleDrawerClose, open}) {
         anchor="left"
         open={open}
       >
-        <DrawerHeader>
+        <DrawerHeader style={{backgroundColor: '#0f3785', color: 'white'}}>
+          <GoogleIcon /> &nbsp;&nbsp;<p className='my-3'><b>Itio Innovex</b></p>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
         <Divider />
 
-        <List>
+        <List style={{backgroundColor: '#0f3785', color: '#e7ebf2'}}>
           {NavContent.map((item, index) => (
           <React.Fragment key={item.text}>
             <ListItem disablePadding>
-              <ListItemButton onClick={() => handleClick(index)}>
-                <ListItemIcon>
+              <ListItemButton onClick={() => handleClick(index)} >
+                <ListItemIcon style={{color: '#e7ebf2'}}>
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText primary={item.text} />
@@ -157,7 +161,7 @@ export default function LeftNavbar({handleDrawerClose, open}) {
                 {item.subItems.map((subItem, subIndex) => (
                   <ListItem key={subIndex} disablePadding >
                     <ListItemButton component="a" href={subItem.url} rel="noopener noreferrer">
-                    <ListItemIcon style={{ marginLeft: '1rem' }}>
+                    <ListItemIcon style={{ marginLeft: '1rem', color: 'white' }}>
                       {subItem.icon}
                     </ListItemIcon>
                       <ListItemText primary={subItem.text} />
@@ -169,13 +173,13 @@ export default function LeftNavbar({handleDrawerClose, open}) {
         </React.Fragment>
       ))}
         </List>
-        <Divider />
+        <Divider/>
 
-        <List>
+        <List style={{backgroundColor: '#0f3785', color: '#e7ebf2'}}>
           {Configurations.map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton>
-                <ListItemIcon>
+                <ListItemIcon style={{color: '#e7ebf2'}}>
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon>
                 <ListItemText primary={text} />
@@ -185,11 +189,11 @@ export default function LeftNavbar({handleDrawerClose, open}) {
         </List>
         <Divider />
 
-        <List>
+        <List style={{backgroundColor: '#0f3785', color: 'white'}}>
           {Addons.map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton>
-                <ListItemIcon>
+                <ListItemIcon style={{color: 'white'}}>
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon>
                 <ListItemText primary={text} />
@@ -201,6 +205,9 @@ export default function LeftNavbar({handleDrawerClose, open}) {
     </>
   )
 }
+
+
+
 
 
 
