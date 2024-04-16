@@ -214,7 +214,7 @@ function getStatusColor(status){
 
 
 
-export default function CryptoSentTable({headCells, rows, TableName}) {
+export default function CryptoReceivedTable({headCells, rows, TableName}) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -357,7 +357,7 @@ export default function CryptoSentTable({headCells, rows, TableName}) {
     <Box sx={{ width: '100%' }}>
 
         <Paper sx={{ width: '100%', height: '90px', mb: 2 }} className='shadow rounded border border-dark'>
-            <FormControl sx={{minWidth: 170, marginTop: '14px', marginLeft: '10px'}} >
+            <FormControl sx={{minWidth: 170, marginTop: '14px', marginLeft: '10px'}} className='shadow' >
                 <InputLabel id="demo-simple-select-helper-label">Pick a date range</InputLabel>
                 <Select labelId="demo-simple-select-label" id="demo-simple-select" value={dateFormat} label="DateFormat" onChange={handleDateFormatChange}>
                     {dateFormats.map((format, index)=> (
@@ -366,7 +366,7 @@ export default function CryptoSentTable({headCells, rows, TableName}) {
                 </Select>
             </FormControl>
 
-            <FormControl sx={{minWidth: 160, marginTop: '14px', marginLeft: '10px'}} >
+            <FormControl sx={{minWidth: 160, marginTop: '14px', marginLeft: '10px'}} className='shadow'>
                 <InputLabel id="demo-simple-select-helper-label">Crypto Currency</InputLabel>
                 <Select labelId="demo-simple-select-label" id="demo-simple-select" value={currency} label="Currency" onChange={handleCurrencyChange}>
                     {currencies.map((cur, index)=> (
@@ -375,27 +375,10 @@ export default function CryptoSentTable({headCells, rows, TableName}) {
                 </Select>
             </FormControl>
 
-            <FormControl sx={{minWidth: 120, marginTop: '14px', marginLeft: '10px'}} >
-                <InputLabel id="demo-simple-select-helper-label">Status</InputLabel>
-                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={wStatus} label="wStatus" onChange={handleStausChange}>
-                    {WithdrawlStatus.map((w, index)=> (
-                        <MenuItem key={index} value={w.value}>{w.value}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>  
 
-            {/* <FormControl sx={{minWidth: 165, marginTop: '14px', marginLeft: '10px'}} >
-                <InputLabel id="demo-simple-select-helper-label">Payment Method</InputLabel>
-                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={payMethod} label="Payment Method" onChange={handelPaymentMethodChange}>
-                    {PaymentMethods.map((pm, index)=> (
-                        <MenuItem key={index} value={pm.value}>{pm.value}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl> */}
+            <TextField sx={{marginTop: '14px', marginLeft: '10px'}}  id="outlined-basic" label="Enter user name" variant="outlined" className='shadow' />
 
-            <TextField sx={{marginTop: '14px', marginLeft: '10px'}}  id="outlined-basic" label="Enter user name" variant="outlined" />
-
-            <Button sx={{marginTop: '20px', marginRight: '10px', float: 'right'}} variant="contained">Filter</Button>
+            <Button sx={{marginTop: '20px', marginRight: '10px', float: 'right'}} variant="contained" className='shadow rounded'>Filter</Button>
         </Paper>
 
 
@@ -451,16 +434,8 @@ export default function CryptoSentTable({headCells, rows, TableName}) {
                       {row.sender}
                     </TableCell>
                     <TableCell align="left">{row.amount}</TableCell>
-                    <TableCell align="left">{row.fees}</TableCell>
-                    {/* <TableCell align="left">{row.total}</TableCell> */}
-                    <TableCell align="left" style={{color: parseFloat(row.total) >= 0 ? 'green' : 'red'}}>
-                        {row.total}
-                    </TableCell>
                     <TableCell align="left">{row.crypto_currency}</TableCell>
                     <TableCell align="left">{row.receiver}</TableCell>
-                    <TableCell align="left" style={{color: getStatusColor(row.status)}}>
-                        {row.status}
-                    </TableCell>
                     <TableCell align="left">
                         <Badge color="success" >
                         <Tooltip title="Edit">

@@ -1,23 +1,27 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Dashboard from "./Components/Dashboard";
-import UpperNavbar from "./Components/UpNavbar";
-import LeftNavbar from "./Components/LeftNavbar";
+import Dashboard from "@components/Dashboard";
+import UpperNavbar from "@components/UpNavbar";
+import LeftNavbar from "@components/LeftNavbar";
 import React from "react";
 import Box from '@mui/material/Box';
-import DataTable from "./Components/DataTable";
-import UsersData from "./Components/Users/users";
-import MerchantDetails from "./Components/Users/merchant";
-import AdminDetails from "./Components/Users/Admin";
-import UserCreateForm from "./Components/Users/userCreateForm";
-import MerchantCreateForm from "./Components/Users/MerchantCreateForm";
-import AdminCreateForm from "./Components/Users/AdminCreateForm";
-import AllTransactionData from "./Components/Transaction/AllTransaction";
-import AllDepositDetail from "./Components/Transaction/Deposit";
-import Withdrawls from "./Components/Transaction/Withdrawl";
-import TransferDetails from "./Components/Transaction/Transfer";
-import CurrencyExchange from "./Components/Transaction/CurrencyExchange";
-import RequestPaymentDetails from "./Components/Transaction/RequestPayment";
-import MerchantPaymentDetails from "./Components/Transaction/MerchantPayment";
+import DataTable from "@components/DataTable";
+import UsersData from "@components/Users/users";
+import MerchantDetails from "@components/Users/merchant";
+import AdminDetails from "@components/Users/Admin";
+import UserCreateForm from "@components/Users/userCreateForm";
+import MerchantCreateForm from "@components/Users/MerchantCreateForm";
+import AdminCreateForm from "@components/Users/AdminCreateForm";
+import AllTransactionData from "@components/Transaction/AllTransaction";
+import AllDepositDetail from "@components/Transaction/Deposit";
+import Withdrawls from "@components/Transaction/Withdrawl";
+import TransferDetails from "@components/Transaction/Transfer";
+import CurrencyExchange from "@components/Transaction/CurrencyExchange";
+import RequestPaymentDetails from "@components/Transaction/RequestPayment";
+import MerchantPaymentDetails from "@components/Transaction/MerchantPayment";
+import CryptoSentDetails from "@components/Transaction/CryptoSent";
+import CryptoReceivedDetails from "@components/Transaction/CryptoReceived";
+
+
 
 
 
@@ -62,6 +66,8 @@ function App() {
                 <Route exact path="/admin/exchanges/" element={<CurrencyExchange open={open} />} ></Route>
                 <Route exact path="/admin/request-payments/" element={<RequestPaymentDetails open={open} />} ></Route>
                 <Route exact path="/admin/merchant-payments/" element={<MerchantPaymentDetails open={open} />} ></Route>
+                <Route exact path="/admin/crypto-sent-transactions/" element={<CryptoSentDetails open={open} />} ></Route>
+                <Route exact path="/admin/crypto-received-transactions/" element={<CryptoReceivedDetails open={open} />} ></Route>
               </Routes>
 
             </Box>

@@ -63,8 +63,8 @@ const NavContent = [
     {text: 'Currency Exchange', icon: <PaymentsOutlinedIcon />, url: '/admin/exchanges/'},
     {text: 'Request Payments', icon: <CalculateOutlinedIcon />, url: '/admin/request-payments/'},
     {text: 'Merchant Payment', icon: <PaymentsOutlinedIcon />, url: '/admin/merchant-payments/'},
-    {text: 'Crypto Sent', icon: <KeyboardDoubleArrowRightOutlinedIcon />, url: 'https://cssgradient.io/'},
-    {text: 'Crypto Received', icon: <KeyboardDoubleArrowLeftOutlinedIcon />, url: 'https://cssgradient.io/'},
+    {text: 'Crypto Sent', icon: <KeyboardDoubleArrowRightOutlinedIcon />, url: '/admin/crypto-sent-transactions/'},
+    {text: 'Crypto Received', icon: <KeyboardDoubleArrowLeftOutlinedIcon />, url: "/admin/crypto-received-transactions"},
   ],
   icon: <ReceiptLongOutlinedIcon />},
 

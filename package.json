@@ -1,3 +1,4 @@
+
 {
   "name": "adminui",
   "private": true,
@@ -7,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite start"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -35,3 +37,5 @@
     "vite": "^5.2.0"
   }
 }
+
+
