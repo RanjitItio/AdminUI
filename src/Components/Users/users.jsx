@@ -94,10 +94,10 @@ function createData(id, first_name, last_name, phone, email, group, last_login, 
 
 const rows = [
     createData(1, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-    createData(2, 'Rupesh', 'Maharana', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-    createData(3, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
+    createData(2, 'Rupesh', 'Maharana', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Inactive', 'dd'),
+    createData(3, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Pending', 'dd'),
     createData(4, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-    createData(5, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
+    createData(5, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Inactive', 'dd'),
     createData(6, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
     createData(7, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
     createData(8, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),

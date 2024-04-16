@@ -26,7 +26,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 
@@ -95,7 +95,7 @@ function EnhancedTableHead(props) {
         {props.headCells.map((headCell) => (
           <TableCell key={headCell.id} align={headCell.numeric ? 'left' : 'left'} padding={headCell.disablePadding ? 'none' : 'normal'} sortDirection={orderBy === headCell.id ? order : false}>
             <TableSortLabel active={orderBy === headCell.id} direction={orderBy === headCell.id ? order : 'asc'} onClick={createSortHandler(headCell.id)}>
-              <b>{headCell.label}</b>
+              <b className='text-muted'>{headCell.label}</b>
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -261,6 +261,18 @@ export default function DataTable({headCells, rows, TableName}) {
     [order, orderBy, page, rowsPerPage],
   );
 
+
+  function getStatusColor(status) {
+    switch(status) {
+      case 'Active':
+        return 'success';
+      case 'Inactive':
+        return 'danger';
+      case 'Pending':
+        return 'warning';
+    }
+  }
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -309,17 +321,23 @@ export default function DataTable({headCells, rows, TableName}) {
                       />
                     </TableCell>
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.id}
+                      <b>{row.id}</b>
                     </TableCell>
-                    <TableCell align="left">{row.first_name}</TableCell>
-                    <TableCell align="left">{row.last_name}</TableCell>
-                    <TableCell align="left">{row.phone}</TableCell>
-                    <TableCell align="left">{row.email}</TableCell>
-                    <TableCell align="left">{row.group}</TableCell>
-                    <TableCell align="left">{row.last_login}</TableCell>
-                    <TableCell align="left">{row.ip}</TableCell>
-                    <TableCell align="left">{row.status}</TableCell>
-                    <TableCell align="right">
+                    <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}><b>{row.first_name}</b></TableCell>
+                    <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}><b>{row.last_name}</b></TableCell>
+                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.phone}</b></TableCell>
+                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.email}</b></TableCell>
+                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.group}</b></TableCell>
+                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.last_login}</b></TableCell>
+                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.ip}</b></TableCell>
+
+                    <TableCell align="left">
+                      <button type="button" className={`btn btn-outline-${getStatusColor(row.status)} my-2`}>
+                        <b>{row.status}</b>
+                      </button>
+                    </TableCell>
+
+                    <TableCell align="left">
                         <Badge color="success" >
                             <EditIcon color="" style={{color:'#0e3080'}} />
                             <DeleteIcon style={{color:'#b23344'}} />
