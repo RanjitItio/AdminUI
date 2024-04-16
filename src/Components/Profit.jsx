@@ -1,11 +1,12 @@
 import * as React from 'react';
-import Tab from '@mui/material/Tab';
+// import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
-import CardContent from '@mui/material/CardContent';
+// import TabContext from '@mui/lab/TabContext';
+// import TabList from '@mui/lab/TabList';
+// import TabPanel from '@mui/lab/TabPanel';
+// import CardContent from '@mui/material/CardContent';
+import SimpleBarChart from './Charts/BarChart';
 
 
 
@@ -33,10 +34,11 @@ export default function TotalProfit() {
 
   return (
     <>
-    <Card sx={{ minWidth: 10 }} style={{ color: '', position: 'relative', marginTop: '2rem'}} >
-        <CardContent>
+    <Card sx={{ minWidth: 10 }} style={{ marginTop: '2rem'}} >
+        {/* <CardContent> */}
             <Box sx={{ maxWidth: '100%', typography: 'body1' }}>
-                <TabContext value={value}>
+              <SimpleBarChart />
+                {/* <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <TabList onChange={handleChange} aria-label="lab API tabs example">
                         <Tab label="Item One" value="1" />
@@ -78,9 +80,9 @@ export default function TotalProfit() {
                       
                     </div>
                     </TabPanel>
-                </TabContext>
+                </TabContext> */}
             </Box>
-        </CardContent>
+        {/* </CardContent> */}
 
     </Card>
 

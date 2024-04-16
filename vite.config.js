@@ -20,8 +20,7 @@ export default defineConfig({
             return 'vendor';
           }
         }
-      },
-      chunkSizeWarningLimit: 1000,
+      }
     }
   }
 })
