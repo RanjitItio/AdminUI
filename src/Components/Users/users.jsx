@@ -1,9 +1,19 @@
 import DataTable from "../DataTable";
 import {Main, DrawerHeader} from '../Content';
+import { useEffect, useState } from "react";
+import axiosInstance from "../Authentication/axios";
+
+
 
 
 
 function UsersData({open}) {
+
+  const [kycData, updateKycData] = useState([]);
+  const [kycID, updateKycID] = useState('')
+
+  // Transaction Status
+  const [status, setStaus] = useState('');
 
   const headCells = [
     {
@@ -65,7 +75,6 @@ function UsersData({open}) {
       disablePadding: false,
       label: "Status",
     },
-
     {
       id: "action",
       numeric: true,
@@ -74,45 +83,89 @@ function UsersData({open}) {
     },
   ];
 
-const TableName = "Users Detail"
+
+const TableName = "Users KYC Detail"
 
 
-function createData(id, first_name, last_name, phone, email, group, last_login, ip, status, action) {
-    return {
-      id,
-      first_name,
-      last_name,
-      phone,
-      email,
-      group,
-      last_login,
-      ip,
-      status,
-      action
+
+useEffect(() => {
+   axiosInstance.get(`api/v1/user/kyc/`).then((res)=> {
+    // console.log(res.data.all_Kyc)
+
+    if(res.data && res.data.all_Kyc) {
+      setTimeout(() => {
+        updateKycData(res.data.all_Kyc)
+      }, 1000); 
+    }
+    
+  }).catch((error)=> {
+    // console.log(error.response)
+
+    if (error.response.data.msg == 'Authentication Failed Please provide auth token') {
+        setError("Authentication Failed")
+
+    } else if (error.response.data.msg == 'Token has expired') {
+        setError("Session Expired please try to login")
+        
+    } else if (error.response.data.msg == 'Invalid token'){
+      setError("Invalid session please try to login")
+
+    } else if(error.response.data.msg == 'Authentication Failed') {
+      setError("Authentication Failed")
+
+    } else if (error.response.data.msg == 'Only admin can view all the KYC'){
+        setError("Only admin can view the Transactions")
+
+    } else if (error.response.data.msg == 'Unable to get Admin detail'){
+        setError("Admin details not found")
+
+    } else if (error.response.data.msg == 'Currency error'){
+        setError("Unable to get the currency")
+
+    } else if (error.response.data.msg == 'User not found'){
+        setError("Unable to get the user details")
+
+    } else if (error.response.data.msg == 'No Transaction available to show'){
+        setError("No Transaction is available to show")
     };
-  }
+  })
+  }, [])
 
-const rows = [
-    createData(1, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-    createData(2, 'Rupesh', 'Maharana', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Inactive', 'dd'),
-    createData(3, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Pending', 'dd'),
-    createData(4, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-    createData(5, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Inactive', 'dd'),
-    createData(6, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-    createData(7, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-    createData(8, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-    createData(9, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-    createData(10, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-    createData(11, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-    createData(12, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-    createData(13, 'Manjesh', 'Yadav', '8978907654', 'manjesh@mail.com', 'Merchant Regular', '11 Minute ago', '123.65.765', 'Active', 'dd'),
-  ];
 
-  return (
+  const handleKYCStatusUpdate = ()=> {
+    // value = event.target.value;
+
+    axiosInstance.put(`api/v1/user/kyc/`, {
+      status: status,
+      kyc_id: kycID 
+
+    }).then((res)=> {
+      console.log(res)
+
+    }).catch((error)=> {
+      console.log(error.response)
+      if (error.response.data.msg == 'Transaction is completed') {
+          // setOpenSnackbar(true);
+      }
+    })
+};
+
+
+
+return (
     <>
     <Main open={open}>
+
     <DrawerHeader />
-      <DataTable headCells={headCells} rows={rows} TableName={TableName} />
+       <DataTable 
+          headCells={headCells} 
+          rows={kycData} 
+          TableName={TableName}
+          status={status} 
+          setStaus={setStaus}
+          updateKycID={updateKycID}
+          handleKYCStatusUpdate={handleKYCStatusUpdate}
+          />
     </Main>
     </>
   );

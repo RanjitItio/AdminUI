@@ -27,6 +27,7 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import KYCEditEditModal from './Users/Kyceditmodal';
 
 
 
@@ -191,13 +192,33 @@ EnhancedTableToolbar.propTypes = {
 
 
 
-export default function DataTable({headCells, rows, TableName}) {
+export default function DataTable({headCells, rows, TableName, status, setStaus, updateKycID, handleKYCStatusUpdate}) {
   const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+  const [orderBy, setOrderBy] = React.useState('');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const [open, setOpen] = React.useState(false);
+
+  // Open the edit modal
+  const handleKYCEdit = () => {
+      setOpen(true);
+  };
+
+  // Close the Edit Modal
+  const handleKYCEditClose = () => {
+      setOpen(false);
+      
+  };
+
+  // Open the edit modal and update the kyc ID
+  const handleUpdateKYCID = (kyc) => {
+      handleKYCEdit();
+      updateKycID(kyc);
+  }
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -274,6 +295,7 @@ export default function DataTable({headCells, rows, TableName}) {
   }
 
   return (
+    <>
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} TableName={TableName} />
@@ -294,8 +316,17 @@ export default function DataTable({headCells, rows, TableName}) {
               headCells={headCells}
             />
             <TableBody>
+
+            {/* {visibleRows.length == 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} align="center">
+                  <b>No data available</b>
+                </TableCell>
+              </TableRow>
+            ) : ( */}
+
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.id);
+                const isItemSelected = isSelected(row.user_kyc_details.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -305,7 +336,7 @@ export default function DataTable({headCells, rows, TableName}) {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.id}
+                    key={row.user_kyc_details.id}
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
@@ -315,37 +346,65 @@ export default function DataTable({headCells, rows, TableName}) {
                         checked={isItemSelected}
                         inputProps={{
                           'aria-labelledby': labelId,
-                          
                         }}
-                      onClick={(event) => handleClick(event, row.id)}
+                      onClick={(event) => handleClick(event, row.user_kyc_details.id)}
                       />
                     </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
-                      <b>{row.id}</b>
-                    </TableCell>
-                    <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}><b>{row.first_name}</b></TableCell>
-                    <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}><b>{row.last_name}</b></TableCell>
-                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.phone}</b></TableCell>
-                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.email}</b></TableCell>
-                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.group}</b></TableCell>
-                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.last_login}</b></TableCell>
-                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.ip}</b></TableCell>
 
+                    {/* ID Column */}
+                    <TableCell component="th" id={labelId} scope="row" padding="none">
+                      <b>{row.user_kyc_details.id}</b>
+                    </TableCell>
+
+                    {/* First Name Column */}
+                    <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}><b>{row.user_kyc_details.firstname}</b></TableCell>
+
+                    {/* Last Name Column */}
+                    <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}><b>{row.user_kyc_details.lastname}</b></TableCell>
+
+                    {/* Phone Number Column */}
+                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.user_kyc_details.phoneno}</b></TableCell>
+
+                    {/* Email Column */}
+                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.user_kyc_details.email}</b></TableCell>
+
+                    {/* Group Column */}
+                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
+                      <b>{
+                          row.user.merchant ? ('Merchant') : row.user.admin ? ('Admin') : ('Unidentified')
+                          }
+                       </b>
+                    </TableCell>
+
+                    {/* Last Login Column */}
+                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
+                      <b>{row.user.lastlogin ? new Date(row.user.lastlogin).toLocaleTimeString() : '0:00:00'}</b>
+                      </TableCell>
+
+                    {/* IP Address Column */}
+                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
+                      <b>{row.user.ip_address ? row.user.ip_address : '0.0.0.0'}</b>
+                    </TableCell>
+
+                    {/* Status Column */}
                     <TableCell align="left">
-                      <button type="button" className={`btn btn-outline-${getStatusColor(row.status)} my-2`}>
-                        <b>{row.status}</b>
+                      <button type="button" className={`btn btn-outline-${getStatusColor(row.user.verified ? 'Active' : "Inactive")} my-2`}>
+                        <b>{row.user.verified ? 'Active' : 'Inactive'}</b>
                       </button>
                     </TableCell>
 
+                    {/* Edit and Delete Icon */}
                     <TableCell align="left">
                         <Badge color="success" >
-                            <EditIcon color="" style={{color:'#0e3080'}} />
+                            <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleUpdateKYCID(row.user_kyc_details.id)}  />
                             <DeleteIcon style={{color:'#b23344'}} />
                         </Badge>
                     </TableCell>
+
                   </TableRow>
                 );
               })}
+
               {emptyRows > 0 && (
                 <TableRow
                   style={{
@@ -358,8 +417,9 @@ export default function DataTable({headCells, rows, TableName}) {
             </TableBody>
           </Table>
         </TableContainer>
+
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 10, 25, 50]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
@@ -373,6 +433,10 @@ export default function DataTable({headCells, rows, TableName}) {
         label="Dense padding"
       />
     </Box>
+
+<KYCEditEditModal open={open} handleClose={handleKYCEditClose} handleKYCStatusUpdate={handleKYCStatusUpdate} setStaus={setStaus} status={status} />
+
+</>
   );
 }
 

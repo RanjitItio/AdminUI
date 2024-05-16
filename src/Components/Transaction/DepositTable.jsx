@@ -29,10 +29,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-
-
-
-
+import DepositTableEditModal from './DepositEditModal';
 
 
 
@@ -213,13 +210,33 @@ function getStatusColor(status){
 
 
 
-export default function DepositTable({headCells, rows, TableName}) {
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+export default function DepositTable({headCells, rows, TableName, updateTransactionID, handleTransactionStatusUpdate, setStaus, status}) {
+  const [order, setOrder] = React.useState('desc');
+  const [orderBy, setOrderBy] = React.useState('id');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  // State to opon dialogue box for edit button
+  const [open, setOpen] = React.useState(false);
+
+  // Open the edit modal
+  const handleDepositEdit = () => {
+    setOpen(true);
+  };
+
+  // Close the Edit Modal
+  const handleDepositEditClose = () => {
+    setOpen(false);
+  };
+
+
+  // Update the transaction id and send in API request
+  const handleUpdateTransactionID = (transaction)=> {
+      updateTransactionID(transaction)
+      handleDepositEdit();
+   };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -349,8 +366,10 @@ export default function DepositTable({headCells, rows, TableName}) {
   ]
 
   return (
+    <>
     <Box sx={{ width: '100%' }}>
 
+        {/* Filter Section */}
         <Paper sx={{ width: '100%', height: '90px', mb: 2 }}>
             <FormControl sx={{minWidth: 170, marginTop: '14px', marginLeft: '10px'}} >
                 <InputLabel id="demo-simple-select-helper-label">Pick a date range</InputLabel>
@@ -392,8 +411,9 @@ export default function DepositTable({headCells, rows, TableName}) {
 
             <Button sx={{marginTop: '20px', marginRight: '10px', float: 'right'}} variant="contained">Filter</Button>
         </Paper>
+        {/* End Filter Section */}
 
-
+      {/* Data Table Scrtio */}
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} TableName={TableName} />
 
@@ -414,17 +434,17 @@ export default function DepositTable({headCells, rows, TableName}) {
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.id);
+                const isItemSelected = isSelected(row.transaction.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
                     hover
-                    // onClick={(event) => handleClick(event, row.id)}
+                    // onClick={(event) => handleClick(event, row.transaction.id)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.id}
+                    key={row.transaction.id}
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
@@ -435,35 +455,57 @@ export default function DepositTable({headCells, rows, TableName}) {
                         inputProps={{
                           'aria-labelledby': labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.id)}
+                        onClick={(event) => handleClick(event, row.transaction.id)}
                       />
                     </TableCell>
+                    {/* ID Column */}
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.id}
+                      {row.transaction.id}
                     </TableCell>
+
+                    {/* Name Column */}
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
-                      {row.user}
+                      {row.user.first_name} {row.user.lastname}
                     </TableCell>
-                    <TableCell align="left" padding="none">{row.date}</TableCell>
-                    <TableCell align="left">{row.amount}</TableCell>
-                    <TableCell align="left">{row.fees}</TableCell>
-                    <TableCell align="left" style={{color: parseFloat(row.total) >= 0 ? 'green' : 'red'}}>
-                        {row.total}
+
+                    {/* Date Column */}
+                    <TableCell align="left" padding="none">{new Date(row.transaction.txddate).toLocaleDateString()}</TableCell>
+
+                    {/* Amount Column */}
+                    <TableCell align="left">{row.transaction.amount}</TableCell>
+
+                    {/* Fee Column */}
+                    <TableCell align="left">{row.transaction.txdfee}</TableCell>
+
+                    {/* Total Amount Column */}
+                    <TableCell align="left" style={{color: parseFloat(row.transaction.totalamount) >= 0 ? 'green' : 'red'}}>
+                        {row.transaction.totalamount}
                     </TableCell>
-                    <TableCell align="left">{row.currency}</TableCell>
-                    <TableCell align="left">{row.payment_method}</TableCell>
-                    <TableCell align="left" style={{color: getStatusColor(row.status)}}>
-                        {row.status}
+
+                    {/* Currency Column */}
+                    <TableCell align="left">{row.currency.name}</TableCell>
+
+                    {/* Payment Method Column */}
+                    <TableCell align="left">{row.transaction.payment_mode}</TableCell>
+
+                    {/* Status Column */}
+                    <TableCell align="left" style={{color: getStatusColor(row.transaction.txdstatus)}}>
+                        {row.transaction.txdstatus}
                     </TableCell>
+
+
                     <TableCell align="left">
+                      {/* Edit and Delete Icons */}
                         <Badge color="success" >
                         <Tooltip title="Edit">
-                            <EditIcon color="" style={{color:'#0e3080'}} />
+                            <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleUpdateTransactionID(row.transaction.id)} />
                         </Tooltip>
+
                         <Tooltip title="Delete">
                             <DeleteIcon style={{color:'#b23344'}} />
                         </Tooltip>
                         </Badge>
+
                     </TableCell>
                   </TableRow>
                 );
@@ -490,11 +532,20 @@ export default function DepositTable({headCells, rows, TableName}) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+
+      {/* End Data table section */}
+
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
       />
+
     </Box>
+
+     <DepositTableEditModal open={open} handleClose={handleDepositEditClose} handleTransactionStatusUpdate={handleTransactionStatusUpdate} setStaus={setStaus} status={status} />
+     </>
   );
+
+ 
 }
 

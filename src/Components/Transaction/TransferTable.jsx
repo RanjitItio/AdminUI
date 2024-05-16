@@ -30,6 +30,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import TransferTableEditModal from './TransferEditModal';
 
 
 
@@ -214,13 +215,32 @@ function getStatusColor(status){
 
 
 
-export default function TransferTable({headCells, rows, TableName}) {
+export default function TransferTable({headCells, rows, TableName, handleTransactionStatusUpdate, updateTransferID, status, setStaus}) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  // State to opon dialogue box for edit button
+  const [open, setOpen] = React.useState(false);
+
+  // Open the edit modal
+  const handleTransfertEdit = () => {
+    setOpen(true);
+  };
+
+  // Close the Edit Modal
+  const handleTransferEditClose = () => {
+    setOpen(false);
+  };
+
+
+  const handleUpdateTransferID = (transfertransaction) => {
+    handleTransfertEdit();
+    updateTransferID(transfertransaction);
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -339,6 +359,7 @@ export default function TransferTable({headCells, rows, TableName}) {
 
 
   return (
+    <>
     <Box sx={{ width: '100%' }}>
 
         <Paper sx={{ width: '100%', height: '90px', mb: 2 }} className='shadow rounded border border-primary'>
@@ -395,7 +416,7 @@ export default function TransferTable({headCells, rows, TableName}) {
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.id);
+                const isItemSelected = isSelected(row.transaction.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -405,7 +426,7 @@ export default function TransferTable({headCells, rows, TableName}) {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.id}
+                    key={row.transaction.id}
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
@@ -416,30 +437,50 @@ export default function TransferTable({headCells, rows, TableName}) {
                         inputProps={{
                           'aria-labelledby': labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.id)}
+                        onClick={(event) => handleClick(event, row.transaction.id)}
                       />
                     </TableCell>
+
+                    {/* ID Column */}
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.id}
+                      {row.transaction.id}
                     </TableCell>
+
+                    {/* User Column */}
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
-                      {row.user}
+                      {row.user.first_name} {row.user.lastname}
                     </TableCell>
-                    <TableCell align="left" padding="none">{row.date}</TableCell>
-                    <TableCell align="left">{row.amount}</TableCell>
-                    <TableCell align="left">{row.fees}</TableCell>
-                    <TableCell align="left" style={{color: parseFloat(row.total) >= 0 ? 'green' : 'red'}}>
-                        {row.total}
+
+                    {/* Transaction Date Column */}
+                    <TableCell align="left" padding="none">{row.transaction.txddate}</TableCell>
+
+                    {/* Transaction Amount Column */}
+                    <TableCell align="left">{row.transaction.amount}</TableCell>
+
+                    {/* Transaction Fees Column */}
+                    <TableCell align="left">{row.transaction.txdfee}</TableCell>
+
+                    {/* Transaction Total Amount Column */}
+                    <TableCell align="left" style={{color: parseFloat(row.transaction.totalamount) >= 0 ? 'green' : 'red'}}>
+                        {row.transaction.totalamount}
                     </TableCell>
-                    <TableCell align="left">{row.currency}</TableCell>
-                    <TableCell align="left">{row.receiver}</TableCell>
-                    <TableCell align="left" style={{color: getStatusColor(row.status)}}>
-                        {row.status}
+
+                    {/* Transaction Currency Column */}
+                    <TableCell align="left">{row.currency.name}</TableCell>
+
+                    {/* Transactiion Receiver Column */}
+                    <TableCell align="left">{row.receiver.first_name} {row.receiver.lastname}</TableCell>
+
+                    {/* Transaction Status Column */}
+                    <TableCell align="left" style={{color: getStatusColor(row.transaction.txdstatus)}}>
+                        {row.transaction.txdstatus}
                     </TableCell>
+
+                    {/* Edit and Delete Icons */}
                     <TableCell align="left">
                         <Badge color="success" >
                         <Tooltip title="Edit">
-                            <EditIcon color="" style={{color:'#0e3080'}} />
+                            <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleUpdateTransferID(row.transaction.id)} />
                         </Tooltip>
                         <Tooltip title="Delete">
                             <DeleteIcon style={{color:'#b23344'}} />
@@ -476,6 +517,9 @@ export default function TransferTable({headCells, rows, TableName}) {
         label="Dense padding"
       />
     </Box>
+
+    <TransferTableEditModal open={open} handleClose={handleTransferEditClose} handleTransactionStatusUpdate={handleTransactionStatusUpdate} setStaus={setStaus} status={status} />
+    </>
   );
 }
 

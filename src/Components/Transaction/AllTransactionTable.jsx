@@ -300,7 +300,7 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.id);
+                const isItemSelected = isSelected(row.transaction.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -310,7 +310,7 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.id}
+                    key={row.transaction.id}
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
@@ -321,27 +321,50 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
                         inputProps={{
                           'aria-labelledby': labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.id)}
+                        onClick={(event) => handleClick(event, row.transaction.id)}
                       />
                     </TableCell>
+
+                    {/* ID Column */}
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.id}
+                      {row.transaction.id}
                     </TableCell>
+
+                    {/* User Column */}
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
-                      {row.user}
+                      {row.user.first_name} {row.user.lastname}
                     </TableCell>
-                    <TableCell align="left" padding="none">{row.date}</TableCell>
-                    <TableCell align="left">{row.type}</TableCell>
-                    <TableCell align="left">{row.amount}</TableCell>
-                    <TableCell align="left">{row.fees}</TableCell>
-                    <TableCell align="left" style={{color: parseFloat(row.total) >= 0 ? 'green' : 'red'}}>
-                        {row.total}
+
+                    {/* Date Column */}
+                    <TableCell align="left" padding="none">{new Date(row.transaction.txddate).toLocaleDateString()}</TableCell>
+
+                    {/* Transaction Type Column */}
+                    <TableCell align="left">{row.transaction.txdtype}</TableCell>
+
+                    {/* Transaction Amount Column */}
+                    <TableCell align="left">{row.transaction.amount}</TableCell>
+
+                    {/* Transaction Fees Column */}
+                    <TableCell align="left">{row.transaction.txdfee}</TableCell>
+
+                    {/* Total amount of Transaction Column */}
+                    <TableCell align="left" style={{color: parseFloat(row.transaction.totalamount) >= 0 ? 'green' : 'red'}}>
+                      {parseFloat(row.transaction.totalamount).toFixed(2)}
+                        {/* {row.transaction.totalamount} */}
                     </TableCell>
-                    <TableCell align="left">{row.currency}</TableCell>
-                    <TableCell align="left">{row.receiver}</TableCell>
-                    <TableCell align="left" style={{color: getStatusColor(row.status)}}>
-                        {row.status}
+
+                    {/* Currency Column */}
+                    <TableCell align="left">{row.currency.name}</TableCell>
+
+                    {/* Receiver Column */}
+                    <TableCell align="left">{row.receiver.first_name} {row.receiver.lastname}</TableCell>
+
+                    {/* Transaction Status Column */}
+                    <TableCell align="left" style={{color: getStatusColor(row.transaction.txdstatus)}}>
+                        {row.transaction.txdstatus}
                     </TableCell>
+
+                    {/* Edit and Delete Icons */}
                     <TableCell align="left">
                         <Badge color="success" >
                         <Tooltip title="Edit">
@@ -352,6 +375,7 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
                         </Tooltip>
                         </Badge>
                     </TableCell>
+
                   </TableRow>
                 );
               })}
