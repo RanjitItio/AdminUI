@@ -55,7 +55,7 @@ function Signin(){
                 if(res.status == 200) {
                     setSuccessMessage(`Login Successfull`)
                     setTimeout(() => {
-                        navigate('/')
+                        window.location.href = '/'
                     }, 1000);
 
                     localStorage.setItem('access_token', res.data.access_token);

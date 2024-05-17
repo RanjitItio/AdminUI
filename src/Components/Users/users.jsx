@@ -2,6 +2,8 @@ import DataTable from "../DataTable";
 import {Main, DrawerHeader} from '../Content';
 import { useEffect, useState } from "react";
 import axiosInstance from "../Authentication/axios";
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 
 
 
@@ -10,7 +12,8 @@ import axiosInstance from "../Authentication/axios";
 function UsersData({open}) {
 
   const [kycData, updateKycData] = useState([]);
-  const [kycID, updateKycID] = useState('')
+  const [kycID, updateKycID] = useState('');
+  const [error, setError] = useState('');
 
   // Transaction Status
   const [status, setStaus] = useState('');
@@ -84,6 +87,7 @@ function UsersData({open}) {
   ];
 
 
+
 const TableName = "Users KYC Detail"
 
 
@@ -110,29 +114,37 @@ useEffect(() => {
     } else if (error.response.data.msg == 'Invalid token'){
       setError("Invalid session please try to login")
 
-    } else if(error.response.data.msg == 'Authentication Failed') {
+    } else if(error.response.data.msg == 'Authentication Failed please login') {
       setError("Authentication Failed")
 
     } else if (error.response.data.msg == 'Only admin can view all the KYC'){
-        setError("Only admin can view the Transactions")
+        setError("Only admin can view the Users kyc")
 
     } else if (error.response.data.msg == 'Unable to get Admin detail'){
         setError("Admin details not found")
 
-    } else if (error.response.data.msg == 'Currency error'){
-        setError("Unable to get the currency")
+    } else if (error.response.data.msg == 'Unknown Error occure during kyc process'){
+        setError("Unknown error during in KYC")
+
+    } else if (error.response.data.msg == 'User not available'){
+        setError("No users available to show")
 
     } else if (error.response.data.msg == 'User not found'){
-        setError("Unable to get the user details")
+        setError("Error")
 
-    } else if (error.response.data.msg == 'No Transaction available to show'){
-        setError("No Transaction is available to show")
+    } else if (error.response.data.msg == 'No Kyc available'){
+        setError("No kyc available to show")
+
+    } else if (error.response.data.msg == 'Server error'){
+        setError("Unknow error occured")
     };
+
   })
   }, [])
 
 
-  const handleKYCStatusUpdate = ()=> {
+
+const handleKYCStatusUpdate = ()=> {
     // value = event.target.value;
 
     axiosInstance.put(`api/v1/user/kyc/`, {
@@ -144,9 +156,47 @@ useEffect(() => {
 
     }).catch((error)=> {
       console.log(error.response)
-      if (error.response.data.msg == 'Transaction is completed') {
-          // setOpenSnackbar(true);
-      }
+
+    if (error.response.data.msg == 'Authentication Failed Please provide auth token') {
+        setError("Authentication Failed")
+
+    } else if (error.response.data.msg == 'Token has expired') {
+        setError("Session Expired please try to login")
+        
+    } else if (error.response.data.msg == 'Invalid token'){
+      setError("Invalid session please try to login")
+
+    } else if (error.response.data.msg == 'Only Admin can update the Kyc'){
+      setError("Only admin can view the Users kyc")
+
+    } else if (error.response.data.msg == 'Authentication Failed'){
+        setError("Authentication Failed")
+
+    } else if (error.response.data.msg == 'Unable to get Admin detail'){
+        setError("Admin details not found")
+
+    } else if (error.response.data.msg == 'Unable to locate kyc'){
+        setError("Unknowc kyc error")
+
+    } else if (error.response.data.msg == 'Error while fetching user detail'){
+        setError("Unknow user detail error")
+
+    } else if (error.response.data.msg == 'Error while updating KYC details'){
+        setError("Unknow kyc update error")
+
+    } else if (error.response.data.msg == 'Kyc not found'){
+        setError("Kyc detail not found")
+
+    } else if (error.response.data.msg == 'Error while updating the user'){
+        setError("Unknown user error")
+
+    } else if (error.response.data.msg == 'Server error'){
+        setError("Server error")
+        
+    } else {
+      setError("")
+    }
+
     })
 };
 
@@ -155,9 +205,14 @@ useEffect(() => {
 return (
     <>
     <Main open={open}>
-
     <DrawerHeader />
-       <DataTable 
+
+    {error ? 
+      <Stack sx={{ width: '100%' }}>
+        <Alert severity="warning">{error}</Alert>
+      </Stack>
+       : (
+          <DataTable 
           headCells={headCells} 
           rows={kycData} 
           TableName={TableName}
@@ -166,6 +221,7 @@ return (
           updateKycID={updateKycID}
           handleKYCStatusUpdate={handleKYCStatusUpdate}
           />
+       )}
     </Main>
     </>
   );

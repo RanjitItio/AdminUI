@@ -11,6 +11,7 @@ import Avatar from '@mui/material/Avatar';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 
 
@@ -34,7 +35,12 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = [
+           {text: '-Profile', url: '/'},
+           {text: '-Account', url: '/'},
+           {text: 'Dashboard', url: '/'},
+           {text: 'Logout', url: '/signout/' }
+          ];
 
 
 function UpperNavbar({handleDrawerOpen, open}){
@@ -91,12 +97,13 @@ function UpperNavbar({handleDrawerOpen, open}){
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+              {settings.map((setting, index) => (
+                <MenuItem key={index} onClick={handleCloseUserMenu}>
+                  <Link to={setting.url} textAlign="center" style={{textDecoration: 'none'}}>{setting.text}</Link>
                 </MenuItem>
               ))}
             </Menu>
+
           </Box>
 
         </Toolbar>
@@ -104,6 +111,7 @@ function UpperNavbar({handleDrawerOpen, open}){
     </>
   )
 }
+
 
 
 export default UpperNavbar;

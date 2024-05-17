@@ -26,7 +26,7 @@ import RequestPaymentDetails from '../Transaction/RequestPayment';
 import MerchantPaymentDetails from '../Transaction/MerchantPayment';
 import CryptoSentDetails from  '../Transaction/CryptoSent';
 import CryptoReceivedDetails from '../Transaction/CryptoReceived';
-
+import Logout from '../Authentication/Logout';
 
 
 
@@ -79,6 +79,7 @@ const AuthRoutes = () => {
                 <Routes>
                     <Route exact path='/signup/' element={<Signup />}></Route>
                     <Route exact path='/signin/' element={<Signin />}></Route>
+                    <Route exact path='/signout/' element={<Logout />}></Route>
 
                     
                   <Route exact path='*' element={
