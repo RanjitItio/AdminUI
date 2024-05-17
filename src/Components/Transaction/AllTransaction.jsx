@@ -90,9 +90,9 @@ function AllTransactionData({open}) {
 useEffect(() => {
   axiosInstance.get(`api/v4/transactions/`).then((res)=> {
 
+    // console.log(allTransactionData)
     if(res.data && res.data.data) {
       updateAllTransactionData(res.data.data)
-      // console.log(transactionData)
     }
     
     // console.log(res.data.data)

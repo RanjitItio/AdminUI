@@ -25,6 +25,7 @@ import Badge from '@mui/material/Badge';
 import EditIcon from '@mui/icons-material/Edit';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import Button from '@mui/material/Button';
+import { useState, useEffect } from 'react';
 
 
 
@@ -216,6 +217,16 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  // To show when there is no data in API response
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (rows && rows.length > 0) {
+      setLoading(false);
+    }
+  }, [rows]);
+
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -300,6 +311,17 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
             />
             <TableBody>
               {visibleRows.map((row, index) => {
+                console.log(row)
+
+                if (loading) {
+                    return <p>Loading</p>;
+                  }
+                
+                if (!rows || rows.length === 0) {
+                  return <p>No transaction data available.</p>;
+                }
+                
+
                 const isItemSelected = isSelected(row.transaction.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -321,7 +343,7 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
                         inputProps={{
                           'aria-labelledby': labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.transaction.id)}
+                        onClick={(event) => handleClick(event, row.id)}
                       />
                     </TableCell>
 
@@ -331,6 +353,7 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
                     </TableCell>
 
                     {/* User Column */}
+                    <>
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
                       {row.user.first_name} {row.user.lastname}
                     </TableCell>
@@ -348,8 +371,8 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
                     <TableCell align="left">{row.transaction.txdfee}</TableCell>
 
                     {/* Total amount of Transaction Column */}
-                    <TableCell align="left" style={{color: parseFloat(row.transaction.totalamount) >= 0 ? 'green' : 'red'}}>
-                      {parseFloat(row.transaction.totalamount).toFixed(2)}
+                    <TableCell align="left" style={{color: parseFloat(row.transaction.totalamount ? row.transaction.totalamount : '0.00') >= 0 ? 'green' : 'red'}}>
+                      {parseFloat(row.transaction.totalamount ? row.transaction.totalamount : '0.00').toFixed(2)}
                         {/* {row.transaction.totalamount} */}
                     </TableCell>
 
@@ -357,13 +380,14 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
                     <TableCell align="left">{row.currency.name}</TableCell>
 
                     {/* Receiver Column */}
-                    <TableCell align="left">{row.receiver.first_name} {row.receiver.lastname}</TableCell>
+                    <TableCell align="left">{row.receiver ? `${row.receiver.first_name} ${row.receiver.lastname}`: 'No Receiver'}</TableCell>
 
                     {/* Transaction Status Column */}
                     <TableCell align="left" style={{color: getStatusColor(row.transaction.txdstatus)}}>
                         {row.transaction.txdstatus}
                     </TableCell>
-
+                    </>
+              
                     {/* Edit and Delete Icons */}
                     <TableCell align="left">
                         <Badge color="success" >
@@ -392,7 +416,7 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 10, 25, 50, 100]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}

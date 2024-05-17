@@ -93,8 +93,8 @@ const NavContent = [
 ];
 
 
-const Configurations = ['Currencies', 'Crypto Provider', 'Templates', 'Settings', 'System Update']
-const Addons = ['Agent', 'Crypto Exchange', 'Investment', 'Addon Manager', 'Cache Clear']
+const Configurations = ['-Currencies', '-Crypto Provider', '-Templates', '-Settings', '-System Update']
+const Addons = ['-Agent', '-Crypto Exchange', '-Investment', '-Addon Manager', '-Cache Clear']
 
 
 const drawerWidth = 240;
