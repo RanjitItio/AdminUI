@@ -78,7 +78,7 @@ const NavContent = [
     icon: <ConfirmationNumberOutlinedIcon />
   },
   { text: 'Tickets', subItems: [
-    {text: 'Tickets', icon: <LocalActivityOutlinedIcon />, url: 'https://cssgradient.io/'}],
+    {text: 'Tickets', icon: <LocalActivityOutlinedIcon />, url: '/tickets/'}],
     icon: <LocalActivityOutlinedIcon />
   },
   { text: 'Activity Logs', subItems: [

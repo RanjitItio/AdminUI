@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import React from "react";
+import CssBaseline from "@mui/material/CssBaseline";
 import Box from '@mui/material/Box';
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { useAuth } from "./authProvider";
@@ -27,6 +28,14 @@ import MerchantPaymentDetails from '../Transaction/MerchantPayment';
 import CryptoSentDetails from  '../Transaction/CryptoSent';
 import CryptoReceivedDetails from '../Transaction/CryptoReceived';
 import Logout from '../Authentication/Logout';
+import DepositUpdate from "../Transaction/DepositUpdate";
+import WithdrawUpdate from "../Transaction/WithdrawUpdate";
+import CurrencyTable from "../Currency/Currency";
+import AddCurrency from "../Currency/AddCurrency";
+import TicketTable from "../Ticket/Ticket";
+import Crypto from "../Crypto/Crypto";
+import AddBlockio from "../Crypto/AddFormBlockio";
+import AddTatumio from "../Crypto/AddFormTatumio";
 
 
 
@@ -105,6 +114,14 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/merchant-payments/" element={<MerchantPaymentDetails open={open} />} ></Route>
                           <Route exact path="/admin/crypto-sent-transactions/" element={<CryptoSentDetails open={open} />} ></Route>
                           <Route exact path="/admin/crypto-received-transactions/" element={<CryptoReceivedDetails open={open} />} ></Route>
+                          <Route exact path="/admin/deposits/update/" element={<DepositUpdate open={open} />} ></Route>
+                          <Route exact path="/admin/withdrawls/update/" element={<WithdrawUpdate open={open} />} ></Route>
+                          <Route exact path="/currencies/" element={<CurrencyTable open={open} />} ></Route>
+                          <Route exact path="/currencies/add/" element={<AddCurrency open={open} />} ></Route>
+                          <Route exact path="/tickets/" element={<TicketTable open={open} />} ></Route>
+                          <Route exact path="/crypto/" element={<Crypto open={open} />} ></Route>
+                          <Route exact path="/crypto/blockio/add/" element={<AddBlockio open={open} />} ></Route>
+                          <Route exact path="/crypto/tatumio/add/" element={<AddTatumio open={open} />} ></Route>
                       </Routes>
                     </Box>
                   }></Route>
