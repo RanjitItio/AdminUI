@@ -72,9 +72,7 @@ function stableSort(array, comparator) {
 
 
 
-function EnhancedTableHead(props) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-    props;
+function EnhancedTableHead({ headCells, order, orderBy, onRequestSort, rowCount, numSelected, onSelectAllClick }) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -88,14 +86,21 @@ function EnhancedTableHead(props) {
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts',
-            }}
+            inputProps={{ 'aria-label': 'select all desserts' }}
           />
         </TableCell>
-        {props.headCells.map((headCell) => (
-          <TableCell key={headCell.id} align={headCell.numeric ? 'right' : 'left'} padding={headCell.disablePadding ? 'none' : 'normal'} sortDirection={orderBy === headCell.id ? order : false}>
-            <TableSortLabel active={orderBy === headCell.id} direction={orderBy === headCell.id ? order : 'asc'} onClick={createSortHandler(headCell.id)}>
+        {headCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={headCell.numeric ? 'right' : 'left'}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)}
+            >
               <b>{headCell.label}</b>
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
@@ -111,6 +116,7 @@ function EnhancedTableHead(props) {
 }
 
 EnhancedTableHead.propTypes = {
+  headCells: PropTypes.array.isRequired,
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
@@ -119,79 +125,34 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-
-
-function EnhancedTableToolbar(props) {
-  const { numSelected } = props;
-
-
+function EnhancedTableToolbar({ numSelected, tableName }) {
   return (
     <Toolbar
       sx={{
         pl: { sm: 3 },
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+          bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
         }),
       }}
     >
       {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
+        <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          <b>{props.TableName}</b>
+        <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
+          <b>{tableName}</b>
         </Typography>
       )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <>
-        <TextField
-        hiddenLabel
-        id="filled-hidden-label-small"
-        placeholder='Search Transaction'
-        variant="filled"
-        size="small"
-      />
-
-    <Tooltip title="Download as CSV">
-        <Button variant="contained" startIcon={<FileDownloadIcon />} style={{marginLeft: '5px'}}>
-            CSV
-        </Button>        
-    </Tooltip>
-
-    <Tooltip title="Download as PDF">
-        <Button variant="contained" startIcon={<FileDownloadIcon />} style={{marginLeft: '5px'}}>
-            PDF
-        </Button>        
-    </Tooltip>
-      </>
-      )}
+      {/* Add your filter and download buttons here */}
     </Toolbar>
   );
 }
 
-
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
+  tableName: PropTypes.string.isRequired,
 };
 
 
@@ -217,7 +178,7 @@ export default function DepositTable({headCells, rows, TableName, updateTransact
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
+  
   // State to opon dialogue box for edit button
   const [open, setOpen] = React.useState(false);
 
@@ -238,7 +199,7 @@ export default function DepositTable({headCells, rows, TableName, updateTransact
       handleDepositEdit();
    };
 
-  const handleRequestSort = (event, property) => {
+   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
@@ -252,6 +213,7 @@ export default function DepositTable({headCells, rows, TableName, updateTransact
     }
     setSelected([]);
   };
+ 
 
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
@@ -299,7 +261,7 @@ export default function DepositTable({headCells, rows, TableName, updateTransact
       ),
     [order, orderBy, page, rowsPerPage],
   );
-
+  console.log(visibleRows)
 
   
   const [dateFormat, setDateFormt] = React.useState('')
@@ -364,6 +326,8 @@ export default function DepositTable({headCells, rows, TableName, updateTransact
     {label: 'This Month', value: '10/02/2024'},
     {label: 'Last month', value: '10/02/2024'},
   ]
+
+
 
   return (
     <>
