@@ -28,6 +28,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import KYCEditEditModal from './Users/Kyceditmodal';
+import { useEffect } from 'react';
 
 
 
@@ -262,6 +263,18 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
     setPage(0);
   };
 
+
+  // TO change the pagination of Table after page load
+  useEffect(()=> {
+    setTimeout(() => {
+      setRowsPerPage(25);
+      setPage(0);
+      // console.log('Changed')
+
+    }, 1000);
+
+  }, [])
+
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
@@ -370,7 +383,7 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
                     {/* Group Column */}
                     <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
                       <b>{
-                          row.user.merchant ? ('Merchant') : row.user.admin ? ('Admin') : ('Unidentified')
+                          row.user.merchant ? ('Merchant') : row.user.admin ? ('Admin') : ('User')
                           }
                        </b>
                     </TableCell>

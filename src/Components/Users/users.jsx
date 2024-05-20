@@ -97,9 +97,8 @@ useEffect(() => {
     // console.log(res.data.all_Kyc)
 
     if(res.data && res.data.all_Kyc) {
-      setTimeout(() => {
-        updateKycData(res.data.all_Kyc)
-      }, 1000); 
+        const sortedData = res.data.all_Kyc.reverse()
+        updateKycData(sortedData)
     }
     
   }).catch((error)=> {
