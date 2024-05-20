@@ -95,9 +95,10 @@ useEffect(() => {
   axiosInstance.get(`api/v1/deposits/`).then((res)=> {
 
     if(res.data && res.data.data) {
-      updateTransactionData(res.data.data)
+      const SortedData = res.data.data.reverse()
+      updateTransactionData(SortedData)
       // console.log(transactionData)
-    }
+    };
     
     // console.log(res.data.data)
   }).catch((error)=> {

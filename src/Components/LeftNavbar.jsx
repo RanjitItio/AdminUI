@@ -42,52 +42,59 @@ import GoogleIcon from '@mui/icons-material/Google';
 
 
 
+
+
 const NavContent = [
   { text: 'Dashboard', subItems: [
-    {text: 'Dashboard', icon: <DashboardCustomizeOutlinedIcon />, url: '/'}
+    {text: '-Dashboard', icon: <DashboardCustomizeOutlinedIcon />, url: '/'}
   ],
   icon: <DashboardCustomizeOutlinedIcon />
 },
 
   { text: 'Users', subItems: [
-    {text:'Users', icon: <Person2OutlinedIcon />, url: '/admin/users/'},
-    {text: 'Merchants', icon: <StorefrontOutlinedIcon />, url: '/admin/merchant/'}, 
-    {text: 'Admins', icon: <SupervisorAccountOutlinedIcon />, url: '/admin/admin-user/'}, 
+    {text:'-Users', icon: <Person2OutlinedIcon />, url: '/admin/users/'},
+    {text: '-Merchants', icon: <StorefrontOutlinedIcon />, url: '/admin/merchant/'}, 
+    {text: '-Admins', icon: <SupervisorAccountOutlinedIcon />, url: '/admin/admin-user/'}, 
   ],
   icon: <AccountCircleOutlinedIcon />},
 
   { text: 'Transactions', subItems: [
-    {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all-transaction/'},
+    {text: '+All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all-transaction/'},
     {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
-    {text: 'Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
-    {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
-    {text: 'Currency Exchange', icon: <PaymentsOutlinedIcon />, url: '/admin/exchanges/'},
-    {text: 'Request Payments', icon: <CalculateOutlinedIcon />, url: '/admin/request-payments/'},
-    {text: 'Merchant Payment', icon: <PaymentsOutlinedIcon />, url: '/admin/merchant-payments/'},
-    {text: 'Crypto Sent', icon: <KeyboardDoubleArrowRightOutlinedIcon />, url: '/admin/crypto-sent-transactions/'},
-    {text: 'Crypto Received', icon: <KeyboardDoubleArrowLeftOutlinedIcon />, url: "/admin/crypto-received-transactions"},
+    {text: '-Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
+    {text: '-Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
+    {text: '-Currency Exchange', icon: <PaymentsOutlinedIcon />, url: '/admin/exchanges/'},
+    {text: '-Request Payments', icon: <CalculateOutlinedIcon />, url: '/admin/request-payments/'},
+    {text: '-Merchant Payment', icon: <PaymentsOutlinedIcon />, url: '/admin/merchant-payments/'},
+    {text: '-Crypto Sent', icon: <KeyboardDoubleArrowRightOutlinedIcon />, url: '/admin/crypto-sent-transactions/'},
+    {text: '-Crypto Received', icon: <KeyboardDoubleArrowLeftOutlinedIcon />, url: "/admin/crypto-received-transactions"},
   ],
   icon: <ReceiptLongOutlinedIcon />},
 
-  { text: 'Revenues', subItems: [
-    {text: 'Revenues', icon: <AccountBalanceOutlinedIcon />, url: 'https://cssgradient.io/'},],
+  { text: '-Revenues', subItems: [
+    {text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: 'https://cssgradient.io/'},],
     icon: <AccountBalanceOutlinedIcon />
   },
-  { text: 'Disputes', subItems: [
-    {text: 'Disputes', icon: <ConfirmationNumberOutlinedIcon />, url: 'https://cssgradient.io/'},],
+  { text: '-Disputes', subItems: [
+    {text: '-Disputes', icon: <ConfirmationNumberOutlinedIcon />, url: 'https://cssgradient.io/'},],
     icon: <ConfirmationNumberOutlinedIcon />
   },
+<<<<<<< HEAD
   { text: 'Tickets', subItems: [
     {text: 'Tickets', icon: <LocalActivityOutlinedIcon />, url: '/tickets/'}],
+=======
+  { text: '-Tickets', subItems: [
+    {text: '-Tickets', icon: <LocalActivityOutlinedIcon />, url: 'https://cssgradient.io/'}],
+>>>>>>> e3f8d5eb6f1efb95c476a88b0e05cd4fbb34da3d
     icon: <LocalActivityOutlinedIcon />
   },
-  { text: 'Activity Logs', subItems: [
-    {text: 'Activity Logs', icon: <RemoveRedEyeOutlinedIcon />, url: 'https://cssgradient.io/'}],
+  { text: '-Activity Logs', subItems: [
+    {text: '-Activity Logs', icon: <RemoveRedEyeOutlinedIcon />, url: 'https://cssgradient.io/'}],
     icon: <RemoveRedEyeOutlinedIcon />
   },
-  { text: 'Verifications', subItems: [
-    {text: 'Identity Verification', icon: <FingerprintOutlinedIcon />, url: 'https://cssgradient.io/'}, 
-    {text: 'Address Verification', icon: <ContactsOutlinedIcon />, url: 'https://cssgradient.io/'}],
+  { text: '-Verifications', subItems: [
+    {text: '-Identity Verification', icon: <FingerprintOutlinedIcon />, url: 'https://cssgradient.io/'}, 
+    {text: '-Address Verification', icon: <ContactsOutlinedIcon />, url: 'https://cssgradient.io/'}],
     icon: <VerifiedOutlinedIcon /> 
   }
 ];

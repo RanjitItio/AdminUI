@@ -270,6 +270,17 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
     setPage(0);
   };
 
+  // To change the pagination of table after page loads
+  useEffect(()=> {
+    setTimeout(() => {
+      setRowsPerPage(25);
+      setPage(0);
+      // console.log('Changed')
+
+    }, 1000);
+
+  }, [])
+
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };

@@ -30,6 +30,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import DepositTableEditModal from './DepositEditModal';
+import { useEffect } from 'react';
 
 
 
@@ -242,6 +243,18 @@ export default function DepositTable({headCells, rows, TableName, updateTransact
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+
+  // To change the pagination of table after page loads
+  useEffect(()=> {
+    setTimeout(() => {
+      setRowsPerPage(25);
+      setPage(0);
+      // console.log('Changed')
+
+    }, 1000);
+
+  }, [])
 
   const handleChangeDense = (event) => {
     setDense(event.target.checked);

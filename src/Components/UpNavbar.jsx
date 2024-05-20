@@ -99,7 +99,7 @@ function UpperNavbar({handleDrawerOpen, open}){
             >
               {settings.map((setting, index) => (
                 <MenuItem key={index} onClick={handleCloseUserMenu}>
-                  <Link to={setting.url} textAlign="center" style={{textDecoration: 'none'}}>{setting.text}</Link>
+                  <Link to={setting.url} textalign="center" style={{textDecoration: 'none'}}>{setting.text}</Link>
                 </MenuItem>
               ))}
             </Menu>
