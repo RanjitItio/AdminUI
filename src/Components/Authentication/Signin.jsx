@@ -1,14 +1,17 @@
-// import 'bootstrap/dist/css/bootstrap.min.css'
 import React, { useState } from 'react';
 import axiosInstance from './axios';
-import { Link, useNavigate } from 'react-router-dom';
 import './tailwind.css';
-import { RiUser3Line } from "react-icons/ri";
+// import { Link, useNavigate } from 'react-router-dom';
+// import { RiUser3Line } from "react-icons/ri";
+
+import { Card } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
+import { Row, Col, Button } from 'react-bootstrap';
 
 
 
 function Signin(){
-    const navigate =  useNavigate();
+    // const navigate =  useNavigate();
 
     const initialFormData = Object.freeze({
 		email: '',
@@ -89,75 +92,27 @@ function Signin(){
    return(
     <>
 
-    <div className="min-h-screen flex bg-blue-300">
-        {/* First flex container with a blue color palette */}
-        <div className="flex-[50%] bg-gradient-to-r from-cyan-500 to-blue-500 text-white flex items-center justify-center">
-        <img src="https://script.viserlab.com/paymenthub/assets/images/frontend/login_register/641872cda99f91679323853.png" alt="Logo" className="h-80 w-80 drop-shadow-2xl " />
-        
-      
-        </div>
-  
-        {/* Second flex container with a green color palette */}
-        <div className="flex-[80%] bg-white-200 flex items-center justify-center  bg-white  ">
-          <div className="max-w-md w-full space-y-8">
-          <div className="col-span-1 shadow-2xl p-4 rounded-md">
-            <div className='col-span-1  rounded-full'>
-              <center>
-            <p className='text-7xl' ><RiUser3Line/>  </p>
-            <h2 className="text-2xl font-semibold mb-4 "> Login </h2>
-              </center>
-            </div>
-          
-          <form className="space-y-4 ">
-          <div className="grid grid-cols-1 gap-x-4 gap-y-2">
-
-            <div>
-              <label className="block text-gray-600 font-medium">Email</label>
-              <input
-                type="email"
-                className="mt-1 p-2 w-full border rounded-md"
-                placeholder="Email"
-                name="email"
-                onChange={handleChange} 
-              />
-            </div>
-
-            
-
-            <div>
-              <label className="block text-gray-600 font-medium">Password</label>
-              <input
-                type="password"
-                className="mt-1 p-2 w-full border rounded-md"
-                placeholder="********"
-                name='password'
-                onChange={handleChange}
-              />
-            </div>
-
-          </div>
-            <button
-              type="submit"
-              className="w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-              onClick={handleOnSubmit}
-            >
-              Submit
-            </button>
-
-                {error &&  <p className="text-danger">{error}</p>}
-                {successMessage && <p className="text-success">{successMessage}</p>}
-          </form>
-          <div className='cols col-span-1 flex justify-between items-center'>
-
-          <p className='font-extralight'>If you don't have any account <Link to={'/signup/'}>  Signup</Link></p>
-          <p className='font-extralight'> <Link to={'/forgot-password/'}> Forget password</Link></p>
-          </div>
-        </div>
-            
-          </div>        
-        </div>
-      </div>
-
+<Card className=" mt-5 shadow" style={{maxWidth: '20rem', margin: '0 auto'}}>
+            <Card.Body>
+                <h2 className="text-center m-4">SignIn </h2>
+                <Form>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control type="email" placeholder="Enter email" name="email" onChange={handleChange} />
+                        <Form.Text className="text-muted">
+                            We'll never share your email with anyone else.
+                        </Form.Text>
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control type="password" placeholder="Password"  name='password' onChange={handleChange} />
+                    </Form.Group>
+                    <Button variant="primary" type="submit" className="w-100"  onClick={handleOnSubmit}>Submit</Button>
+                    {error &&  <p className="text-danger">{error}</p>}
+                    {successMessage && <p className="text-success">{successMessage}</p>}
+                </Form>
+            </Card.Body>
+        </Card>
         
     </>
    );
