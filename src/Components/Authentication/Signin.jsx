@@ -1,18 +1,7 @@
 import React, { useState } from 'react';
 import axiosInstance from './axios';
 import './tailwind.css';
-<<<<<<< HEAD
-// import { Link, useNavigate } from 'react-router-dom';
 // import { RiUser3Line } from "react-icons/ri";
-
-import { Card } from 'react-bootstrap';
-import Form from 'react-bootstrap/Form';
-import { Row, Col, Button } from 'react-bootstrap';
-
-=======
-// import { RiUser3Line } from "react-icons/ri";
->>>>>>> 26a6403a6a823c94a0ce02432a2a9c64e9608db9
-
 import { Card } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import { Row, Col, Button } from 'react-bootstrap';
@@ -115,11 +104,6 @@ function Signin(){
                         <Form.Control type="password" placeholder="Password"  name='password' onChange={handleChange} />
                     </Form.Group>
                     <Button variant="primary" type="submit" className="w-100"  onClick={handleOnSubmit}>Submit</Button>
-<<<<<<< HEAD
-                    {error &&  <p className="text-danger">{error}</p>}
-                    {successMessage && <p className="text-success">{successMessage}</p>}
-=======
->>>>>>> 26a6403a6a823c94a0ce02432a2a9c64e9608db9
                 </Form>
             </Card.Body>
         </Card>
