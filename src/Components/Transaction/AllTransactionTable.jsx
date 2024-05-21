@@ -25,7 +25,13 @@ import Badge from '@mui/material/Badge';
 import EditIcon from '@mui/icons-material/Edit';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import Button from '@mui/material/Button';
+
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
 import { useState, useEffect } from 'react';
+import AllTransactionTableEditModal from './AllTransactionEditModal';
 
 
 
@@ -209,7 +215,7 @@ function getStatusColor(status){
 }
 
 
-export default function AllTransactionTable({headCells, rows, TableName}) {
+export default function AllTransactionTable({headCells, rows, TableName , updateTransactionID, handleTransactionStatusUpdate, setStaus, status}) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -219,6 +225,30 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
 
   // To show when there is no data in API response
   const [loading, setLoading] = useState(true);
+
+  const [open, setOpen] = React.useState(false);
+  const [dateFormat, setDateFormt] = React.useState('')
+  const [currency, setCurrency] = React.useState('');
+  const [wStatus, setwStatus] = React.useState('')
+  const [payMethod, setPaymethod] =  React.useState('');
+
+
+  const handleAllTransectionEdit = () => {
+    setOpen(true);
+  };
+
+  // Close the Edit Modal
+  const handleAllTransectionEditClose = () => {
+    setOpen(false);
+  };
+
+
+  // Update the transaction id and send in API request
+  const handleWithdrawlTransactionID = (transaction)=> {
+      // updateTransactionID(transaction)
+      handleAllTransectionEdit();
+   };
+
 
   useEffect(() => {
     if (rows && rows.length > 0) {
@@ -299,10 +329,108 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
       ),
     [order, orderBy, page, rowsPerPage],
   );
+  const getLastSevenDays = ()=> {
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    
+    const formatDate = `0${sevenDaysAgo.getMonth()}/0${sevenDaysAgo.getDate()}/${sevenDaysAgo.getFullYear()}`;
+    return formatDate;
+  }
 
+  const PaymentMethods = [
+    {value: 'Bank'},
+    {value: 'Crypto'},
+    {value: 'Card'},
+    {value: 'Stripe'},
+    {value: 'Paypal'},
+    {value: 'UPI'},
+  ]
+
+  const WithdrawlStatus = [
+    {value: 'All'},
+    {value: 'Success'},
+    {value: 'Pending'},
+    {value: 'Cancelled'},
+  ]
+
+  const currencies = [
+    {value: 'USD'},
+    {value: 'CYN'},
+    {value: 'INR'},
+    {value: 'EUR'},
+  ]
+
+  const dateFormats = [
+    {label: 'Today', value: '01/02/2024'},
+    {label: 'Yesterday', value: '03/04/2024'},
+    {label: 'Last 7 Days', value: getLastSevenDays()},
+    {label: 'Last 30 Days', value: '10/02/2024'},
+    {label: 'This Month', value: '10/02/2024'},
+    {label: 'Last month', value: '10/02/2024'},
+  ]
+
+  const handleDateFormatChange = (event)=> {
+    setDateFormt(event.target.value)
+  }
+
+  const handleCurrencyChange = (event)=> {
+    setCurrency(event.target.value)
+  }
+
+  const handleStausChange = (event)=> {
+    setwStatus(event.target.value)
+  }
+
+  const handelPaymentMethodChange = (event)=> {
+    setPaymethod(event.target.value)
+  }
   return (
+    <>
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+    <Paper sx={{ width: '100%', height: '90px', mb: 2 }}>
+            <FormControl sx={{minWidth: 170, marginTop: '14px', marginLeft: '10px'}} >
+                <InputLabel id="demo-simple-select-helper-label">Pick a date range</InputLabel>
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={dateFormat} label="DateFormat" onChange={handleDateFormatChange}>
+                    {dateFormats.map((format, index)=> (
+                        <MenuItem key={index} value={format.value}>{format.label}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <FormControl sx={{minWidth: 120, marginTop: '14px', marginLeft: '10px'}} >
+                <InputLabel id="demo-simple-select-helper-label">Currency</InputLabel>
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={currency} label="Currency" onChange={handleCurrencyChange}>
+                    {currencies.map((cur, index)=> (
+                        <MenuItem key={index} value={cur.value}>{cur.value}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <FormControl sx={{minWidth: 120, marginTop: '14px', marginLeft: '10px'}} >
+                <InputLabel id="demo-simple-select-helper-label">Status</InputLabel>
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={wStatus} label="wStatus" onChange={handleStausChange}>
+                    {WithdrawlStatus.map((w, index)=> (
+                        <MenuItem key={index} value={w.value}>{w.value}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>  
+
+            <FormControl sx={{minWidth: 165, marginTop: '14px', marginLeft: '10px'}} >
+                <InputLabel id="demo-simple-select-helper-label">Payment Method</InputLabel>
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={payMethod} label="Payment Method" onChange={handelPaymentMethodChange}>
+                    {PaymentMethods.map((pm, index)=> (
+                        <MenuItem key={index} value={pm.value}>{pm.value}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <TextField sx={{marginTop: '14px', marginLeft: '10px'}}  id="outlined-basic" label="Enter user name" variant="outlined" />
+
+            <Button sx={{marginTop: '20px', marginRight: '10px', float: 'right'}} variant="contained">Filter</Button>
+        </Paper>
+
+     <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} TableName={TableName} />
 
         <TableContainer>
@@ -403,7 +531,7 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
                     <TableCell align="left">
                         <Badge color="success" >
                         <Tooltip title="Edit">
-                            <EditIcon color="" style={{color:'#0e3080'}} />
+                        <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleWithdrawlTransactionID(row.id)} />
                         </Tooltip>
                         <Tooltip title="Delete">
                             <DeleteIcon style={{color:'#b23344'}} />
@@ -441,6 +569,9 @@ export default function AllTransactionTable({headCells, rows, TableName}) {
         label="Dense padding"
       />
     </Box>
+    <AllTransactionTableEditModal open={open} handleClose={handleAllTransectionEditClose} handleTransactionStatusUpdate={handleTransactionStatusUpdate} setStaus={setStaus} status={status} />
+
+    </>
   );
 }
 

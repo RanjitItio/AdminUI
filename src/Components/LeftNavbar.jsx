@@ -79,13 +79,8 @@ const NavContent = [
     {text: '-Disputes', icon: <ConfirmationNumberOutlinedIcon />, url: 'https://cssgradient.io/'},],
     icon: <ConfirmationNumberOutlinedIcon />
   },
-<<<<<<< HEAD
   { text: 'Tickets', subItems: [
     {text: 'Tickets', icon: <LocalActivityOutlinedIcon />, url: '/tickets/'}],
-=======
-  { text: '-Tickets', subItems: [
-    {text: '-Tickets', icon: <LocalActivityOutlinedIcon />, url: 'https://cssgradient.io/'}],
->>>>>>> e3f8d5eb6f1efb95c476a88b0e05cd4fbb34da3d
     icon: <LocalActivityOutlinedIcon />
   },
   { text: '-Activity Logs', subItems: [

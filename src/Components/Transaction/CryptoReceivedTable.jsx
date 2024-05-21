@@ -30,7 +30,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import CryptoExchangeTableEditModal from './CryptoExchangeEditModal';
 
 
 
