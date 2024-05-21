@@ -29,7 +29,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-
+import WithdrawlTableEditModal from './withdrawlEditModal';
 
 
 
@@ -213,13 +213,32 @@ function getStatusColor(status){
 
 
 
-export default function WithdrawlTable({headCells, rows, TableName}) {
+export default function WithdrawlTable({headCells, rows, TableName , updateTransactionID, handleTransactionStatusUpdate, setStaus, status}) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const [open, setOpen] = React.useState(false);
+
+
+  const handleWithdrawlEdit = () => {
+    setOpen(true);
+  };
+
+  // Close the Edit Modal
+  const handleWihdrawlEditClose = () => {
+    setOpen(false);
+  };
+
+
+  // Update the transaction id and send in API request
+  const handleWithdrawlTransactionID = (transaction)=> {
+      // updateTransactionID(transaction)
+      handleWithdrawlEdit();
+   };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -349,6 +368,7 @@ export default function WithdrawlTable({headCells, rows, TableName}) {
   ]
 
   return (
+    <>
     <Box sx={{ width: '100%' }}>
 
         <Paper sx={{ width: '100%', height: '90px', mb: 2 }}>
@@ -458,7 +478,7 @@ export default function WithdrawlTable({headCells, rows, TableName}) {
                     <TableCell align="left">
                         <Badge color="success" >
                         <Tooltip title="Edit">
-                            <EditIcon color="" style={{color:'#0e3080'}} />
+                            <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleWithdrawlTransactionID(row.id)} />
                         </Tooltip>
                         <Tooltip title="Delete">
                             <DeleteIcon style={{color:'#b23344'}} />
@@ -495,6 +515,9 @@ export default function WithdrawlTable({headCells, rows, TableName}) {
         label="Dense padding"
       />
     </Box>
+
+    <WithdrawlTableEditModal open={open} handleClose={handleWihdrawlEditClose} handleTransactionStatusUpdate={handleTransactionStatusUpdate} setStaus={setStaus} status={status} />
+    </>
   );
 }
 

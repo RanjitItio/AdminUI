@@ -15,7 +15,7 @@ function App() {
             <AuthRoutes />
         </AuthProvider>
   )
-};
+}
 
 
 

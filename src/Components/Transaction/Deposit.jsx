@@ -131,11 +131,13 @@ useEffect(() => {
     } else if (error.response.data.msg == 'No Transaction available to show'){
         setError("No Transaction is available to show")
 
-    };
+    }
 
     
   })
   }, [])
+
+
 
 
   const handleTransactionStatusUpdate = ()=> {
@@ -146,7 +148,7 @@ useEffect(() => {
         transaction_id: trsactionID 
 
       }).then((res)=> {
-        // console.log(res)
+        console.log(res)
 
       }).catch((error)=> {
         // console.log(error.response)
@@ -180,7 +182,6 @@ useEffect(() => {
       </IconButton>
     </React.Fragment>
   );
-
 
 
 

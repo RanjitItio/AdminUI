@@ -30,6 +30,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import RequestPaymentEditModal from './RequestPaymentEditModal';
 
 
 
@@ -214,13 +215,33 @@ function getStatusColor(status){
 
 
 
-export default function RequestPaymentTable({headCells, rows, TableName}) {
+export default function RequestPaymentTable({headCells, rows, TableName, updateTransactionID, handleTransactionStatusUpdate, setStaus, status}) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  
+  const [open, setOpen] = React.useState(false);
+
+
+  const handleRequestPaymentEdit = () => {
+    setOpen(true);
+  };
+
+  // Close the Edit Modal
+  const handleRequestPaymentEditClose = () => {
+    setOpen(false);
+  };
+
+
+  // Update the transaction id and send in API request
+  const handleRequestPaymentTransactionID = (transaction)=> {
+      // updateTransactionID(transaction)
+      handleRequestPaymentEdit();
+   };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -339,6 +360,7 @@ export default function RequestPaymentTable({headCells, rows, TableName}) {
 
 
   return (
+    <>
     <Box sx={{ width: '100%' }}>
 
         <Paper sx={{ width: '100%', height: '90px', mb: 2 }} className='shadow rounded border border-primary'>
@@ -441,7 +463,7 @@ export default function RequestPaymentTable({headCells, rows, TableName}) {
                     <TableCell align="left">
                         <Badge color="success" >
                         <Tooltip title="Edit">
-                            <EditIcon color="" style={{color:'#0e3080'}} />
+                            <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleRequestPaymentTransactionID(row.id)} />
                         </Tooltip>
                         <Tooltip title="Delete">
                             <DeleteIcon style={{color:'#b23344'}} />
@@ -478,6 +500,9 @@ export default function RequestPaymentTable({headCells, rows, TableName}) {
         label="Dense padding"
       />
     </Box>
+    <RequestPaymentEditModal open={open} handleClose={handleRequestPaymentEditClose} handleTransactionStatusUpdate={handleTransactionStatusUpdate} setStaus={setStaus} status={status} />
+    
+    </>
   );
 }
 
