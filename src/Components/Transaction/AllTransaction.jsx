@@ -2,6 +2,8 @@ import AllTransactionTable from './AllTransactionTable';
 import {Main, DrawerHeader} from '../Content';
 import { useState, useEffect } from 'react';
 import axiosInstance from '../Authentication/axios';
+import Stack from '@mui/material/Stack';
+import { Alert } from '@mui/material';
 
 
 
@@ -12,7 +14,20 @@ function AllTransactionData({open}) {
   const [error, setError] = useState('');
   const [allTrsactionID, updateAllTransactionID] = useState('')
   const [openSnackbar, setOpenSnackbar] = useState(false);
-
+  const [status, setStatus] = useState('');
+// setStatus
+  const setStaus = (status) => {
+    setStatus(status);
+    setOpenSnackbar(true);
+    setTimeout(() => {
+      setOpenSnackbar(false);
+    }, 1000)};
+  // handleTransactionStatusUpdate
+  const handleTransactionStatusUpdate = (id, status) => {
+    setStatus(status);
+    updateAllTransactionID(id);
+    setOpenSnackbar(true);
+  };
 
   const headCells = [
     {
@@ -165,6 +180,9 @@ const TableName = "Transaction Detail"
                  headCells={headCells} 
                  rows={allTransactionData} 
                  TableName={TableName} 
+                 handleTransactionStatusUpdate={handleTransactionStatusUpdate}
+                 setStaus={setStaus}
+               
                  />
         )}
     </Main>

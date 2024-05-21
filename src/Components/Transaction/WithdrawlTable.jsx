@@ -224,7 +224,7 @@ export default function WithdrawlTable({headCells, rows, TableName , updateTrans
   const [open, setOpen] = React.useState(false);
 
 
-  const handleDepositEdit = () => {
+  const handleWithdrawlEdit = () => {
     setOpen(true);
   };
 
@@ -237,7 +237,7 @@ export default function WithdrawlTable({headCells, rows, TableName , updateTrans
   // Update the transaction id and send in API request
   const handleWithdrawlTransactionID = (transaction)=> {
       // updateTransactionID(transaction)
-      handleDepositEdit();
+      handleWithdrawlEdit();
    };
 
   const handleRequestSort = (event, property) => {

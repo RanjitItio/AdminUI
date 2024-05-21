@@ -569,6 +569,7 @@ export default function AllTransactionTable({headCells, rows, TableName , update
         label="Dense padding"
       />
     </Box>
+
     <AllTransactionTableEditModal open={open} handleClose={handleAllTransectionEditClose} handleTransactionStatusUpdate={handleTransactionStatusUpdate} setStaus={setStaus} status={status} />
 
     </>

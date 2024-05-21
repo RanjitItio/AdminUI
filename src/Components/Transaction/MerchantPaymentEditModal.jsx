@@ -14,8 +14,7 @@ import Select from '@mui/material/Select';
 
 
 
-
-export default function AllTransactionTableEditModal({open, handleClose, handleTransactionStatusUpdate, setStaus, status}) {
+export default function MerchantPaymentEditModal({open, handleClose, handleTransactionStatusUpdate, setStaus, status}) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
