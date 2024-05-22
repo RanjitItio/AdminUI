@@ -24,6 +24,7 @@ export default function AllTransactionTableEditModal({open, handleClose, handleT
 
   const handleStatusChange = (event) => {
     setStaus(event.target.value);
+  
   };
 
 
@@ -67,7 +68,7 @@ export default function AllTransactionTableEditModal({open, handleClose, handleT
           <Button autoFocus onClick={handleClose} >
             Cancel
           </Button>
-          <Button onClick={()=> {handleClose(); handleTransactionStatusUpdate();}} autoFocus>
+          <Button onClick={()=> {handleClose(); handleTransactionStatusUpdate(1,status);}} autoFocus>
             Confirm
           </Button>
         </DialogActions>
