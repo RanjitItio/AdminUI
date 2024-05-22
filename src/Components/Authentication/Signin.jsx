@@ -9,6 +9,8 @@ import { Card } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import { Row, Col, Button } from 'react-bootstrap';
 
+
+
 function Signin(){
     const navigate =  useNavigate();
 
@@ -107,6 +109,9 @@ function Signin(){
                         <Form.Control type="password" placeholder="Password"  name='password' onChange={handleChange} />
                     </Form.Group>
                     <Button variant="primary" type="submit" className="w-100"  onClick={handleOnSubmit}>Submit</Button>
+                     {/* Message */}
+                {error &&  <p className="text-danger">{error}</p>}
+                {successMessage && <p className="text-success">{successMessage}</p>}
                 </Form>
             </Card.Body>
         </Card>
