@@ -12,7 +12,7 @@ function AllTransactionData({open}) {
 
   const [allTransactionData, updateAllTransactionData] = useState([]);
   const [error, setError] = useState('');
-  const [allTrsactionID, updateAllTransactionID] = useState('')
+  const [allTrsactionID, updateAllTransactionID] = useState()
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [status, setStatus] = useState('');
 // setStatus
@@ -24,8 +24,9 @@ function AllTransactionData({open}) {
     }, 1000)};
   // handleTransactionStatusUpdate
   const handleTransactionStatusUpdate = (id, status) => {
+    // console.log(allTrsactionID, status);
     setStatus(status);
-    updateAllTransactionID(id);
+    updateAllTransactionID(allTrsactionID);
     setOpenSnackbar(true);
   };
 
@@ -180,9 +181,10 @@ const TableName = "Transaction Detail"
                  headCells={headCells} 
                  rows={allTransactionData} 
                  TableName={TableName} 
+                 updateTransactionID={updateAllTransactionID}
                  handleTransactionStatusUpdate={handleTransactionStatusUpdate}
                  setStaus={setStaus}
-               
+                 status={status}
                  />
         )}
     </Main>

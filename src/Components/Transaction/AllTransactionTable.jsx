@@ -244,7 +244,8 @@ export default function AllTransactionTable({headCells, rows, TableName , update
 
   // Update the transaction id and send in API request
   const handleWithdrawlTransactionID = (transaction)=> {
-      // updateTransactionID(transaction)
+    // console.log(transaction)
+      updateTransactionID(transaction)
       handleAllTransectionEdit();
    };
 
@@ -530,7 +531,7 @@ export default function AllTransactionTable({headCells, rows, TableName , update
                     <TableCell align="left">
                         <Badge color="success" >
                         <Tooltip title="Edit">
-                        <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleWithdrawlTransactionID(row.id)} />
+                        <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleWithdrawlTransactionID(row.transaction.id)} />
                         </Tooltip>
                         <Tooltip title="Delete">
                             <DeleteIcon style={{color:'#b23344'}} />
