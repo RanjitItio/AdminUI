@@ -25,7 +25,6 @@ import Badge from '@mui/material/Badge';
 import EditIcon from '@mui/icons-material/Edit';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import Button from '@mui/material/Button';
-
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -450,7 +449,7 @@ export default function AllTransactionTable({headCells, rows, TableName , update
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                console.log(row)
+                // console.log(row)
 
                 if (loading) {
                     return <p>Loading</p>;

@@ -105,6 +105,9 @@ function Signin(){
                     </Form.Group>
                     <Button variant="primary" type="submit" className="w-100"  onClick={handleOnSubmit}>Submit</Button>
                 </Form>
+                {/* Message */}
+                {error &&  <p className="text-danger">{error}</p>}
+                {successMessage && <p className="text-success">{successMessage}</p>}
             </Card.Body>
         </Card>
         
