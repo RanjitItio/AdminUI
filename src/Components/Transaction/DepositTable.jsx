@@ -126,7 +126,7 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-function EnhancedTableToolbar({ numSelected, tableName }) {
+function EnhancedTableToolbar({ numSelected, TableName }) {
   return (
     <Toolbar
       sx={{
@@ -143,7 +143,7 @@ function EnhancedTableToolbar({ numSelected, tableName }) {
         </Typography>
       ) : (
         <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-          <b>{tableName}</b>
+          <b>{TableName}</b>
         </Typography>
       )}
       {/* Add your filter and download buttons here */}
@@ -153,7 +153,7 @@ function EnhancedTableToolbar({ numSelected, tableName }) {
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
-  tableName: PropTypes.string.isRequired,
+  TableName: PropTypes.string.isRequired,
 };
 
 
@@ -274,7 +274,7 @@ export default function DepositTable({headCells, rows, TableName, updateTransact
       ),
     [order, orderBy, page, rowsPerPage],
   );
-  console.log(visibleRows)
+  // console.log(visibleRows)
 
   
   const [dateFormat, setDateFormt] = React.useState('')
