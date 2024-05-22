@@ -15,6 +15,8 @@ function AllTransactionData({open}) {
   const [allTrsactionID, updateAllTransactionID] = useState()
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [status, setStatus] = useState('');
+
+
 // setStatus
   const setStaus = (status) => {
     setStatus(status);
@@ -22,6 +24,7 @@ function AllTransactionData({open}) {
     setTimeout(() => {
       setOpenSnackbar(false);
     }, 1000)};
+
   // handleTransactionStatusUpdate
   const handleTransactionStatusUpdate = (id, status) => {
     // console.log(allTrsactionID, status);
@@ -35,7 +38,7 @@ function AllTransactionData({open}) {
       id: "id",
       numeric: false,
       disablePadding: true,
-      label: "ID",
+      label: "Transaction ID",
     },
     {
       id: "user",

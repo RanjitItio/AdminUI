@@ -110,9 +110,6 @@ function Signin(){
                 {error &&  <p className="text-danger">{error}</p>}
                 {successMessage && <p className="text-success">{successMessage}</p>}
                 </Form>
-                {/* Message */}
-                {error &&  <p className="text-danger">{error}</p>}
-                {successMessage && <p className="text-success">{successMessage}</p>}
             </Card.Body>
         </Card>
         

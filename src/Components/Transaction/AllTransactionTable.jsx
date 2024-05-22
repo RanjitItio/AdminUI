@@ -488,7 +488,7 @@ export default function AllTransactionTable({headCells, rows, TableName , update
 
                     {/* ID Column */}
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.transaction.id}
+                      <small>{row.transaction.txdid}</small>
                     </TableCell>
 
                     {/* User Column */}
@@ -498,7 +498,8 @@ export default function AllTransactionTable({headCells, rows, TableName , update
                     </TableCell>
 
                     {/* Date Column */}
-                    <TableCell align="left" padding="none">{new Date(row.transaction.txddate).toLocaleDateString()}</TableCell>
+                    {/* <TableCell align="left" padding="none">{new Date(row.transaction.txddate).toLocaleDateString()}</TableCell> */}
+                    <TableCell align="left" padding="none">{row.transaction.txddate}</TableCell>
 
                     {/* Transaction Type Column */}
                     <TableCell align="left">{row.transaction.txdtype}</TableCell>

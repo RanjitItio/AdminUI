@@ -437,7 +437,7 @@ export default function DepositTable({headCells, rows, TableName, updateTransact
                     </TableCell>
                     {/* ID Column */}
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.transaction.id}
+                      <small>{row.transaction.txdid}</small>
                     </TableCell>
 
                     {/* Name Column */}
@@ -446,10 +446,10 @@ export default function DepositTable({headCells, rows, TableName, updateTransact
                     </TableCell>
 
                     {/* Date Column */}
-                    <TableCell align="left" padding="none">{new Date(row.transaction.txddate).toLocaleDateString()}</TableCell>
+                    <TableCell align="left" padding="none">{row.transaction.txddate}</TableCell>
 
                     {/* Amount Column */}
-                    <TableCell align="left">{row.transaction.amount}</TableCell>
+                    <TableCell align="center">{row.transaction.amount}</TableCell>
 
                     {/* Fee Column */}
                     <TableCell align="left">{row.transaction.txdfee}</TableCell>
@@ -469,7 +469,6 @@ export default function DepositTable({headCells, rows, TableName, updateTransact
                     <TableCell align="left" style={{color: getStatusColor(row.transaction.txdstatus)}}>
                         {row.transaction.txdstatus}
                     </TableCell>
-
 
                     <TableCell align="left">
                       {/* Edit and Delete Icons */}
