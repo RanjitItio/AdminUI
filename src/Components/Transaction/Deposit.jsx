@@ -68,6 +68,12 @@ function AllDepositDetail({open}) {
       label: "Currency",
     },
     {
+      id: "Convert Currency",
+      numeric: false,
+      disablePadding: false,
+      label: "Convert Currency",
+    },
+    {
       id: "payment_method",
       numeric: false,
       disablePadding: false,

@@ -462,6 +462,10 @@ export default function DepositTable({headCells, rows, TableName, updateTransact
                     {/* Currency Column */}
                     <TableCell align="left">{row.currency.name}</TableCell>
 
+                    <TableCell align="left">{row.converted_currency ? row.converted_currency.currency : 
+                    (<p>Not Available</p>)}
+                    </TableCell>
+
                     {/* Payment Method Column */}
                     <TableCell align="left">{row.transaction.payment_mode}</TableCell>
 
