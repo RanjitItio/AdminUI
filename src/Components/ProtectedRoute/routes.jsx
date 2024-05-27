@@ -36,6 +36,8 @@ import TicketTable from "../Ticket/Ticket";
 import Crypto from "../Crypto/Crypto";
 import AddBlockio from "../Crypto/AddFormBlockio";
 import AddTatumio from "../Crypto/AddFormTatumio";
+import Profile from "../Users/profileedit.jsx";
+
 
 
 
@@ -122,6 +124,7 @@ const AuthRoutes = () => {
                           <Route exact path="/crypto/" element={<Crypto open={open} />} ></Route>
                           <Route exact path="/crypto/blockio/add/" element={<AddBlockio open={open} />} ></Route>
                           <Route exact path="/crypto/tatumio/add/" element={<AddTatumio open={open} />} ></Route>
+                          <Route exact path="/admin/users/add/" element={<Profile open={open} />} ></Route>
                       </Routes>
                     </Box>
                   }></Route>

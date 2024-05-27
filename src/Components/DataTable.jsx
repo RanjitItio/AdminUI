@@ -199,6 +199,7 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+
   const [open, setOpen] = React.useState(false);
 
   // Open the edit modal
@@ -216,6 +217,7 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
   const handleUpdateKYCID = (kyc) => {
       handleKYCEdit();
       updateKycID(kyc);
+
   }
 
 
