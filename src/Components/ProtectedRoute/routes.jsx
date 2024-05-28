@@ -37,6 +37,10 @@ import Crypto from "../Crypto/Crypto";
 import AddBlockio from "../Crypto/AddFormBlockio";
 import AddTatumio from "../Crypto/AddFormTatumio";
 import Profile from "../Users/profileedit.jsx";
+import AdminUpdateForm from '../Users/AdminUpdateForm.jsx';
+import Revenues from '../Revenues/Revenues.jsx';
+import Dispute from '../Dispute/Dispute.jsx';
+import DisputeDiscussion from '../Dispute/DisputeDiscussion.jsx';
 
 
 
@@ -125,6 +129,10 @@ const AuthRoutes = () => {
                           <Route exact path="/crypto/blockio/add/" element={<AddBlockio open={open} />} ></Route>
                           <Route exact path="/crypto/tatumio/add/" element={<AddTatumio open={open} />} ></Route>
                           <Route exact path="/admin/users/add/" element={<Profile open={open} />} ></Route>
+                          <Route exact path="/admin/update/" element={<AdminUpdateForm open={open} />} ></Route>
+                          <Route exact path="/admin/revenues/" element={<Revenues open={open} />} ></Route>
+                          <Route exact path="/admin/dispute/" element={<Dispute open={open} />} ></Route>
+                          <Route exact path="/admin/dispute/discussion/" element={<DisputeDiscussion open={open} />} ></Route>
                       </Routes>
                     </Box>
                   }></Route>
