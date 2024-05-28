@@ -31,6 +31,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import DepositTableEditModal from './DepositEditModal';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -172,14 +173,16 @@ function getStatusColor(status){
 
 
 
-export default function DepositTable({headCells, rows, TableName, updateTransactionID, handleTransactionStatusUpdate, setStaus, status}) {
+export default function DepositTable({headCells, rows, TableName, handleTransactionStatusUpdate, setStaus, status}) {
   const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('id');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  
+
+  const navigate =  useNavigate()
+
   // State to opon dialogue box for edit button
   const [open, setOpen] = React.useState(false);
 
@@ -196,8 +199,8 @@ export default function DepositTable({headCells, rows, TableName, updateTransact
 
   // Update the transaction id and send in API request
   const handleUpdateTransactionID = (transaction)=> {
-      updateTransactionID(transaction)
-      handleDepositEdit();
+      // handleDepositEdit();
+      navigate('/admin/deposits/update/', {state: {transactionID: transaction}})
    };
 
    const handleRequestSort = (event, property) => {

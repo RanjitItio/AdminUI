@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Nav, Form, } from 'react-bootstrap';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
@@ -6,39 +6,235 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import { Main, DrawerHeader } from "../Content"
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TicketTable from "./UsersTecketTable"
 import WalletTable from './UserWalletsTable';
 import TransactionTable from './UsersTransactionTable';
 import DisputeTable from './UserDisputesTable'
 import Modal from 'react-bootstrap/Modal';
 import UserDeposit from './UserDeposit';
-// import PhoneInput from 'react-phone-input-2';
-// import 'react-phone-input-2/lib/style.css';
-// import { useTable, usePagination, useSortBy, useGlobalFilter } from 'react-table';
+import { useLocation } from 'react-router-dom';
+import axiosInstance from '../Authentication/axios';
+// import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 
 
 const Profile = ({ open }) => {
-    const [phone, setPhone] = useState('');
-    const [group, setGroup] = useState('');
-    const [status, setStatus] = useState('');
-    const [activeTab, setActiveTab] = useState('profile');
+    const location = useLocation();
+    const Kycdetails = location.state?.kycID;
+    const userDetails = location.state?.userID;
+
+    const initialProfileData = {
+        first_name:     Kycdetails?.firstname || '',
+        last_name:      Kycdetails?.lastname || '',
+        email:          Kycdetails?.email    || '',
+        dob:            Kycdetails?.dateofbirth || '',
+        zipcode:        Kycdetails?.zipcode  || '',
+        status:         Kycdetails?.status   || '',
+        gender:         Kycdetails?.gander   || '',
+        state:          Kycdetails?.state    || '',
+        marital_status: Kycdetails?.marital_status || '',
+        country:        Kycdetails?.country  || '',
+        nationality:    Kycdetails?.nationality  || '',
+        mobile_number:  Kycdetails?.phoneno      || '',
+        id_type:        Kycdetails?.id_type      || '',
+        address:        Kycdetails?.address      || '',
+        id_number:      Kycdetails?.id_number    || '',
+        landmark:       Kycdetails?.landmark     || '',
+        id_expiry_date: Kycdetails?.id_expiry_date  || '',
+        city:           Kycdetails?.city  || '',
+        group:          0,
+        confirm_password: '',
+        password:         ''
+    }
+
+    const [phone, setPhone]             = useState('');
+    const [group, setGroup]             = useState('');
+    const [status, setStatus]           = useState('');
+    const [activeTab, setActiveTab]     = useState('profile');
     const [showDeposit, setShowDeposit] = useState(false);
-    const [show, setShow] = useState(false);
+    const [show, setShow]               = useState(false);
+    const [allGroup, updateAllGroup]    = useState([])
+    const [error, setError]             = useState('')
+    const [successMessage, setSuccessMessage] = useState('')
+    const [statusMessage, updateStatusMessage] = useState('')
+    const [userTransactions, updateUserTransactions] = useState([])
+    const [userWallet, updateUserWallet] = useState([])
+    const [kycDetail, updateKycDetails] = useState(initialProfileData)
+
+    const [groupValue, setGroupValue] = useState('');
+
 
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow  = () => setShow(true);
 
-  const handleCloseDeposit = () => setShowDeposit(false);
-  const handleShowDeposit = () => setShowDeposit(true);
+    const handleCloseDeposit = () => setShowDeposit(false);
+    const handleShowDeposit  = () => setShowDeposit(true);
+
+    
+    const handleProfileChange = (event) => {
+        
+        updateKycDetails({...kycDetail,
+            [event.target.name]: event.target.value,
+        })
+    }
+
+    const handleGroupValueChange = (event) => {
+        setGroupValue(event.target.value)
+        // console.log(event.target.value)
+    }
+
+    const handleProfileStatusMessage = (event) => {
+        const status_value = event.target.value
+
+        if (status_value === 'Inactive') {
+            updateStatusMessage('User will not be able to login')
+
+        } else if (status_value === 'Suspended') {
+            updateStatusMessage('User will be able to login but can not perform any Transactions')
+        } 
+        else if (status_value === 'Active') {
+            updateStatusMessage('')
+        }
+    };
+
+
+    // Fetch all Group from API
+    useEffect(() => {
+        axiosInstance.get(`api/all/groups/`).then((res)=> {
+        // console.log(res.data.data)
+        if (res.status === 200) {
+            updateAllGroup(res.data.data)
+        }
+    }).catch((error)=> {
+        // console.log(error)
+        if (error.response.data.msg === 'Group fetch error') {
+            setError('Unknow error Occured')
+        } else if (error.response.data.msg === 'Server Error') {
+            setError('Unknow error Occured')
+        } else {
+            setError('')
+        };
+    })
+    }, [])
+
+
+    
+const handleKYCStatusUpdate = ()=> {
+    // value = event.target.value;
+
+    if (kycDetail.status === '') {
+        setError('Please Select the status of the user')
+
+    } else if (kycDetail.first_name === '') {
+        setError('Please Fill up the First Name of the user')
+
+    } else if (kycDetail.last_name === '') {
+        setError("Please fill up the Last name")
+
+    } else if (kycDetail.mobile_number === '') {
+        setError("Please fill up the Mobile Number")
+
+    } else if (kycDetail.email === '') {
+        setError("Please fill up the Email ID")
+
+    } else if (kycDetail.dob === '') {
+        setError("Please fill up User DOB")
+
+    } else if (kycDetail.gender === '') {
+        setError("Please fill up User Gender")
+
+    } else if (kycDetail.state === '') {
+        setError("Please fill the state")
+
+    } else if (kycDetail.marital_status === '') {
+        setError("Please fill the Marital Status")
+        
+    } else if (kycDetail.country === '') {
+        setError("Please fill the user's Country")
+
+    } else if (kycDetail.id_type === '') {
+        setError("Please fill the user's ID Type")
+
+    } else if (kycDetail.id_number === '') {
+        setError("Please fill the user's ID Number")
+
+    } else if (kycDetail.id_expiry_date === '') {
+        setError("Please fill the user's ID Expiry Date")
+
+    } else if (kycDetail.address === '') {
+        setError("Please fill the Address")
+
+    } else if (kycDetail.city === '') {
+        setError("Please fill the City")
+
+    } else if (kycDetail.group === 0) {
+        setError("Please Select user Group")
+
+    } else {
+        // setError('')
+        
+        axiosInstance.put(`api/v1/admin/update/user/`, {
+            user_id: Kycdetails.user_id,
+            first_name: kycDetail.first_name,
+            last_name: kycDetail.last_name,
+            phoneno: kycDetail.mobile_number,
+            email: kycDetail.email,
+            dob: kycDetail.dob,
+            gender: Kycdetails.gander,
+            state: Kycdetails.state,
+            city: Kycdetails.city,
+            landmark: Kycdetails.landmark,
+            address: Kycdetails.address,
+            status: kycDetail.status,
+            group: kycDetail.group,
+            password: Kycdetails.password,
+            confirm_password: Kycdetails.confirm_password
+          }).then((res)=> {
+            // console.log(res)
+            if (res.status == 200) {
+                setSuccessMessage('User Data updated Successfully')
+            }
+
+          }).catch((error)=> {
+            console.log(error.response)
+      
+          if (error.response.data.msg == 'Only Admin can update the Kyc'){
+            setError("Only admin can view the Users kyc")
+      
+          } else if (error.response.data.msg == 'Unable to get Admin detail'){
+              setError("Admin details not found")
+      
+          } else if (error.response.data.msg == 'Unable to locate kyc'){
+              setError("Unknowc kyc error")
+      
+          } else if (error.response.data.msg == 'Error while fetching user detail'){
+              setError("Unknow user detail error")
+      
+          } else if (error.response.data.msg == 'Error while updating KYC details'){
+              setError("Unknow kyc update error")
+      
+          } else if (error.response.data.msg == 'Kyc not found'){
+              setError("Kyc detail not found")
+      
+          } else if (error.response.data.msg == 'Error while updating the user'){
+              setError("Unknown user error")
+      
+          } else if (error.response.data.msg == 'Server error'){
+              setError("Server error")
+              
+          } else if (error.response.status == 401) {
+              setError('Unauthorized Access')
+          }
+          else {
+            setError("")
+          }
+      
+          })
+      };
+    }
+
+    
+
 
     const TicketTableHead = [
         {
@@ -85,49 +281,60 @@ const Profile = ({ open }) => {
 
     const WalletTableHead = [
         {
-            id: "date",
+            id: "ID",
             numeric: false,
             disablePadding: true,
-            label: "Date",
+            label: "ID",
         },
         {
-            id: "balance",
+            id: "Date Created",
+            numeric: false,
+            disablePadding: false,
+            label: "Date Created",
+        },
+        {
+            id: "Currency",
+            numeric: false,
+            disablePadding: true,
+            label: "Currency",
+        },
+        {
+            id: "Balance",
             numeric: false,
             disablePadding: false,
             label: "Balance",
         },
         {
-            id: "currency",
-            numeric: false,
-            disablePadding: true,
-            label: "Status",
-        },
-        {
-            id: "defult",
+            id: "Status",
             numeric: false,
             disablePadding: false,
-            label: "Defult",
+            label: "Status",
         },
-
 
 
     ];
 
     const TransactionTableHead = [
         {
+            id: "Transaction ID",
+            numeric: false,
+            disablePadding: true,
+            label: "Transaction ID",
+        },
+        {
             id: "date",
             numeric: false,
             disablePadding: true,
             label: "Date",
         },
         {
-            id: "user",
+            id: "Sender",
             numeric: false,
             disablePadding: false,
-            label: "User",
+            label: "Sender",
         },
         {
-            id: "type",
+            id: "Type",
             numeric: false,
             disablePadding: true,
             label: "Type",
@@ -145,10 +352,10 @@ const Profile = ({ open }) => {
             label: "Fees",
         },
         {
-            id: "total",
+            id: "Total Amount",
             numeric: false,
             disablePadding: false,
-            label: "Total",
+            label: "Total Amount",
         },
         {
             id: "currency",
@@ -218,8 +425,6 @@ const Profile = ({ open }) => {
 
     ];
 
-
-
     const TicketTableName = "Tickets"
     const WalletsTableName = " Wallets"
     const TransactionTableName = "Transactions"
@@ -229,9 +434,55 @@ const Profile = ({ open }) => {
     // Sample data for the table
 
     const ticketData = [];
-    const WalletsData = [];
-    const TransactionsData = [];
     const DisputeData = [];
+
+// console.log(kycDetail.status)
+
+useEffect(() => {
+    if (error || successMessage) {
+        const timer = setTimeout(() => {
+            setError('');
+            setSuccessMessage('');
+        }, 3000); 
+
+        return () => clearTimeout(timer);
+    }
+}, [error, successMessage]);
+
+
+// Get all the Transactions related to the user
+const handleUserTransactions = () => {
+    axiosInstance.post(`api/v2/admin/user/transactions/`, {
+        user_id: Kycdetails.user_id,
+        limit: 10,
+        offset: 0
+      }).then((res) => {
+        // console.log(res.data.user_transactions)
+        const sortedTransactions = res.data.user_transactions.reverse()
+        updateUserTransactions(sortedTransactions)
+
+      }).catch((error)=> {
+
+        console.log(error)
+
+      })
+}
+
+// Get all the Wallets related to the user
+const handleUserWallets = () => {
+    axiosInstance.post(`api/v2/admin/user/wallet/`, {
+        user_id: Kycdetails.user_id,
+
+      }).then((res) => {
+        console.log(res.data.user_wallet_data)
+        const SortedWallet = res.data.user_wallet_data
+        updateUserWallet(SortedWallet)
+
+      }).catch((error)=> {
+            console.log(error)
+      })
+};
+
 
     return (
         <Main open={open}>
@@ -250,6 +501,7 @@ const Profile = ({ open }) => {
 
                 </Card>
             </Modal>
+
             <Modal show={show} style={{margin:'10rem'}} onHide={handleClose} backdrop="static" keyboard={false} >
                 <Modal.Header closeButton>
                     <Modal.Title>Withdraw</Modal.Title>
@@ -271,11 +523,13 @@ const Profile = ({ open }) => {
                             <Nav.Item>
                                 <Nav.Link eventKey="profile">Profile</Nav.Link>
                             </Nav.Item>
+
                             <Nav.Item>
-                                <Nav.Link eventKey="transactions">Transactions</Nav.Link>
+                                <Nav.Link eventKey="transactions" onClick={handleUserTransactions}>Transactions</Nav.Link>
                             </Nav.Item>
+
                             <Nav.Item>
-                                <Nav.Link eventKey="wallets">Wallets</Nav.Link>
+                                <Nav.Link eventKey="wallets" onClick={handleUserWallets}>Wallets</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
                                 <Nav.Link eventKey="tickets">Tickets</Nav.Link>
@@ -291,7 +545,16 @@ const Profile = ({ open }) => {
                         <Card.Body>
                             <Row className="">
                                 <Col className="d-flex align-items-center justify-content-between mb-3">
-                                    <h3>gvjjh hvbjkh <span className="badge bg-success">Active</span></h3>
+                                    <h3>{Kycdetails.firstname} {Kycdetails.lastname} 
+                                    {userDetails ? (
+                                        userDetails.active === true ? 
+                                            (<span className="badge bg-success">Active</span>) :
+                                            (<span className="badge bg-danger">Inactive</span>)
+                                    ) : (
+                                        <></>
+                                    )}
+                                    
+                                    </h3>
                                     <div>
                                         <Button variant="primary" className="me-2" onClick={handleShowDeposit}>Deposit</Button>
                                         <Button variant="secondary" onClick={handleShow} >Withdraw</Button>
@@ -301,6 +564,8 @@ const Profile = ({ open }) => {
                         </Card.Body>
                     </Card>
                 )}
+
+                {/* Profile Tab */}
                 {activeTab === 'profile' && (
                     <Row>
                         <Col md={6} lg={4} className="mb-3">
@@ -308,62 +573,117 @@ const Profile = ({ open }) => {
                                 <Card.Body>
                                     <Form>
                                         <Form.Group className="mb-3">
-                                            <TextField label="First Name" variant="outlined" fullWidth />
+                                            <TextField label="First Name" name='first_name' value={kycDetail.first_name} variant="outlined" fullWidth onChange={handleProfileChange} />
                                         </Form.Group>
+                                        
                                         <Form.Group className="mb-3">
-                                            <TextField label="Last Name" variant="outlined" fullWidth />
+                                            <TextField label="Last Name" name='last_name' value={kycDetail.last_name} variant="outlined"  fullWidth onChange={handleProfileChange} />
                                         </Form.Group>
+
                                         <Form.Group className="mb-3">
                                             <TextField
-                                                country={'us'}
+                                                // country={'us'}
                                                 variant="outlined"
-                                                value={phone}
+                                                value={kycDetail.mobile_number}
                                                 label="Phone Number"
-                                                onChange={phone => setPhone(phone)}
+                                                name='mobile_number'
+                                                onChange={handleProfileChange}
                                                 fullWidth
                                             />
                                         </Form.Group>
+
                                         <Form.Group className="mb-3">
-                                            <TextField label="Email" variant="outlined" fullWidth type="email" />
+                                            <TextField label="Email" variant="outlined" fullWidth type="email" name='email' value={kycDetail.email}/>
                                         </Form.Group>
+
+                                        <Form.Group className="mb-3">
+                                            <TextField label="DOB" name='dob' value={kycDetail.dob} variant="outlined" fullWidth onChange={handleProfileChange} />
+                                        </Form.Group>
+                                        
+                                        <Form.Group className="mb-3">
+                                            <TextField label="Gender" name='gender' value={Kycdetails.gander} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3">
+                                            <TextField label="state" name='state' value={kycDetail.state} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3">
+                                            <TextField label="city" name='city' value={kycDetail.city} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3">
+                                            <TextField label="landmark" name='landmark' value={kycDetail.landmark} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3">
+                                            <TextField label="address" name='address' value={kycDetail.address} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3">
+                                            <TextField label="ID Type" name='id_type' value={Kycdetails.id_type} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3">
+                                            <TextField label="ID Number" name='id_number' value={Kycdetails.id_number} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3">
+                                            <TextField label="ID Expiry Date" name='id_expiry_date' value={Kycdetails.id_expiry_date} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                        </Form.Group>
+
                                         <Form.Group className="mb-3">
                                             <FormControl fullWidth variant="outlined">
                                                 <InputLabel>Group</InputLabel>
+                       
                                                 <Select
-                                                    value={group}
-                                                    onChange={e => setGroup(e.target.value)}
+                                                    value={groupValue}
+                                                    onChange={(event)=> {handleProfileChange(event), handleGroupValueChange(event)}}
                                                     label="Group"
-                                                >
-                                                    <MenuItem value="Merchant Regular">Merchant Regular</MenuItem>
-                                                    <MenuItem value="Merchant VIP">Merchant VIP</MenuItem>
-                                                    <MenuItem value="Admin">Admin</MenuItem>
+                                                    name='group'
+                                                    >
+                                                        {allGroup.map((group) => (
+                                                            <MenuItem key={group.id} value={group.id}>
+                                                                {group.name}
+                                                            </MenuItem>
+                                                        ))}
                                                 </Select>
+                                           
                                             </FormControl>
                                         </Form.Group>
+
                                         <Form.Group className="mb-3">
-                                            <TextField label="Password" variant="outlined" fullWidth type="password" />
+                                            <TextField label="Password" name='password' variant="outlined" fullWidth type="password" onChange={handleProfileChange} />
                                         </Form.Group>
+
                                         <Form.Group className="mb-3">
-                                            <TextField label="Confirm Password" variant="outlined" fullWidth type="password" />
+                                            <TextField label="Confirm Password" name='confirm_password' variant="outlined" fullWidth type="password" onChange={handleProfileChange} />
                                         </Form.Group>
+
                                         <Form.Group className="mb-3">
                                             <FormControl fullWidth variant="outlined">
                                                 <InputLabel>Status</InputLabel>
                                                 <Select
-                                                    value={status}
-                                                    onChange={e => setStatus(e.target.value)}
+                                                    value={'Active'}
+                                                    onChange={(event) => {handleProfileChange(event); handleProfileStatusMessage(event);}}
                                                     label="Status"
+                                                    name='status'
+                                                    onClick={handleProfileStatusMessage}
                                                 >
                                                     <MenuItem value="Active">Active</MenuItem>
                                                     <MenuItem value="Inactive">Inactive</MenuItem>
                                                     <MenuItem value="Suspended">Suspended</MenuItem>
                                                 </Select>
                                             </FormControl>
+                                            {statusMessage && <p className="text-danger">{statusMessage}</p>}
                                         </Form.Group>
+
                                         <div className="d-flex justify-content-between">
                                             <Button variant="danger">Cancel</Button>
-                                            <Button variant="primary">Update</Button>
+                                            <Button variant="primary" onClick={handleKYCStatusUpdate}>Update</Button>
                                         </div>
+                                        {error &&  <p className="text-danger">{error}</p>}
+                                        {successMessage && <p className="text-success">{successMessage}</p>}
                                     </Form>
                                 </Card.Body>
                             </Card>
@@ -372,18 +692,18 @@ const Profile = ({ open }) => {
                 )}
 
                 {activeTab === 'wallets' && (
-                    <WalletTable headCells={WalletTableHead} TableName={WalletsTableName} rows={WalletsData} />
+                    <WalletTable headCells={WalletTableHead} TableName={WalletsTableName} rows={userWallet} />
 
                 )}
                 {activeTab === 'tickets' && (
                     <>
 
-                        <TicketTable headCells={TicketTableHead} TableName={TicketTableName} rows={ticketData} />
+                    <TicketTable headCells={TicketTableHead} TableName={TicketTableName} rows={ticketData} />
                     </>
 
                 )}
                 {activeTab === 'transactions' && (
-                    <TransactionTable headCells={TransactionTableHead} TableName={TransactionTableName} rows={TransactionsData} />
+                    <TransactionTable headCells={TransactionTableHead} TableName={TransactionTableName} rows={userTransactions}  userID={Kycdetails.user_id} updateUserTransactions={updateUserTransactions} />
                 )}
                 {activeTab === 'disputes' && (
                     <DisputeTable headCells={DisputeTableHead} TableName={DisputeTableName} rows={DisputeData} />

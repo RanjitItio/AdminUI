@@ -14,7 +14,7 @@ import Select from '@mui/material/Select';
 
 
 
-export default function KYCEditEditModal({open, handleClose, handleKYCStatusUpdate, setStaus, status}) {
+export default function KYCEditEditModal({open, handleClose, setStaus, status}) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -66,7 +66,7 @@ export default function KYCEditEditModal({open, handleClose, handleKYCStatusUpda
           <Button autoFocus onClick={handleClose} >
             Cancel
           </Button>
-          <Button onClick={()=> {handleClose(); handleKYCStatusUpdate();}} autoFocus>
+          <Button onClick={()=> {handleClose();}} autoFocus>
             Confirm
           </Button>
         </DialogActions>

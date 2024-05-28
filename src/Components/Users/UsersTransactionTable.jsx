@@ -21,17 +21,16 @@ import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { visuallyHidden } from '@mui/utils';
 import TextField from '@mui/material/TextField';
-import Badge from '@mui/material/Badge';
-import EditIcon from '@mui/icons-material/Edit';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-
-
-
+import Badge from '@mui/material/Badge';
+import EditIcon from '@mui/icons-material/Edit';
+import axiosInstance from '../Authentication/axios';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -57,10 +56,7 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
+
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -213,15 +209,33 @@ function getStatusColor(status){
 
 
 
-export default function TicketTable({headCells, rows, TableName  }) {
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
+export default function TransactionTable({headCells, rows, TableName, userID, updateUserTransactions}) {
+  const [order, setOrder]             = React.useState('asc');
+  const [orderBy, setOrderBy]         = React.useState('calories');
+  const [selected, setSelected]       = React.useState([]);
+  const [page, setPage]               = React.useState(0);
+  const [dense, setDense]             = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // const [transactionUserID, updateTransactionUserID] = React.useState('')
+
+  const navigate = useNavigate()
 
 
+  // TO change the pagination of Table after page load
+  React.useEffect(()=> {
+    setTimeout(() => {
+      setRowsPerPage(25);
+      setPage(0);
+      // console.log('Changed')
+
+    }, 1000);
+
+  }, [])
+
+  const handleEditButtonClicked = (id) => {
+    navigate('/admin/users/transaction/details/', {state: {transactionID: id}})
+  }
+  
 
 
   const handleRequestSort = (event, property) => {
@@ -262,10 +276,27 @@ export default function TicketTable({headCells, rows, TableName  }) {
     setPage(newPage);
   };
 
+ 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+    
+    axiosInstance.post(`api/v2/admin/user/transactions/`, {
+        user_id: userID ,
+        limit: event.target.value,
+        offset: 0
+      }).then((res) => {
+        // console.log(res)
+        const sortedTransactions = res.data.user_transactions.reverse()
+        updateUserTransactions(sortedTransactions)
+
+      }).catch((error)=> {
+
+        console.log(error.response)
+
+      })
   };
+
 
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
@@ -428,23 +459,68 @@ export default function TicketTable({headCells, rows, TableName  }) {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.id}
+                    key={index}
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        color="primary"
+                        checked={isItemSelected}
+                        inputProps={{
+                          'aria-labelledby': labelId,
+                        }}
+                      onClick={(event) => handleClick(event, row.user_kyc_details.id)}
+                      />
+                    </TableCell>
                     
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.date}
-                    </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="normal">
-                      {row.subject}
-                    </TableCell>
-                    <TableCell align="left" padding="none">{row.status}</TableCell>
-                    <TableCell align="left">{row.priority}</TableCell>
-                    <TableCell align="left">{row.last_reply}</TableCell>
-                    <TableCell align="left" style={{color: parseFloat(row.total) >= 0 ? 'green' : 'red'}}>
-                        {row.action}
-                    </TableCell>
+                        <TableCell component="th" id={labelId} scope="row" align="left" padding="none">
+                          {row.transaction.txdid}
+                        </TableCell>
+
+                        <TableCell align="left">
+                          {row.transaction.txddate}
+                        </TableCell>
+
+                        <TableCell align="left">
+                          {row.user.first_name} {row.user.last_name}
+                        </TableCell>
+
+                        {/* <TableCell hidden onChange={() => handleTransactionUserID(row.transaction.user_id)}></TableCell> */}
+
+                        <TableCell align="left">{row.transaction.txdtype}</TableCell>
+
+                        <TableCell align="left">{(row.transaction.amount).toFixed(2)}</TableCell>
+
+                        <TableCell align="left">{(row.transaction.txdfee).toFixed(2)}</TableCell>
+
+                        <TableCell align="left" style={{color: parseFloat(row.transaction.totalamount) >= 0 ? 'green' : 'red'}}>
+                            {(row.transaction.totalamount).toFixed(2)}
+                        </TableCell>
+
+                        <TableCell align="left">
+                            {row.currency.name}
+                        </TableCell>
+
+                        <TableCell align="left">
+                            {row.receiver ? row.receiver.first_name : 'None'} {row.receiver ? row.receiver.last_name : ''}
+                        </TableCell>
+
+                        <TableCell align="left">
+                            {row.transaction.txdstatus === 'Success' ? 
+                            <p className="text-success">Success</p> : (row.transaction.txdstatus === 'Pending' ? 
+                            <p className="text-warning">Pending</p> : 
+                            <p className="text-danger">Cancelled</p>
+                            )}
+                        </TableCell>
+
+                        {/* Edit and Delete Icon */}
+                        <TableCell align="left">
+                            <Badge color="success" >
+                                <EditIcon color="" style={{color:'#0e3080'}} onClick={() => handleEditButtonClicked(row.transaction.id)}  />
+                                {/* <DeleteIcon style={{color:'#b23344'}} /> */}
+                            </Badge>
+                        </TableCell>
                    
                   </TableRow>
                 );
@@ -453,13 +529,14 @@ export default function TicketTable({headCells, rows, TableName  }) {
                 <TableRow
                   style={{
                     height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
+                  }}>
+                  <TableCell align="right" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>1</b></TableCell>
                 </TableRow>
               )}
+              
             </TableBody>
           </Table>
+
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}

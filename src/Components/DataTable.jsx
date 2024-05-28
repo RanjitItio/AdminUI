@@ -173,7 +173,7 @@ function EnhancedTableToolbar(props) {
         <Tooltip title="Add New User">
             <Fab color="primary" aria-label="add" style={{marginLeft: '20px'}} >
               <div >
-                <AddIcon onClick={()=> console.log(navigate('/admin/create-user/'))}/>
+                <AddIcon onClick={()=> (navigate('/admin/create-user/'))}/>
               </div>
             </Fab>
         </Tooltip>
@@ -191,7 +191,7 @@ EnhancedTableToolbar.propTypes = {
 
 
 
-export default function DataTable({headCells, rows, TableName, status, setStaus, updateKycID, handleKYCStatusUpdate}) {
+export default function DataTable({headCells, rows, TableName, status, setStaus, updateKycID}) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('id');
   const [selected, setSelected] = React.useState([]);
@@ -199,6 +199,7 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  const navigate = useNavigate()
 
   const [open, setOpen] = React.useState(false);
 
@@ -214,9 +215,10 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
   };
 
   // Open the edit modal and update the kyc ID
-  const handleUpdateKYCID = (kyc) => {
-      handleKYCEdit();
-      updateKycID(kyc);
+  const handleUpdateKYCID = (kyc, user) => {
+      // handleKYCEdit();
+      // updateKycID(kyc);
+      navigate('/admin/users/details/', {state: {kycID: kyc, userID: user}})
 
   }
 
@@ -410,7 +412,8 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
                     {/* Edit and Delete Icon */}
                     <TableCell align="left">
                         <Badge color="success" >
-                            <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleUpdateKYCID(row.user_kyc_details.id)}  />
+                            <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleUpdateKYCID(row.user_kyc_details, row.user)}  />
+                
                             <DeleteIcon style={{color:'#b23344'}} />
                         </Badge>
                     </TableCell>
@@ -448,7 +451,7 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
       />
     </Box>
 
-<KYCEditEditModal open={open} handleClose={handleKYCEditClose} handleKYCStatusUpdate={handleKYCStatusUpdate} setStaus={setStaus} status={status} />
+<KYCEditEditModal open={open} handleClose={handleKYCEditClose} setStaus={setStaus} status={status} />
 
 </>
   );

@@ -222,6 +222,15 @@ export default function WalletTable({headCells, rows, TableName  }) {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
 
+  React.useEffect(()=> {
+    setTimeout(() => {
+      setRowsPerPage(10);
+      setPage(0);
+      // console.log('Changed')
+
+    }, 1000);
+
+  }, [])
 
 
   const handleRequestSort = (event, property) => {
@@ -355,48 +364,6 @@ export default function WalletTable({headCells, rows, TableName  }) {
     <>
     <Box sx={{ width: '100%' }}>
 
-        <Paper sx={{ width: '100%', height: '90px', mb: 2 }}>
-            <FormControl sx={{minWidth: 170, marginTop: '14px', marginLeft: '10px'}} >
-                <InputLabel id="demo-simple-select-helper-label">Pick a date range</InputLabel>
-                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={dateFormat} label="DateFormat" onChange={handleDateFormatChange}>
-                    {dateFormats.map((format, index)=> (
-                        <MenuItem key={index} value={format.value}>{format.label}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-
-            <FormControl sx={{minWidth: 120, marginTop: '14px', marginLeft: '10px'}} >
-                <InputLabel id="demo-simple-select-helper-label">Currency</InputLabel>
-                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={currency} label="Currency" onChange={handleCurrencyChange}>
-                    {currencies.map((cur, index)=> (
-                        <MenuItem key={index} value={cur.value}>{cur.value}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-
-            <FormControl sx={{minWidth: 120, marginTop: '14px', marginLeft: '10px'}} >
-                <InputLabel id="demo-simple-select-helper-label">Status</InputLabel>
-                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={wStatus} label="wStatus" onChange={handleStausChange}>
-                    {WithdrawlStatus.map((w, index)=> (
-                        <MenuItem key={index} value={w.value}>{w.value}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>  
-
-            <FormControl sx={{minWidth: 165, marginTop: '14px', marginLeft: '10px'}} >
-                <InputLabel id="demo-simple-select-helper-label">Payment Method</InputLabel>
-                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={payMethod} label="Payment Method" onChange={handelPaymentMethodChange}>
-                    {PaymentMethods.map((pm, index)=> (
-                        <MenuItem key={index} value={pm.value}>{pm.value}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-
-            <TextField sx={{marginTop: '14px', marginLeft: '10px'}}  id="outlined-basic" label="Enter user name" variant="outlined" />
-
-            <Button sx={{marginTop: '20px', marginRight: '10px', float: 'right'}} variant="contained">Filter</Button>
-        </Paper>
-
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} TableName={TableName} />
       
@@ -432,18 +399,33 @@ export default function WalletTable({headCells, rows, TableName  }) {
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        color="primary"
+                        checked={isItemSelected}
+                        inputProps={{
+                          'aria-labelledby': labelId,
+                        }}
+                      onClick={(event) => handleClick(event, row.user_kyc_details.id)}
+                      />
+                    </TableCell>
                     
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.date}
+                      {row.id}
                     </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="normal">
-                      {row.subject}
+
+                    <TableCell align='left'>
+                      {row.created_data ? row.created_data : 'NA'}
                     </TableCell>
-                    <TableCell align="left" padding="none">{row.status}</TableCell>
-                    <TableCell align="left">{row.priority}</TableCell>
-                    <TableCell align="left">{row.last_reply}</TableCell>
-                    <TableCell align="left" style={{color: parseFloat(row.total) >= 0 ? 'green' : 'red'}}>
-                        {row.action}
+
+                    <TableCell align="left" >{row.currency}</TableCell>
+
+                    <TableCell align="left">{row.balance}</TableCell>
+
+                    <TableCell align="left">
+                          {row.is_active === true ? 
+                        <p class="text-success">Active</p> : row.is_active === false ? 
+                        <p class="text-danger">Inactive</p> : 'NA'}
                     </TableCell>
                    
                   </TableRow>

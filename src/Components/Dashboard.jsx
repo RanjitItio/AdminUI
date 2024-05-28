@@ -28,7 +28,7 @@ function Dashboard({open}) {
             <Box sx={{display: 'flex', flexWrap: 'wrap','& > :not(style)': {m: 1, width: 300, height: 153,},}}>
           
        
-            <Card sx={4} style={{backgroundColor: '#51e56d', color: 'white', position: 'relative'}} >
+            <Card style={{backgroundColor: '#51e56d', color: 'white', position: 'relative'}} >
                 <PersonRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}}/>
                 <CardContent>
                     <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
@@ -47,7 +47,7 @@ function Dashboard({open}) {
                 </CardActions>
             </Card>
 
-            <Card sx={4} style={{backgroundColor: '#8d0aa9', color: 'white', position: 'relative'}} >
+            <Card  style={{backgroundColor: '#8d0aa9', color: 'white', position: 'relative'}} >
                 <StorefrontRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
                 <CardContent>
                     <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
@@ -66,7 +66,7 @@ function Dashboard({open}) {
                 </CardActions>
             </Card>
 
-            <Card sx={4} style={{backgroundColor: '#0a8aa9', color: 'white', position: 'relative'}} >
+            <Card  style={{backgroundColor: '#0a8aa9', color: 'white', position: 'relative'}} >
                 <ConfirmationNumberRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
                 <CardContent>
                     <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
@@ -85,7 +85,7 @@ function Dashboard({open}) {
                 </CardActions>
             </Card>
 
-            <Card sx={4} style={{backgroundColor: '#a90a4a', color: 'white', position: 'relative'}} >
+            <Card style={{backgroundColor: '#a90a4a', color: 'white', position: 'relative'}} >
                 <DisabledByDefaultRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
                 <CardContent>
                     <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
