@@ -72,11 +72,11 @@ const NavContent = [
   icon: <ReceiptLongOutlinedIcon />},
 
   { text: '-Revenues', subItems: [
-    {text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: 'https://cssgradient.io/'},],
+    {text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: '/admin/revenues/'},],
     icon: <AccountBalanceOutlinedIcon />
   },
   { text: '-Disputes', subItems: [
-    {text: '-Disputes', icon: <ConfirmationNumberOutlinedIcon />, url: 'https://cssgradient.io/'},],
+    {text: '-Disputes', icon: <ConfirmationNumberOutlinedIcon />, url: '/admin/dispute/'},],
     icon: <ConfirmationNumberOutlinedIcon />
   },
   { text: 'Tickets', subItems: [

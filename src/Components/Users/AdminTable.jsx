@@ -316,7 +316,10 @@ export default function AdminDataTable({headCells, rows, TableName}) {
                     <TableCell align="left">{row.status}</TableCell>
                     <TableCell align="right">
                         <Badge color="success" >
-                            <EditIcon color="" style={{color:'#0e3080'}} />
+                            <a href="/admin/update/">
+
+                            <EditIcon  color="" style={{color:'#0e3080'}} />
+                            </a>
                             <DeleteIcon style={{color:'#b23344'}} />
                         </Badge>
                     </TableCell>
