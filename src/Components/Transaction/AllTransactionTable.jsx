@@ -31,6 +31,8 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import { useState, useEffect } from 'react';
 import AllTransactionTableEditModal from './AllTransactionEditModal';
+import axiosInstance from '../Authentication/axios';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -214,7 +216,7 @@ function getStatusColor(status){
 }
 
 
-export default function AllTransactionTable({headCells, rows, TableName , updateTransactionID, handleTransactionStatusUpdate, setStaus, status}) {
+export default function AllTransactionTable({headCells, rows, TableName , updateTransactionID, handleTransactionStatusUpdate, setStaus, status, updateAllTransactionData}) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -222,6 +224,7 @@ export default function AllTransactionTable({headCells, rows, TableName , update
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  const navigate = useNavigate()
   // To show when there is no data in API response
   const [loading, setLoading] = useState(true);
 
@@ -243,10 +246,11 @@ export default function AllTransactionTable({headCells, rows, TableName , update
 
 
   // Update the transaction id and send in API request
-  const handleWithdrawlTransactionID = (transaction)=> {
+  const handleEditButtonClick = (transaction)=> {
     // console.log(transaction)
-      updateTransactionID(transaction)
-      handleAllTransectionEdit();
+      // updateTransactionID(transaction)
+      // handleAllTransectionEdit();
+      navigate('/admin/all-transaction/detial/', {state: {transactionID: transaction}})
    };
 
 
@@ -296,8 +300,24 @@ export default function AllTransactionTable({headCells, rows, TableName , update
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    const rowsPerPage = parseInt(event.target.value, 10)
+    setRowsPerPage(rowsPerPage);
     setPage(0);
+
+    let limit = rowsPerPage
+    let offset = 0
+
+    axiosInstance.get(`api/v4/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
+
+      if(res.data && res.data.data) {
+        // const SortedData = res.data.data.reverse()
+        // console.log('Pagination Data',SortedData)
+        updateAllTransactionData(res.data.data)
+      }
+      // console.log(res.data.data)
+    }).catch((error)=> {
+      console.log(error.response)
+    })
   };
 
   // To change the pagination of table after page loads
@@ -491,6 +511,10 @@ export default function AllTransactionTable({headCells, rows, TableName , update
                       <small>{row.transaction.txdid}</small>
                     </TableCell>
 
+                    <TableCell align="left" >
+                      <small>{row.transaction.id}</small>
+                    </TableCell>
+
                     {/* User Column */}
                     <>
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
@@ -520,7 +544,7 @@ export default function AllTransactionTable({headCells, rows, TableName , update
                     <TableCell align="left">{row.currency.name}</TableCell>
 
                     {/* Receiver Column */}
-                    <TableCell align="left">{row.receiver ? `${row.receiver.first_name} ${row.receiver.lastname}`: 'No Receiver'}</TableCell>
+                    <TableCell align="left">{row.receiver ? `${row.receiver.first_name} ${row.receiver.lastname}`: 'NA'}</TableCell>
 
                     {/* Transaction Status Column */}
                     <TableCell align="left" style={{color: getStatusColor(row.transaction.txdstatus)}}>
@@ -532,11 +556,11 @@ export default function AllTransactionTable({headCells, rows, TableName , update
                     <TableCell align="left">
                         <Badge color="success" >
                         <Tooltip title="Edit">
-                        <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleWithdrawlTransactionID(row.transaction.id)} />
+                        <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleEditButtonClick(row.transaction.id)} />
                         </Tooltip>
-                        <Tooltip title="Delete">
+                        {/* <Tooltip title="Delete">
                             <DeleteIcon style={{color:'#b23344'}} />
-                        </Tooltip>
+                        </Tooltip> */}
                         </Badge>
                     </TableCell>
 

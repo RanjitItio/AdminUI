@@ -32,6 +32,7 @@ import InputLabel from '@mui/material/InputLabel';
 import DepositTableEditModal from './DepositEditModal';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../Authentication/axios';
 
 
 
@@ -173,7 +174,7 @@ function getStatusColor(status){
 
 
 
-export default function DepositTable({headCells, rows, TableName, handleTransactionStatusUpdate, setStaus, status}) {
+export default function DepositTable({headCells, rows, TableName, handleTransactionStatusUpdate, setStaus, status, updateTransactionData}) {
   const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('id');
   const [selected, setSelected] = React.useState([]);
@@ -243,8 +244,21 @@ export default function DepositTable({headCells, rows, TableName, handleTransact
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    const rowsperPage = parseInt(event.target.value, 10)
+    setRowsPerPage(rowsperPage);
     setPage(0);
+
+    let limit = rowsperPage
+    let offset = 0
+
+    axiosInstance.get(`api/v1/deposits/?limit=${limit}&offset=${offset}`).then((res)=> {
+         if (res.data && res.data.data) {
+          console.log(res.data.data)
+            updateTransactionData(res.data.data)
+         }
+    }).catch((error)=> {
+        console.log(error.response)
+    })
   };
 
 
@@ -484,9 +498,9 @@ export default function DepositTable({headCells, rows, TableName, handleTransact
                             <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleUpdateTransactionID(row.transaction.id)} />
                         </Tooltip>
 
-                        <Tooltip title="Delete">
+                        {/* <Tooltip title="Delete">
                             <DeleteIcon style={{color:'#b23344'}} />
-                        </Tooltip>
+                        </Tooltip> */}
                         </Badge>
 
                     </TableCell>

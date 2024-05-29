@@ -97,12 +97,13 @@ useEffect(() => {
     // console.log(res.data.all_Kyc)
 
     if(res.data && res.data.all_Kyc) {
-        const sortedData = res.data.all_Kyc.reverse()
-        updateKycData(sortedData)
+        // const sortedData = res.data.all_Kyc.reverse()
+        updateKycData(res.data.all_Kyc)
+        // console.log(res.data.all_Kyc)
     }
     
   }).catch((error)=> {
-    // console.log(error.response)
+    console.log(error.response)
 
     if (error.response.data.msg == 'Authentication Failed Please provide auth token') {
         setError("Authentication Failed")
@@ -217,6 +218,7 @@ return (
           TableName={TableName}
           status={status} 
           setStaus={setStaus}
+          updateKycData={updateKycData}
           updateKycID={updateKycID}
           />
        )}

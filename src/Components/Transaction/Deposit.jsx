@@ -101,8 +101,8 @@ useEffect(() => {
   axiosInstance.get(`api/v1/deposits/`).then((res)=> {
 
     if(res.data && res.data.data) {
-      const SortedData = res.data.data.reverse()
-      updateTransactionData(SortedData)
+      // const SortedData = res.data.data.reverse()
+      updateTransactionData(res.data.data)
       // console.log(transactionData)
     };
     
@@ -209,6 +209,7 @@ useEffect(() => {
                         handleTransactionStatusUpdate={handleTransactionStatusUpdate} 
                         status={status} 
                         setStaus={setStaus} 
+                        updateTransactionData={updateTransactionData}
                       />
 
           <div>

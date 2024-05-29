@@ -27,8 +27,9 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import KYCEditEditModal from './Users/Kyceditmodal';
+import KYCDeleteModal from './Users/Kyceditmodal';
 import { useEffect } from 'react';
+import axiosInstance from './Authentication/axios';
 
 
 
@@ -124,6 +125,10 @@ function EnhancedTableToolbar(props) {
   const { numSelected } = props;
   const navigate = useNavigate()
 
+  // const handleUserSearch = () => {
+  //   axiosInstance.get()
+  // }
+
   return (
     <Toolbar
       sx={{
@@ -169,6 +174,7 @@ function EnhancedTableToolbar(props) {
         placeholder='Search users'
         variant="filled"
         size="small"
+        // onClick={}
       />
         <Tooltip title="Add New User">
             <Fab color="primary" aria-label="add" style={{marginLeft: '20px'}} >
@@ -183,15 +189,14 @@ function EnhancedTableToolbar(props) {
   );
 }
 
+
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
 
 
-
-
-export default function DataTable({headCells, rows, TableName, status, setStaus, updateKycID}) {
+export default function DataTable({headCells, rows, TableName, status, setStaus, updateKycData, updateKycID}) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('id');
   const [selected, setSelected] = React.useState([]);
@@ -202,10 +207,12 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
   const navigate = useNavigate()
 
   const [open, setOpen] = React.useState(false);
-
+  const [deleteUserID, updateDeleteUserID] = React.useState(0)
+  
   // Open the edit modal
-  const handleKYCEdit = () => {
+  const handleKYCDelete = (event, id) => {
       setOpen(true);
+      updateDeleteUserID(id)
   };
 
   // Close the Edit Modal
@@ -216,10 +223,7 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
 
   // Open the edit modal and update the kyc ID
   const handleUpdateKYCID = (kyc, user) => {
-      // handleKYCEdit();
-      // updateKycID(kyc);
       navigate('/admin/users/details/', {state: {kycID: kyc, userID: user}})
-
   }
 
 
@@ -263,8 +267,27 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    const rowsPerPage = parseInt(event.target.value, 10)
+    setRowsPerPage(rowsPerPage);
     setPage(0);
+
+    let limit = rowsPerPage
+    let offset = 0
+    
+    axiosInstance.get(`api/v1/user/kyc/?limit=${limit}&offset=${offset}`, {
+    }).then((res) => {
+      // console.log(res.data)
+
+      if (res.status === 200) {
+        // const sortedData = res.data.all_Kyc.reverse()
+        updateKycData(res.data.all_Kyc)
+        // console.log(sortedData)
+      }
+
+    }).catch((error)=> {
+      console.log(error.response)
+
+    })
   };
 
 
@@ -414,7 +437,7 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
                         <Badge color="success" >
                             <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleUpdateKYCID(row.user_kyc_details, row.user)}  />
                 
-                            <DeleteIcon style={{color:'#b23344'}} />
+                            <DeleteIcon style={{color:'#b23344'}} onClick={(event) => handleKYCDelete(event, row.user_kyc_details.user_id)} />
                         </Badge>
                     </TableCell>
 
@@ -451,7 +474,7 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
       />
     </Box>
 
-<KYCEditEditModal open={open} handleClose={handleKYCEditClose} setStaus={setStaus} status={status} />
+<KYCDeleteModal open={open} handleClose={handleKYCEditClose} setStaus={setStaus} status={status} deleteUserID={deleteUserID} />
 
 </>
   );

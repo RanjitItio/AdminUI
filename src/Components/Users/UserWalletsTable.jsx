@@ -167,15 +167,15 @@ function EnhancedTableToolbar(props) {
         </Tooltip>
       ) : (
         <>
-        <TextField
+        {/* <TextField
         hiddenLabel
         id="filled-hidden-label-small"
         placeholder='Search...'
         variant="filled"
         size="small"
-      />
+      /> */}
 
-    <Tooltip title="Download as CSV">
+    {/* <Tooltip title="Download as CSV">
         <Button variant="contained" startIcon={<FileDownloadIcon />} style={{marginLeft: '5px'}}>
             CSV
         </Button>        
@@ -185,7 +185,7 @@ function EnhancedTableToolbar(props) {
         <Button variant="contained" startIcon={<FileDownloadIcon />} style={{marginLeft: '5px'}}>
             PDF
         </Button>        
-    </Tooltip>
+    </Tooltip> */}
       </>
       )}
     </Toolbar>
@@ -443,7 +443,7 @@ export default function WalletTable({headCells, rows, TableName  }) {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
+        {/* <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={rows.length}
@@ -451,7 +451,7 @@ export default function WalletTable({headCells, rows, TableName  }) {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        /> */}
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}

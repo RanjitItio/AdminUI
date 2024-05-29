@@ -13,15 +13,18 @@ import axiosInstance from '../Authentication/axios';
 export default function UserTransactionDetail({ open }) {
 
     const initialFormData = {
-        status: ''
+        status: 'Success'
     }
 
     const location      = useLocation()
     const TransactionID = location.state.transactionID
     const [transactionDetail, updateTransactionDetail] = React.useState([]);
     const [transactionStatus, updateTransactionStatus] = React.useState(initialFormData);
+    const [successMessage, setSuccessMessage]   = React.useState('')
+    const [error, setError] = React.useState('')
+    // console.log(transactionDetail)
 
-
+    // Get the Transaction Details
     React.useEffect(() => {
       axiosInstance.get(`api/v2/admin/transaction/details/${TransactionID}/`).then((res)=> {
         // console.log(res.data.transaction_data)
@@ -42,14 +45,20 @@ export default function UserTransactionDetail({ open }) {
         })
     };
 
-
+    // Update the Trasaction Status
     const handleTransactionStatusUpdate = () => {
         axiosInstance.put(`api/v4/transactions/`, {
             status: transactionStatus.status,
             transaction_id: TransactionID
 
         }).then((res)=> {
-            console.log(res)
+            // console.log(res)
+            if (res.status === 200) {
+                setSuccessMessage("Transaction Updated Successfully")
+            }
+            else {
+                setError('Some error Occured')
+            }  
 
         }).catch((error)=> {
             console.log(error)
@@ -67,7 +76,9 @@ console.log()
                         <span className="text-success">Success</span> : 
                         transactionDetail.transaction_status === 'Pending' ? 
                         <span className="text-warning">Pending</span> : 
-                        <span className="text-danger">Cancelled</span> 
+                        transactionDetail.transaction_status === 'Cancelled' ? 
+                        <span className="text-danger">Cancelled</span> :
+                        <span className="text-danger">None</span>
                         }
                  </h2>
             </div>
@@ -128,6 +139,7 @@ console.log()
                             </Form.Select>
                             </div>
                             <Button variant="primary" className="ms-3 w-25" onClick={handleTransactionStatusUpdate}>Update</Button>
+                            {successMessage && <p className='text-success'>{successMessage}</p>}
                         </>
                          }
                         

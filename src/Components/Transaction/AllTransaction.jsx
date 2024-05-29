@@ -41,6 +41,12 @@ function AllTransactionData({open}) {
       label: "Transaction ID",
     },
     {
+      id: "No",
+      numeric: false,
+      disablePadding: true,
+      label: "Transaction No",
+    },
+    {
       id: "user",
       numeric: false,
       disablePadding: false,
@@ -111,8 +117,9 @@ useEffect(() => {
 
     // console.log(allTransactionData)
     if(res.data && res.data.data) {
-      const SortedData = res.data.data.reverse()
-      updateAllTransactionData(SortedData)
+      // const SortedData = res.data.data.reverse()
+      updateAllTransactionData(res.data.data)
+      // console.log('Data',SortedData)
     }
     
     // console.log(res.data.data)
@@ -188,6 +195,7 @@ const TableName = "Transaction Detail"
                  handleTransactionStatusUpdate={handleTransactionStatusUpdate}
                  setStaus={setStaus}
                  status={status}
+                 updateAllTransactionData={updateAllTransactionData}
                  />
         )}
     </Main>

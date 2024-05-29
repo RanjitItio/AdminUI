@@ -29,7 +29,7 @@ const Profile = ({ open }) => {
         email:          Kycdetails?.email    || '',
         dob:            Kycdetails?.dateofbirth || '',
         zipcode:        Kycdetails?.zipcode  || '',
-        status:         Kycdetails?.status   || '',
+        status:          '',
         gender:         Kycdetails?.gander   || '',
         state:          Kycdetails?.state    || '',
         marital_status: Kycdetails?.marital_status || '',
@@ -62,6 +62,7 @@ const Profile = ({ open }) => {
     const [kycDetail, updateKycDetails] = useState(initialProfileData)
 
     const [groupValue, setGroupValue] = useState('');
+    const [statusValue, setStatusValue] = useState('')
 
 
     const handleClose = () => setShow(false);
@@ -76,10 +77,15 @@ const Profile = ({ open }) => {
         updateKycDetails({...kycDetail,
             [event.target.name]: event.target.value,
         })
-    }
+    };
 
     const handleGroupValueChange = (event) => {
         setGroupValue(event.target.value)
+        // console.log(event.target.value)
+    }
+
+    const handleStatusValueUpdate = (event) => {
+        setStatusValue(event.target.value)
         // console.log(event.target.value)
     }
 
@@ -170,25 +176,29 @@ const handleKYCStatusUpdate = ()=> {
     } else if (kycDetail.group === 0) {
         setError("Please Select user Group")
 
+    } else if (kycDetail.password !== kycDetail.confirm_password) {
+        setError("Password and Confirm password did not match")
+
     } else {
         // setError('')
-        
+        // console.log(kycDetail.status)
         axiosInstance.put(`api/v1/admin/update/user/`, {
-            user_id: Kycdetails.user_id,
-            first_name: kycDetail.first_name,
-            last_name: kycDetail.last_name,
-            phoneno: kycDetail.mobile_number,
-            email: kycDetail.email,
-            dob: kycDetail.dob,
-            gender: Kycdetails.gander,
-            state: Kycdetails.state,
-            city: Kycdetails.city,
-            landmark: Kycdetails.landmark,
-            address: Kycdetails.address,
-            status: kycDetail.status,
-            group: kycDetail.group,
-            password: Kycdetails.password,
-            confirm_password: Kycdetails.confirm_password
+            user_id:          Kycdetails.user_id,
+            first_name:       kycDetail.first_name,
+            last_name:        kycDetail.last_name,
+            phoneno:          kycDetail.mobile_number,
+            email:            kycDetail.email,
+            dob:              kycDetail.dob,
+            gender:           Kycdetails.gander,
+            state:            Kycdetails.state,
+            city:             Kycdetails.city,
+            landmark:         Kycdetails.landmark,
+            address:          Kycdetails.address,
+            status:           kycDetail.status,
+            group:            kycDetail.group,
+            password:         kycDetail.password,
+            confirm_password: kycDetail.confirm_password
+
           }).then((res)=> {
             // console.log(res)
             if (res.status == 200) {
@@ -454,12 +464,12 @@ useEffect(() => {
 const handleUserTransactions = () => {
     axiosInstance.post(`api/v2/admin/user/transactions/`, {
         user_id: Kycdetails.user_id,
-        limit: 10,
+        limit: 25,
         offset: 0
       }).then((res) => {
         // console.log(res.data.user_transactions)
-        const sortedTransactions = res.data.user_transactions.reverse()
-        updateUserTransactions(sortedTransactions)
+        // const sortedTransactions = res.data.user_transactions.reverse()
+        updateUserTransactions(res.data.user_transactions)
 
       }).catch((error)=> {
 
@@ -546,13 +556,13 @@ const handleUserWallets = () => {
                             <Row className="">
                                 <Col className="d-flex align-items-center justify-content-between mb-3">
                                     <h3>{Kycdetails.firstname} {Kycdetails.lastname} 
-                                    {userDetails ? (
+                                    {/* {userDetails ? (
                                         userDetails.active === true ? 
                                             (<span className="badge bg-success">Active</span>) :
                                             (<span className="badge bg-danger">Inactive</span>)
                                     ) : (
                                         <></>
-                                    )}
+                                    )} */}
                                     
                                     </h3>
                                     <div>
@@ -664,8 +674,8 @@ const handleUserWallets = () => {
                                             <FormControl fullWidth variant="outlined">
                                                 <InputLabel>Status</InputLabel>
                                                 <Select
-                                                    value={'Active'}
-                                                    onChange={(event) => {handleProfileChange(event); handleProfileStatusMessage(event);}}
+                                                    value={statusValue}
+                                                    onChange={(event) => {handleProfileChange(event); handleProfileStatusMessage(event); handleStatusValueUpdate(event);}}
                                                     label="Status"
                                                     name='status'
                                                     onClick={handleProfileStatusMessage}

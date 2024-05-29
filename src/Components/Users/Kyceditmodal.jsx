@@ -7,30 +7,39 @@ import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import axiosInstance from '../Authentication/axios';
 
 
-
-export default function KYCEditEditModal({open, handleClose, setStaus, status}) {
+export default function KYCDeleteModal({open, handleClose, setStaus, status, deleteUserID}) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  // const [status, setStaus] = React.useState('');
+  const [successMessage, setSuccessMessage] = React.useState('');
 
-  const handleStatusChange = (event) => {
-    setStaus(event.target.value);
+  const handleDeleteuser = () => {
+      axiosInstance.post(`api/v1/admin/del/user/`, {
+        user_id: deleteUserID
+
+      }).then((res)=> {
+          if (res.status === 200) {
+            setSuccessMessage("User Deleted Successfully")
+
+            // Close the Dialoge box
+            setTimeout(() => {
+              handleClose();
+            }, 2000);
+          }
+
+      }).catch((error)=> {
+        console.log(error.response)
+      })
   };
 
 
   return (
     <React.Fragment>
-      {/* <Button variant="outlined" onClick={handleClickOpen}>
-        Open responsive dialog
-      </Button> */}
+      
       <Dialog
         fullScreen={fullScreen}
         open={open}
@@ -38,38 +47,28 @@ export default function KYCEditEditModal({open, handleClose, setStaus, status}) 
         aria-labelledby="responsive-dialog-title"
       >
         <DialogTitle id="responsive-dialog-title">
-          {"Change Transaction Status"}
+          {"Delete User"}
         </DialogTitle>
         <DialogContent>
           {/* <DialogContentText> */}
 
-          <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth>
-                <InputLabel id="transaction-status-select">Status</InputLabel>
-                <Select
-                labelId="transaction-status-select"
-                id="transaction-status-select"
-                value={status}
-                label="Status"
-                onChange={handleStatusChange}
-                >
-                <MenuItem value={'Pending'}>Pending</MenuItem>
-                <MenuItem value={'Approved'}>Approve</MenuItem>
-                <MenuItem value={'Cancel'}>Reject</MenuItem>
-                </Select>
-            </FormControl>
+          <Box sx={{ minWidth: 120, color: 'warning.main' }}>
+            <p>Are you sure, You want to delete the user.</p>
+            <p>Everything related to the user Wallet, Transactions, KYC details will be deleted</p>
+            
             </Box>
 
           {/* </DialogContentText> */}
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose} >
+          <Button autoFocus onClick={handleClose}  >
             Cancel
           </Button>
-          <Button onClick={()=> {handleClose();}} autoFocus>
+          <Button onClick={()=> {handleDeleteuser()}} autoFocus sx={{color: 'error.main'}}>
             Confirm
           </Button>
         </DialogActions>
+          {successMessage && <p className='text-success d-flex justify-content-center'>{successMessage}</p> }
       </Dialog>
     </React.Fragment>
   );

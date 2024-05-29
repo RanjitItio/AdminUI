@@ -13,7 +13,7 @@ import { useState } from 'react';
 
 export default function DepositUpdate({ open }) {
     const initialFormData = {
-        status: ''
+        status: 'Success'
     }
 
     const location = useLocation()
@@ -21,7 +21,9 @@ export default function DepositUpdate({ open }) {
 
     const [transactionDetail, updateTransactionDetail] = React.useState([]);
     const [transactionStatus, updateTransactionStatus] = React.useState(initialFormData);
-    const [successMessage, setSuccessMessage] = React.useState('')
+    const [statusValue, updateStatusValue]             = useState('')
+    const [successMessage, SetSuccessMessage]          = useState('')
+
 
     React.useEffect(() => {
         axiosInstance.get(`api/v2/admin/transaction/details/${TransactionID}/`).then((res)=> {
@@ -43,6 +45,7 @@ export default function DepositUpdate({ open }) {
         })
     };
 
+    
     const handleTransactionStatusUpdate = () => {
         axiosInstance.put(`api/v4/transactions/`, {
             status: transactionStatus.status,
@@ -51,7 +54,7 @@ export default function DepositUpdate({ open }) {
         }).then((res)=> {
             // console.log(res)
             if (res.status === 200)  {
-                setSuccessMessage('Transaction Updated Successfully')
+                SetSuccessMessage('Transaction Updated Successfully')
             }
 
         }).catch((error)=> {
@@ -60,8 +63,12 @@ export default function DepositUpdate({ open }) {
         })
     };
 
-    // console.log(transactionDetail.transaction_status)
-    console.log(transactionDetail.is_completed)
+    const handleUpdateStatusValue = (event) => {
+        const value = event.target.value
+
+        updateStatusValue(value)
+    }
+
 
     return (
         <Main open={open}>
@@ -72,7 +79,9 @@ export default function DepositUpdate({ open }) {
                         <span className="text-success">Success</span> : 
                         transactionDetail.transaction_status === 'Pending' ? 
                         <span className="text-warning">Pending</span> : 
-                        <span className="text-danger">Cancelled</span> 
+                        transactionDetail.transaction_status === 'Cancelled' ?
+                        <span className="text-danger">Cancelled</span> : 
+                        <span className="text-danger">None</span>
                         }
                 </h1>
             </div>
@@ -109,7 +118,7 @@ export default function DepositUpdate({ open }) {
                         <>
                             <div className="d-flex pb-3">
                             <p>Change Status :</p>
-                            <Form.Select aria-label="Default select example " style={{'width': '15rem'}} onChange={handleChange} name='status' >
+                            <Form.Select aria-label="Default select example " style={{'width': '15rem'}} onChange={(event)=> {handleChange(event); handleUpdateStatusValue(event);}} name='status' >
                                 <option value="Success">Success</option>
                                 <option value="Pending">Pending</option>  
                                 <option value="Cancelled">Cancel</option>
