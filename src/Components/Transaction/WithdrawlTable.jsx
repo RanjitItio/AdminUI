@@ -30,6 +30,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import WithdrawlTableEditModal from './withdrawlEditModal';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -214,6 +215,9 @@ function getStatusColor(status){
 
 
 export default function WithdrawlTable({headCells, rows, TableName , updateTransactionID, handleTransactionStatusUpdate, setStaus, status}) {
+
+  const navigate = useNavigate()
+
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -237,7 +241,9 @@ export default function WithdrawlTable({headCells, rows, TableName , updateTrans
   // Update the transaction id and send in API request
   const handleWithdrawlTransactionID = (transaction)=> {
       // updateTransactionID(transaction)
-      handleWithdrawlEdit();
+      // handleWithdrawlEdit();
+      navigate('/admin/withdrawls/update/')
+
    };
 
   const handleRequestSort = (event, property) => {

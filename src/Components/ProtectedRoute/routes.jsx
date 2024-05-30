@@ -130,14 +130,14 @@ const AuthRoutes = () => {
                           <Route exact path="/currencies/" element={<CurrencyTable open={open} />} ></Route>
                           <Route exact path="/currencies/add/" element={<AddCurrency open={open} />} ></Route>
                           <Route exact path="/tickets/" element={<TicketTable open={open} />} ></Route>
-                          <Route exact path="/tickets/add" element={<TicketAddForm open={open} />} ></Route>
-                          <Route exact path="/tickets/update" element={<TicketUpdateForm open={open} />} ></Route>
+                          <Route exact path="/tickets/add/" element={<TicketAddForm open={open} />} ></Route>
+                          <Route exact path="/tickets/update/" element={<TicketUpdateForm open={open} />} ></Route>
                           <Route exact path="/crypto/" element={<Crypto open={open} />} ></Route>
                           <Route exact path="/crypto/blockio/add/" element={<AddBlockio open={open} />} ></Route>
                           <Route exact path="/crypto/tatumio/add/" element={<AddTatumio open={open} />} ></Route>
                           <Route exact path="/admin/users/details/" element={<Profile open={open} />} ></Route>
                           <Route exact path="/admin/users/transaction/details/" element={<UserTransactionDetail open={open} />} ></Route>
-                          <Route exact path="/admin/users/add/" element={<Profile open={open} />} ></Route>
+                          {/* <Route exact path="/admin/users/add/" element={<Profile open={open} />} ></Route> */}
                           <Route exact path="/admin/update/" element={<AdminUpdateForm open={open} />} ></Route>
                           <Route exact path="/admin/revenues/" element={<Revenues open={open} />} ></Route>
                           <Route exact path="/admin/dispute/" element={<Dispute open={open} />} ></Route>

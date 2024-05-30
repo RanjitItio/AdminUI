@@ -43,8 +43,8 @@ const Profile = ({ open }) => {
         id_expiry_date: Kycdetails?.id_expiry_date  || '',
         city:           Kycdetails?.city  || '',
         group:          0,
-        confirm_password: '',
-        password:         ''
+        // confirm_password: '',
+        // password:         ''
     }
 
     const [phone, setPhone]             = useState('');
@@ -176,10 +176,11 @@ const handleKYCStatusUpdate = ()=> {
     } else if (kycDetail.group === 0) {
         setError("Please Select user Group")
 
-    } else if (kycDetail.password !== kycDetail.confirm_password) {
-        setError("Password and Confirm password did not match")
-
-    } else {
+    } 
+    // else if (kycDetail.password !== kycDetail.confirm_password) {
+    //     setError("Password and Confirm password did not match")
+    //  } 
+     else {
         // setError('')
         // console.log(kycDetail.status)
         axiosInstance.put(`api/v1/admin/update/user/`, {
@@ -196,8 +197,8 @@ const handleKYCStatusUpdate = ()=> {
             address:          Kycdetails.address,
             status:           kycDetail.status,
             group:            kycDetail.group,
-            password:         kycDetail.password,
-            confirm_password: kycDetail.confirm_password
+            // password:         kycDetail.password,
+            // confirm_password: kycDetail.confirm_password
 
           }).then((res)=> {
             // console.log(res)
@@ -662,13 +663,13 @@ const handleUserWallets = () => {
                                             </FormControl>
                                         </Form.Group>
 
-                                        <Form.Group className="mb-3">
+                                        {/* <Form.Group className="mb-3">
                                             <TextField label="Password" name='password' variant="outlined" fullWidth type="password" onChange={handleProfileChange} />
                                         </Form.Group>
 
                                         <Form.Group className="mb-3">
                                             <TextField label="Confirm Password" name='confirm_password' variant="outlined" fullWidth type="password" onChange={handleProfileChange} />
-                                        </Form.Group>
+                                        </Form.Group> */}
 
                                         <Form.Group className="mb-3">
                                             <FormControl fullWidth variant="outlined">
