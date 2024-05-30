@@ -60,7 +60,7 @@ function Dispute({open}) {
   ];
 
 
-const TableName = "All Revenues"
+const TableName = "Dispute"
 
 
 

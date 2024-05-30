@@ -43,6 +43,10 @@ import Revenues from '../Revenues/Revenues.jsx';
 import Dispute from '../Dispute/Dispute.jsx';
 import DisputeDiscussion from '../Dispute/DisputeDiscussion.jsx';
 import AllTransactionDetail from '../Transaction/AllTransactionDetails.jsx';
+import TicketAddForm from '../Ticket/TicketAdd.jsx';
+import TicketUpdateForm from '../Ticket/TicketUpdate.jsx';
+import ActivityLogData from '../ActivityLog/ActivityLog.jsx';
+
 
 
 
@@ -91,7 +95,6 @@ const AuthRoutes = () => {
             path: "*",
             element: (
               
-              
                 <Routes>
                     <Route exact path='/signup/' element={<Signup />}></Route>
                     <Route exact path='/signin/' element={<Signin />}></Route>
@@ -127,6 +130,8 @@ const AuthRoutes = () => {
                           <Route exact path="/currencies/" element={<CurrencyTable open={open} />} ></Route>
                           <Route exact path="/currencies/add/" element={<AddCurrency open={open} />} ></Route>
                           <Route exact path="/tickets/" element={<TicketTable open={open} />} ></Route>
+                          <Route exact path="/tickets/add" element={<TicketAddForm open={open} />} ></Route>
+                          <Route exact path="/tickets/update" element={<TicketUpdateForm open={open} />} ></Route>
                           <Route exact path="/crypto/" element={<Crypto open={open} />} ></Route>
                           <Route exact path="/crypto/blockio/add/" element={<AddBlockio open={open} />} ></Route>
                           <Route exact path="/crypto/tatumio/add/" element={<AddTatumio open={open} />} ></Route>
@@ -137,6 +142,7 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/revenues/" element={<Revenues open={open} />} ></Route>
                           <Route exact path="/admin/dispute/" element={<Dispute open={open} />} ></Route>
                           <Route exact path="/admin/dispute/discussion/" element={<DisputeDiscussion open={open} />} ></Route>
+                          <Route exact path="/admin/activitylogs/" element={<ActivityLogData open={open} />} ></Route>
                       </Routes>
                     </Box>
                   }></Route>
