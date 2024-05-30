@@ -93,7 +93,6 @@ const AuthRoutes = () => {
             path: "*",
             element: (
               
-              
                 <Routes>
                     <Route exact path='/signup/' element={<Signup />}></Route>
                     <Route exact path='/signin/' element={<Signin />}></Route>

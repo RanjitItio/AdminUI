@@ -84,7 +84,7 @@ const NavContent = [
     icon: <LocalActivityOutlinedIcon />
   },
   { text: '-Activity Logs', subItems: [
-    {text: '-Activity Logs', icon: <RemoveRedEyeOutlinedIcon />, url: 'https://cssgradient.io/'}],
+    {text: '-Activity Logs', icon: <RemoveRedEyeOutlinedIcon />, url: '/admin/activitylogs/'}],
     icon: <RemoveRedEyeOutlinedIcon />
   },
   { text: '-Verifications', subItems: [
