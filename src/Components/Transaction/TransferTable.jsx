@@ -31,6 +31,8 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TransferTableEditModal from './TransferEditModal';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 
 
@@ -216,12 +218,16 @@ function getStatusColor(status){
 
 
 export default function TransferTable({headCells, rows, TableName, handleTransactionStatusUpdate, updateTransferID, status, setStaus}) {
+  
+  const navigate = useNavigate()
+
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [disapblePagination, setDisablePagination] = React.useState(false)
 
   // State to opon dialogue box for edit button
   const [open, setOpen] = React.useState(false);
@@ -238,8 +244,9 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
 
 
   const handleUpdateTransferID = (transfertransaction) => {
-    handleTransfertEdit();
-    updateTransferID(transfertransaction);
+    // handleTransfertEdit();
+    navigate('/admin/transfers/details/', {state: {transaction_id: transfertransaction}})
+    // updateTransferID(transfertransaction);
   }
 
   const handleRequestSort = (event, property) => {
@@ -278,12 +285,40 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    // const newOffset = newPage + 1
+    // setPage(newOffset)
+
+    // axiosInstance.get(`api/v1/transfer/transactions/offset=${offset}`).then((res)=> {
+
+    //   if(res.data && res.data.data) {
+    //     updateAllTransactionData(res.data.data)
+    //   }
+
+    //   if (res.data && res.data.data.length > 0) {
+
+    //   }
+    //   // console.log(res.data.data)
+    // }).catch((error)=> {
+    //   console.log(error.response)
+    // })
+
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  // Show data when page loads
+  useEffect(()=> {
+    setTimeout(() => {
+      setRowsPerPage(25);
+      setPage(0);
+      // console.log('Changed')
+
+    }, 1000);
+
+  }, [])
 
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
@@ -446,6 +481,10 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
                       {row.transaction.id}
                     </TableCell>
 
+                    <TableCell component="th" id={labelId} scope="row" padding="none">
+                      {row.transaction.txdid}
+                    </TableCell>
+
                     {/* User Column */}
                     <TableCell component="th" id={labelId} scope="row" padding="normal">
                       {row.user.first_name} {row.user.lastname}
@@ -455,7 +494,7 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
                     <TableCell align="left" padding="none">{row.transaction.txddate}</TableCell>
 
                     {/* Transaction Amount Column */}
-                    <TableCell align="left">{row.transaction.amount}</TableCell>
+                    <TableCell align="center">{row.transaction.amount}</TableCell>
 
                     {/* Transaction Fees Column */}
                     <TableCell align="left">{row.transaction.txdfee}</TableCell>
@@ -466,10 +505,10 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
                     </TableCell>
 
                     {/* Transaction Currency Column */}
-                    <TableCell align="left">{row.currency.name}</TableCell>
+                    <TableCell align="left">{row.sender_currency.name}</TableCell>
 
                     {/* Transactiion Receiver Column */}
-                    <TableCell align="left">{row.receiver.first_name} {row.receiver.lastname}</TableCell>
+                    {/* <TableCell align="left">{row.receiver ? row.receiver.first_name : 'NA'} {row.receiver ? row.receiver.lastname : ''}</TableCell> */}
 
                     {/* Transaction Status Column */}
                     <TableCell align="left" style={{color: getStatusColor(row.transaction.txdstatus)}}>
@@ -482,9 +521,9 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
                         <Tooltip title="Edit">
                             <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleUpdateTransferID(row.transaction.id)} />
                         </Tooltip>
-                        <Tooltip title="Delete">
+                        {/* <Tooltip title="Delete">
                             <DeleteIcon style={{color:'#b23344'}} />
-                        </Tooltip>
+                        </Tooltip> */}
                         </Badge>
                     </TableCell>
                   </TableRow>

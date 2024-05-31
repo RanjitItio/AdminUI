@@ -46,6 +46,7 @@ import AllTransactionDetail from '../Transaction/AllTransactionDetails.jsx';
 import TicketAddForm from '../Ticket/TicketAdd.jsx';
 import TicketUpdateForm from '../Ticket/TicketUpdate.jsx';
 import ActivityLogData from '../ActivityLog/ActivityLog.jsx';
+import TransferTransactionDetail from '../Transaction/TransferDetails.jsx';
 
 
 
@@ -120,6 +121,7 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/deposits/" element={<AllDepositDetail open={open} />} ></Route>
                           <Route exact path="/admin/withdrawls/" element={<Withdrawls open={open} />} ></Route>
                           <Route exact path="/admin/transfers/" element={<TransferDetails open={open} />} ></Route>
+                          <Route exact path="/admin/transfers/details/" element={<TransferTransactionDetail open={open} />} ></Route>
                           <Route exact path="/admin/exchanges/" element={<CurrencyExchange open={open} />} ></Route>
                           <Route exact path="/admin/request-payments/" element={<RequestPaymentDetails open={open} />} ></Route>
                           <Route exact path="/admin/merchant-payments/" element={<MerchantPaymentDetails open={open} />} ></Route>
