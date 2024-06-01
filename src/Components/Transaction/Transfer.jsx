@@ -20,6 +20,8 @@ function TransferDetails({open}) {
   // Transaction Status
   const [status, setStaus] = useState('');
 
+  // console.log(transferData)
+
   const headCells = [
     {
       id: "sl no",
@@ -156,7 +158,7 @@ const handleTransactionStatusUpdate = ()=> {
       // console.log(res)
 
     }).catch((error)=> {
-      // console.log(error.response)
+      console.log(error.response)
       if (error.response.data.msg == 'Transaction is completed') {
           setOpenSnackbar(true);
       }
@@ -184,6 +186,7 @@ return (
                 handleTransactionStatusUpdate={handleTransactionStatusUpdate}
                 status={status} 
                 setStaus={setStaus}
+                updateTransferData={updateTransferData}
           />
         )}
         </Main>

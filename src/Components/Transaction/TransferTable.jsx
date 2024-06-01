@@ -32,7 +32,8 @@ import InputLabel from '@mui/material/InputLabel';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TransferTableEditModal from './TransferEditModal';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import axiosInstance from '../Authentication/axios';
 
 
 
@@ -130,7 +131,27 @@ EnhancedTableHead.propTypes = {
 
 function EnhancedTableToolbar(props) {
   const { numSelected } = props;
+  const timeoutIdRef = useRef(null);
 
+  const handleSearchChange = (event) => {
+    const input = event.target.value;
+
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current)
+    }
+
+    timeoutIdRef.current = setTimeout(() => {
+      axiosInstance.get(`/api/v1/search/transfer/transactions/?search=${input}`).
+        then((res)=> {
+          // console.log(res)
+          props.updateTransferData(res.data.data)
+
+        }).catch((error)=> {
+          console.log(error.response)
+          
+        })
+    }, 2000);
+  };
 
   return (
     <Toolbar
@@ -177,6 +198,7 @@ function EnhancedTableToolbar(props) {
         placeholder='Search...'
         variant="filled"
         size="small"
+        onChange={handleSearchChange}
       />
 
     <Tooltip title="Download as CSV">
@@ -217,9 +239,10 @@ function getStatusColor(status){
 
 
 
-export default function TransferTable({headCells, rows, TableName, handleTransactionStatusUpdate, updateTransferID, status, setStaus}) {
+export default function TransferTable({headCells, rows, TableName, handleTransactionStatusUpdate, updateTransferData, status, setStaus}) {
   
   const navigate = useNavigate()
+  // console.log(rows)
 
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -272,8 +295,10 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
       newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
+
     } else if (selectedIndex === selected.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
+
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
@@ -432,9 +457,15 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
         
 
       <Paper sx={{ mb: 2, marginTop: '30px', transition: 'width 20px' }} className='shadow-lg rounded border border-primary' >
-        <EnhancedTableToolbar numSelected={selected.length} TableName={TableName} />
+        <EnhancedTableToolbar 
+             numSelected={selected.length} 
+             TableName={TableName} 
+             updateTransferData={updateTransferData} 
+             setRowsPerPage={setRowsPerPage}
+             setPage={setPage}
+             />
 
-        <TableContainer component={Paper} >
+<TableContainer component={Paper} >
           <Table
             sx={{ minWidth: 200}}
             aria-labelledby="tableTitle"
@@ -541,6 +572,8 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
             </TableBody>
           </Table>
         </TableContainer>
+        
+        
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
