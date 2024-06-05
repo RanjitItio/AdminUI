@@ -30,6 +30,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import KYCDeleteModal from './Users/Kyceditmodal';
 import { useEffect } from 'react';
 import axiosInstance from './Authentication/axios';
+import { useState } from 'react';
 
 
 
@@ -122,12 +123,60 @@ EnhancedTableHead.propTypes = {
 
 
 function EnhancedTableToolbar(props) {
-  const { numSelected } = props;
   const navigate = useNavigate()
+  const { numSelected } = props;
+  const [triggerRender, setTriggerRender] = useState(false)
+  const timeoutIdRef = React.useRef(null);
 
-  // const handleUserSearch = () => {
-  //   axiosInstance.get()
-  // }
+  const handleSearchChange = (event) => {
+    const input = event.target.value;
+
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current)
+    };
+    
+
+    timeoutIdRef.current = setTimeout(() => {
+      axiosInstance.get(`api/v1/admin/user/search/?query=${input}`).
+        then((res)=> {
+          // console.log(res.data.all_Kyc)
+          props.updateKycData(res.data.all_Kyc.reverse())
+          setTriggerRender(true)
+
+        }).catch((error)=> {
+          console.log(error.response)
+          
+        })
+    }, 2000);
+};
+
+
+
+useEffect(() => {
+
+  if(triggerRender) {
+
+    setTimeout(() => {
+      if(props.rowsPerPage === 10) {
+        props.setRowsPerPage(25)
+        props.setPage(0)
+      } else if (props.rowsPerPage === 25) {
+        props.setRowsPerPage(10)
+        props.setPage(0)
+      } else {
+        props.setRowsPerPage(25)
+        props.setPage(0)
+      }
+        
+        console.log('Page Changed')
+        setTriggerRender(false)
+
+    }, 1000);
+  }
+
+}, [triggerRender])
+
+
 
   return (
     <Toolbar
@@ -174,7 +223,7 @@ function EnhancedTableToolbar(props) {
         placeholder='Search users'
         variant="filled"
         size="small"
-        // onClick={}
+        onChange={handleSearchChange}
       />
         <Tooltip title="Add New User">
             <Fab color="primary" aria-label="add" style={{marginLeft: '20px'}} >
@@ -337,7 +386,15 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
     <>
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} TableName={TableName} />
+        <EnhancedTableToolbar 
+            numSelected={selected.length} 
+            TableName={TableName} 
+            setRowsPerPage={setRowsPerPage}
+            setPage={setPage}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            updateKycData={updateKycData}
+            />
 
         <TableContainer>
           <Table
@@ -365,7 +422,7 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
             ) : ( */}
 
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.user_kyc_details.id);
+                const isItemSelected = isSelected(row.user_kyc_details ? row.user_kyc_details.id : row.user.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -375,7 +432,7 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.user_kyc_details.id}
+                    key={row.user_kyc_details ? row.user_kyc_details.id : row.user.id}
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
@@ -386,31 +443,31 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
                         inputProps={{
                           'aria-labelledby': labelId,
                         }}
-                      onClick={(event) => handleClick(event, row.user_kyc_details.id)}
+                      onClick={(event) => handleClick(event, row.user_kyc_details ? row.user_kyc_details.id : row.user.id)}
                       />
                     </TableCell>
 
                     {/* ID Column */}
                     <TableCell component="th" id={labelId} scope="row" padding="none">
-                      <b>{row.user_kyc_details.id}</b>
+                      <b>{row.user_kyc_details ? row.user_kyc_details.id : row.user.id}</b>
                     </TableCell>
 
                     {/* First Name Column */}
-                    <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}><b>{row.user_kyc_details.firstname}</b></TableCell>
+                    <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}><b>{row.user_kyc_details ? row.user_kyc_details.firstname: 'NA'}</b></TableCell>
 
                     {/* Last Name Column */}
-                    <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}><b>{row.user_kyc_details.lastname}</b></TableCell>
+                    <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}><b>{row.user_kyc_details ? row.user_kyc_details.lastname : 'NA'}</b></TableCell>
 
                     {/* Phone Number Column */}
-                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.user_kyc_details.phoneno}</b></TableCell>
+                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.user_kyc_details ? row.user_kyc_details.phoneno : 'NA'}</b></TableCell>
 
                     {/* Email Column */}
-                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.user_kyc_details.email}</b></TableCell>
+                    <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>{row.user_kyc_details ? row.user_kyc_details.email : 'NA'}</b></TableCell>
 
                     {/* Group Column */}
                     <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
                       <b>{
-                          row.user.merchant ? ('Merchant') : row.user.admin ? ('Admin') : ('User')
+                          row.user.group_name ? row.user.group_name : 'NA'
                           }
                        </b>
                     </TableCell>
@@ -435,9 +492,9 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
                     {/* Edit and Delete Icon */}
                     <TableCell align="left">
                         <Badge color="success" >
-                            <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleUpdateKYCID(row.user_kyc_details, row.user)}  />
+                            <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleUpdateKYCID(row.user_kyc_details ? row.user_kyc_details : '', row.user)}  />
                 
-                            <DeleteIcon style={{color:'#b23344'}} onClick={(event) => handleKYCDelete(event, row.user_kyc_details.user_id)} />
+                            <DeleteIcon style={{color:'#b23344'}} onClick={(event) => handleKYCDelete(event, row.user_kyc_details ? row.user_kyc_details.user_id : row.user.id)} />
                         </Badge>
                     </TableCell>
 

@@ -34,6 +34,8 @@ import TransferTableEditModal from './TransferEditModal';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import axiosInstance from '../Authentication/axios';
+import { useState } from 'react';
+import { addDays, subDays, startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 
 
 
@@ -132,26 +134,59 @@ EnhancedTableHead.propTypes = {
 function EnhancedTableToolbar(props) {
   const { numSelected } = props;
   const timeoutIdRef = useRef(null);
-
+  const [triggerRender, setTriggerRender] = useState(false)
+  
+  
   const handleSearchChange = (event) => {
     const input = event.target.value;
 
     if (timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current)
     }
+    
 
     timeoutIdRef.current = setTimeout(() => {
       axiosInstance.get(`/api/v1/search/transfer/transactions/?search=${input}`).
         then((res)=> {
-          // console.log(res)
+          // console.log(res.data.data)
           props.updateTransferData(res.data.data)
+          props.rows == props.transferData
+          setTriggerRender(true)
+          
+          // console.log(props.rows)
 
         }).catch((error)=> {
           console.log(error.response)
           
         })
     }, 2000);
-  };
+
+};
+
+useEffect(() => {
+
+  if(triggerRender) {
+
+    setTimeout(() => {
+      if(props.rowsPerPage === 10) {
+        props.setRowsPerPage(25)
+        props.setPage(0)
+      } else if (props.rowsPerPage === 25) {
+        props.setRowsPerPage(10)
+        props.setPage(0)
+      } else {
+        props.setRowsPerPage(25)
+        props.setPage(0)
+      }
+        
+        // console.log('Page Changed')
+        setTriggerRender(false)
+
+    }, 3000);
+  }
+
+}, [triggerRender])
+
 
   return (
     <Toolbar
@@ -199,6 +234,7 @@ function EnhancedTableToolbar(props) {
         variant="filled"
         size="small"
         onChange={handleSearchChange}
+        // onKeyDown={handleSearchChange}
       />
 
     <Tooltip title="Download as CSV">
@@ -239,18 +275,28 @@ function getStatusColor(status){
 
 
 
-export default function TransferTable({headCells, rows, TableName, handleTransactionStatusUpdate, updateTransferData, status, setStaus}) {
+export default function TransferTable({headCells, rows, TableName, handleTransactionStatusUpdate, updateTransferData, status, setStaus, transferData}) {
   
   const navigate = useNavigate()
-  // console.log(rows)
+
+  const initialFormData = {
+    from_date: '',
+    to_date: '',
+    currency: '',
+    status: '',
+    user_name: ''
+  }
 
   const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+  const [orderBy, setOrderBy] = React.useState('id');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [disapblePagination, setDisablePagination] = React.useState(false)
+  const [error, setError] = useState('')
+
+  // Filter Form Data
+  const [formData, updateFormDate] = useState(initialFormData)
 
   // State to opon dialogue box for edit button
   const [open, setOpen] = React.useState(false);
@@ -366,55 +412,199 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
 
 
 
-  const [dateFormat, setDateFormt] = React.useState('')
-  const [currency, setCurrency] = React.useState('');
-  const [wStatus, setwStatus] = React.useState('')
+  const [dateFormat, setDateFormat]             = useState('')
+  const [currencies, setCurrencies]             = useState([]);
+  const [wStatus, setwStatus]                   = useState('')
+  const [selectedCurrency, setSelectedCurrency] = useState('');
+  const [filterRerender, setFilterRerender]     = useState(false)
 
 
-  const handleDateFormatChange = (event)=> {
-    setDateFormt(event.target.value)
-  }
 
+  // Set Currency Value
   const handleCurrencyChange = (event)=> {
-    setCurrency(event.target.value)
+    setSelectedCurrency(event.target.value)
   }
 
   const handleStausChange = (event)=> {
     setwStatus(event.target.value)
-  }
-
-  
-  const getLastSevenDays = ()=> {
-    const today = new Date();
-    const sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(today.getDate() - 7);
-    
-    const formatDate = `0${sevenDaysAgo.getMonth()}/0${sevenDaysAgo.getDate()}/${sevenDaysAgo.getFullYear()}`;
-    return formatDate;
-  }
+  };
 
 
-  const WithdrawlStatus = [
+  // Call API to get all the Available currency on DropDown
+
+  useEffect(() => {
+    axiosInstance.get(`api/v2/currency/`).then((res)=> {
+
+      if (res.data && res.data.currencies){
+        setCurrencies(res.data.currencies)
+        // console.log(res.data.currencies)
+      };
+    }).catch((error)=> {
+      console.log(error.response)
+    });
+
+  }, [])
+
+  const TransferStatus = [
     {value: 'All'},
     {value: 'Success'},
     {value: 'Pending'},
     {value: 'Cancelled'},
   ]
 
-  const currencies = [
-    {value: 'USD'},
-    {value: 'CYN'},
-    {value: 'INR'},
-    {value: 'EUR'},
-  ]
+  // date Configurations
+  const getCurrentDate = () =>  {
+    const today = new Date();
+    return format(today, 'yyyy-MM-dd')
+  }
+
+  const getYesterDay = () => {
+    const yesterday = subDays(new Date(), 1)
+    return format(yesterday, 'yyyy-MM-dd');
+  }
+
+  const getLastSevenDays = () => {
+    const today = new Date()
+
+    const lastSevenDays = subDays(today, 7)
+    return {
+      from_date: format(lastSevenDays, 'yyyy-MM-dd'),
+      to_date: format(today, 'yyyy-MM-dd'),
+    };
+  }
+
+  const getLastThirtyDays = () => {
+    const today = new Date();
+    const lastThirtyDays = subDays(today, 30);
+    return {
+      from_date: format(lastThirtyDays, 'yyyy-MM-dd'),
+      to_date: format(today, 'yyyy-MM-dd'),
+    };
+  };
+
+  const getThisMonth = () => {
+    const today = new Date();
+    const start = startOfMonth(today);
+    const end = endOfMonth(today);
+    return {
+      from_date: format(start, 'yyyy-MM-dd'),
+      to_date: format(end, 'yyyy-MM-dd'),
+    };
+  };
+
+
+  const getLastMonth = () => {
+    const today = new Date();
+    const start = startOfMonth(subMonths(today, 1));
+    const end = endOfMonth(subMonths(today, 1));
+    return {
+      from_date: format(start, 'yyyy-MM-dd'),
+      to_date: format(end, 'yyyy-MM-dd'),
+    };
+  };
+
+
+  const handleDateFormatChange = (event)=> {
+    const selectedFormat = event.target.value;
+    setDateFormat(selectedFormat)
+
+    switch (selectedFormat) {
+      case 'Today':
+        updateFormDate({from_date: getCurrentDate(), to_date: getCurrentDate()})
+        break;
+
+      case 'Yesterday':
+        updateFormDate({from_date: getYesterDay(), to_date: getCurrentDate()})
+        break;
+
+      case 'Last 7 Days':
+        updateFormDate(getLastSevenDays())
+        break;
+
+      case 'Last 30 Days':
+        updateFormDate(getLastThirtyDays())
+        break;
+
+      case 'This Month':
+        updateFormDate(getThisMonth())
+        break;
+
+      case 'Last month':
+        updateFormDate(getLastMonth())
+        break;
+    }
+  }
+
+  // console.log(formData)
+  
+  const handleFilterChange = (event) => {
+    updateFormDate({...formData,
+      [event.target.name]: event.target.value
+    })
+  };
+
+  const handleFilterSubmit = ()=> {
+    if (formData.currency === '') {
+      setError('Please select currency')
+
+    } else if(formData.status === '') {
+      setError('Please select The status')
+    } else {
+      setError('')
+
+      axiosInstance.post(`api/v1/filter/transfer/transactions/`, {
+        from_date: formData.from_date,
+        to_date: formData.to_date,
+        currency: formData.currency,
+        status: formData.status,
+        user_name: formData.user_name
+      }).then((res)=> {
+
+        console.log(res.data.data)
+        updateTransferData(res.data.data)
+        setFilterRerender(true)
+
+      }).catch((error)=> {
+        console.log(error.response)
+
+      })
+    }
+  };
+
+
+  
+useEffect(() => {
+
+  if(filterRerender) {
+
+    setTimeout(() => {
+      if(rowsPerPage === 10) {
+        setRowsPerPage(25)
+        setPage(0)
+
+      } else if (rowsPerPage === 25) {
+        setRowsPerPage(10)
+        setPage(0)
+
+      } else {
+        setRowsPerPage(25)
+        setPage(0)
+      }
+        // console.log('Page Changed')
+        setFilterRerender(false)
+
+    }, 2000);
+  }
+
+}, [filterRerender])
 
   const dateFormats = [
-    {label: 'Today', value: '01/02/2024'},
-    {label: 'Yesterday', value: '03/04/2024'},
-    {label: 'Last 7 Days', value: getLastSevenDays()},
-    {label: 'Last 30 Days', value: '10/02/2024'},
-    {label: 'This Month', value: '10/02/2024'},
-    {label: 'Last month', value: '10/02/2024'},
+    {label: 'Today', value: 'Today'},
+    {label: 'Yesterday', value: 'Yesterday'},
+    {label: 'Last 7 Days', value: 'Last 7 Days'},
+    {label: 'Last 30 Days', value: 'Last 30 Days'},
+    {label: 'This Month', value: 'This Month'},
+    {label: 'Last month', value: 'Last month'},
   ]
 
 
@@ -425,7 +615,7 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
         <Paper sx={{ width: '100%', height: '90px', mb: 2 }} className='shadow rounded border border-primary'>
             <FormControl sx={{minWidth: 170, marginTop: '14px', marginLeft: '10px'}} >
                 <InputLabel id="demo-simple-select-helper-label">Pick a date range</InputLabel>
-                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={dateFormat} label="DateFormat" onChange={handleDateFormatChange}>
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={dateFormat} label="DateFormat" onChange={(event)=> {handleDateFormatChange(event);}}>
                     {dateFormats.map((format, index)=> (
                         <MenuItem key={index} value={format.value}>{format.label}</MenuItem>
                     ))}
@@ -434,25 +624,25 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
 
             <FormControl sx={{minWidth: 120, marginTop: '14px', marginLeft: '10px'}} >
                 <InputLabel id="demo-simple-select-helper-label">Currency</InputLabel>
-                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={currency} label="Currency" onChange={handleCurrencyChange}>
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" name='currency' value={selectedCurrency} label="Currency" onChange={(event)=>{handleCurrencyChange(event); handleFilterChange(event);}}>
                     {currencies.map((cur, index)=> (
-                        <MenuItem key={index} value={cur.value}>{cur.value}</MenuItem>
+                        <MenuItem key={index} value={cur.name}>{cur.name}</MenuItem>
                     ))}
                 </Select>
             </FormControl>
 
             <FormControl sx={{minWidth: 120, marginTop: '14px', marginLeft: '10px'}} >
                 <InputLabel id="demo-simple-select-helper-label">Status</InputLabel>
-                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={wStatus} label="wStatus" onChange={handleStausChange}>
-                    {WithdrawlStatus.map((w, index)=> (
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" name='status' value={wStatus} label="wStatus" onChange={(event)=> {handleStausChange(event); handleFilterChange(event);}}>
+                    {TransferStatus.map((w, index)=> (
                         <MenuItem key={index} value={w.value}>{w.value}</MenuItem>
                     ))}
                 </Select>
-            </FormControl>  
+            </FormControl> 
 
-            <TextField sx={{marginTop: '14px', marginLeft: '10px'}}  id="outlined-basic" label="Enter user name" variant="outlined" />
+            <TextField sx={{marginTop: '14px', marginLeft: '10px'}}  id="outlined-basic" name='user_name' label="Enter user name" variant="outlined" onChange={handleFilterChange} />
 
-            <Button sx={{marginTop: '20px', marginRight: '10px', float: 'right'}} variant="contained">Filter</Button>
+            <Button sx={{marginTop: '20px', marginRight: '10px', float: 'right'}} variant="contained" onClick={handleFilterSubmit}>Filter</Button>
         </Paper>
         
 
@@ -463,6 +653,10 @@ export default function TransferTable({headCells, rows, TableName, handleTransac
              updateTransferData={updateTransferData} 
              setRowsPerPage={setRowsPerPage}
              setPage={setPage}
+             rows={rows}
+             transferData={transferData}
+             rowsPerPage={rowsPerPage}
+             page={page}
              />
 
 <TableContainer component={Paper} >

@@ -26,7 +26,7 @@ function AllDepositDetail({open}) {
       id: "id",
       numeric: false,
       disablePadding: true,
-      label: "ID",
+      label: "Transaction ID",
     },
     {
       id: "user",

@@ -180,7 +180,8 @@ return (
         ) : (
             <TransferTable 
                 headCells={headCells} 
-                rows={transferData} 
+                rows={transferData}
+                transferData={transferData}
                 TableName={TableName}
                 updateTransferID={updateTransferID}
                 handleTransactionStatusUpdate={handleTransactionStatusUpdate}

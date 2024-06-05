@@ -15,24 +15,47 @@ import TotalProfit from './Profit';
 import LatestTickets from './LatestTickets';
 import LatestDispute from './LatestDispute';
 import {Row, Col} from'react-bootstrap';
+import Grid from '@mui/material/Grid';
+import { useEffect, useState } from 'react';
+import axiosInstance from './Authentication/axios';
 
 
 
 
 
 function Dashboard({open}) {
+    const [countUsers, setCountUsers] = useState(0)
+
+    useEffect(() => {
+      axiosInstance.get(`api/v1/user/count/`).then((res)=> {
+        // console.log(res.data.total_users)
+
+        if (res.data.total_users) {
+            setCountUsers(res.data.total_users)
+        }
+
+      }).catch((error)=> {
+        console.log(error.response)
+
+      })
+    }, [])
+    
+
     return(
+       
         <Main open={open}>
             <DrawerHeader />
 
-            <Box sx={{display: 'flex', flexWrap: 'wrap','& > :not(style)': {m: 1, width: 300, height: 153,},}}>
-          
-       
+            {/* <Box sx={{display: 'flex','& > :not(style)': {m: 1, width: 260, height: 153,},}}> */}
+            <Box sx={{flexGrow: 1}}>
+            <Grid container spacing={3} justifyContent="center">
+
+            <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card style={{backgroundColor: '#51e56d', color: 'white', position: 'relative'}} >
                 <PersonRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}}/>
                 <CardContent>
                     <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
-                        <b>5</b>
+                        <b>{countUsers}</b>
                     </Typography>
                     
                     <Typography variant="p" component="div" >
@@ -46,7 +69,9 @@ function Dashboard({open}) {
                     </Button>
                 </CardActions>
             </Card>
-
+            </Grid>
+            
+            <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card  style={{backgroundColor: '#8d0aa9', color: 'white', position: 'relative'}} >
                 <StorefrontRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
                 <CardContent>
@@ -65,7 +90,9 @@ function Dashboard({open}) {
                     </Button>
                 </CardActions>
             </Card>
+            </Grid>
 
+            <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card  style={{backgroundColor: '#0a8aa9', color: 'white', position: 'relative'}} >
                 <ConfirmationNumberRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
                 <CardContent>
@@ -84,7 +111,9 @@ function Dashboard({open}) {
                     </Button>
                 </CardActions>
             </Card>
+            </Grid>
 
+            <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card style={{backgroundColor: '#a90a4a', color: 'white', position: 'relative'}} >
                 <DisabledByDefaultRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
                 <CardContent>
@@ -103,8 +132,9 @@ function Dashboard({open}) {
                     </Button>
                 </CardActions>
             </Card>
+            </Grid>
         
-            
+            </Grid>
             </Box>
 
             {/* Dash Board Line Chart Starts */}
@@ -121,6 +151,7 @@ function Dashboard({open}) {
             <LatestDispute />
 
         </Main>
+    
     )
 }
 

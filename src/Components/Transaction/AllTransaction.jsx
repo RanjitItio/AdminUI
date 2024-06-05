@@ -35,10 +35,10 @@ function AllTransactionData({open}) {
 
   const headCells = [
     {
-      id: "id",
+      id: "sl No",
       numeric: false,
       disablePadding: true,
-      label: "Transaction ID",
+      label: "Sl No",
     },
     {
       id: "No",

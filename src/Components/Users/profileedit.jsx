@@ -12,15 +12,16 @@ import TransactionTable from './UsersTransactionTable';
 import DisputeTable from './UserDisputesTable'
 import Modal from 'react-bootstrap/Modal';
 import UserDeposit from './UserDeposit';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../Authentication/axios';
 // import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 
 
 const Profile = ({ open }) => {
-    const location = useLocation();
-    const Kycdetails = location.state?.kycID;
+    const navigate    = useNavigate();
+    const location    = useLocation();
+    const Kycdetails  = location.state?.kycID;
     const userDetails = location.state?.userID;
 
     const initialProfileData = {
@@ -29,7 +30,7 @@ const Profile = ({ open }) => {
         email:          Kycdetails?.email    || '',
         dob:            Kycdetails?.dateofbirth || '',
         zipcode:        Kycdetails?.zipcode  || '',
-        status:          '',
+        status:         userDetails?.status || '',
         gender:         Kycdetails?.gander   || '',
         state:          Kycdetails?.state    || '',
         marital_status: Kycdetails?.marital_status || '',
@@ -42,14 +43,11 @@ const Profile = ({ open }) => {
         landmark:       Kycdetails?.landmark     || '',
         id_expiry_date: Kycdetails?.id_expiry_date  || '',
         city:           Kycdetails?.city  || '',
-        group:          0,
+        // group:          0,
         // confirm_password: '',
         // password:         ''
     }
 
-    const [phone, setPhone]             = useState('');
-    const [group, setGroup]             = useState('');
-    const [status, setStatus]           = useState('');
     const [activeTab, setActiveTab]     = useState('profile');
     const [showDeposit, setShowDeposit] = useState(false);
     const [show, setShow]               = useState(false);
@@ -61,8 +59,9 @@ const Profile = ({ open }) => {
     const [userWallet, updateUserWallet] = useState([])
     const [kycDetail, updateKycDetails] = useState(initialProfileData)
 
-    const [groupValue, setGroupValue] = useState('');
-    const [statusValue, setStatusValue] = useState('')
+    const [groupValue, setGroupValue]   = useState(userDetails?.group_name || 'NA');
+    const [statusValue, setStatusValue] = useState(userDetails?.status || 'NA');
+    const [groupID, setGroupID]         = useState(userDetails?.group || 1)
 
 
     const handleClose = () => setShow(false);
@@ -79,14 +78,20 @@ const Profile = ({ open }) => {
         })
     };
 
+    // console.log(groupID)
+
     const handleGroupValueChange = (event) => {
-        setGroupValue(event.target.value)
-        // console.log(event.target.value)
+
+        const selectedGroupName   = event.target.value;
+        const selectedGroup       = allGroup.find(group => group.name === selectedGroupName);
+
+        setGroupValue(selectedGroup ? selectedGroup.name : 1)
+        setGroupID(selectedGroup ? selectedGroup.id : 1)
+
     }
 
     const handleStatusValueUpdate = (event) => {
         setStatusValue(event.target.value)
-        // console.log(event.target.value)
     }
 
     const handleProfileStatusMessage = (event) => {
@@ -196,14 +201,16 @@ const handleKYCStatusUpdate = ()=> {
             landmark:         Kycdetails.landmark,
             address:          Kycdetails.address,
             status:           kycDetail.status,
-            group:            kycDetail.group,
-            // password:         kycDetail.password,
-            // confirm_password: kycDetail.confirm_password
+            group:            groupID,
 
           }).then((res)=> {
             // console.log(res)
             if (res.status == 200) {
                 setSuccessMessage('User Data updated Successfully')
+
+                setTimeout(() => {
+                    navigate('/admin/users/')
+                }, 1000);
             }
 
           }).catch((error)=> {
@@ -651,10 +658,10 @@ const handleUserWallets = () => {
                                                     value={groupValue}
                                                     onChange={(event)=> {handleProfileChange(event), handleGroupValueChange(event)}}
                                                     label="Group"
-                                                    name='group'
+                                                    // name='group'
                                                     >
                                                         {allGroup.map((group) => (
-                                                            <MenuItem key={group.id} value={group.id}>
+                                                            <MenuItem key={group.id} value={group.name}>
                                                                 {group.name}
                                                             </MenuItem>
                                                         ))}
@@ -679,7 +686,7 @@ const handleUserWallets = () => {
                                                     onChange={(event) => {handleProfileChange(event); handleProfileStatusMessage(event); handleStatusValueUpdate(event);}}
                                                     label="Status"
                                                     name='status'
-                                                    onClick={handleProfileStatusMessage}
+                                                    // onClick={handleProfileStatusMessage}
                                                 >
                                                     <MenuItem value="Active">Active</MenuItem>
                                                     <MenuItem value="Inactive">Inactive</MenuItem>
