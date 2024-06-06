@@ -15,6 +15,8 @@ import UserDeposit from './UserDeposit';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../Authentication/axios';
 // import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { Grid } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 
 
@@ -43,9 +45,6 @@ const Profile = ({ open }) => {
         landmark:       Kycdetails?.landmark     || '',
         id_expiry_date: Kycdetails?.id_expiry_date  || '',
         city:           Kycdetails?.city  || '',
-        // group:          0,
-        // confirm_password: '',
-        // password:         ''
     }
 
     const [activeTab, setActiveTab]     = useState('profile');
@@ -502,6 +501,36 @@ const handleUserWallets = () => {
 };
 
 
+
+if (Kycdetails === undefined) {
+    
+    return (
+        <>
+            <Main open={open}>
+            <DrawerHeader />
+                <h2>Please reverse the page and re edit again</h2>
+                <p>OR <Link to={'/admin/users/'}>Click</Link> on the Link </p>
+           </Main>
+
+        </>
+    )
+};
+
+if (userDetails === undefined) {
+    
+    return (
+        <>
+            <Main open={open}>
+            <DrawerHeader />
+                <h2>Please reverse the page and re edit again</h2>
+                <p>OR <Link to={'/admin/users/'}>Click</Link> on the Link </p>
+           </Main>
+
+        </>
+    )
+};
+
+
     return (
         <Main open={open}>
             <DrawerHeader />
@@ -563,7 +592,7 @@ const handleUserWallets = () => {
                         <Card.Body>
                             <Row className="">
                                 <Col className="d-flex align-items-center justify-content-between mb-3">
-                                    <h3>{Kycdetails.firstname} {Kycdetails.lastname} 
+                                    <h3>{kycDetail ? Kycdetails.firstname : 'NA'} {kycDetail ? Kycdetails.lastname : 'NA'} 
                                     {/* {userDetails ? (
                                         userDetails.active === true ? 
                                             (<span className="badge bg-success">Active</span>) :
@@ -586,115 +615,154 @@ const handleUserWallets = () => {
                 {/* Profile Tab */}
                 {activeTab === 'profile' && (
                     <Row>
-                        <Col md={6} lg={4} className="mb-3">
+                        <Col md={6} lg={10} className="mb-3">
                             <Card className='shadow'>
                                 <Card.Body>
                                     <Form>
-                                        <Form.Group className="mb-3">
-                                            <TextField label="First Name" name='first_name' value={kycDetail.first_name} variant="outlined" fullWidth onChange={handleProfileChange} />
-                                        </Form.Group>
+                                    <Grid container spacing={2} sx={{marginBottom: '10px'}}>
+
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField label="First Name" name='first_name' value={kycDetail ? kycDetail.first_name : 'NA'} variant="outlined" fullWidth onChange={handleProfileChange} />
+                                            </Form.Group>
+                                        </Grid>
                                         
-                                        <Form.Group className="mb-3">
-                                            <TextField label="Last Name" name='last_name' value={kycDetail.last_name} variant="outlined"  fullWidth onChange={handleProfileChange} />
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField label="Last Name" name='last_name' value={kycDetail ? kycDetail.last_name : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                            </Form.Group>
+                                        </Grid>
 
-                                        <Form.Group className="mb-3">
-                                            <TextField
-                                                // country={'us'}
-                                                variant="outlined"
-                                                value={kycDetail.mobile_number}
-                                                label="Phone Number"
-                                                name='mobile_number'
-                                                onChange={handleProfileChange}
-                                                fullWidth
-                                            />
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField
+                                                    // country={'us'}
+                                                    variant="outlined"
+                                                    value={kycDetail.mobile_number}
+                                                    label="Phone Number"
+                                                    name='mobile_number'
+                                                    onChange={handleProfileChange}
+                                                    fullWidth
+                                                />
+                                            </Form.Group>
+                                        </Grid>
 
-                                        <Form.Group className="mb-3">
-                                            <TextField label="Email" variant="outlined" fullWidth type="email" name='email' value={kycDetail.email}/>
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField label="Email" variant="outlined" fullWidth type="email" name='email' value={kycDetail.email}/>
+                                            </Form.Group>
+                                        </Grid>
 
-                                        <Form.Group className="mb-3">
-                                            <TextField label="DOB" name='dob' value={kycDetail.dob} variant="outlined" fullWidth onChange={handleProfileChange} />
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField label="DOB" name='dob' value={kycDetail ? kycDetail.dob : 'NA'} variant="outlined" fullWidth onChange={handleProfileChange} />
+                                            </Form.Group>
+                                        </Grid>
                                         
-                                        <Form.Group className="mb-3">
-                                            <TextField label="Gender" name='gender' value={Kycdetails.gander} variant="outlined"  fullWidth onChange={handleProfileChange} />
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField label="Gender" name='gender' value={Kycdetails ? Kycdetails.gander : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                            </Form.Group>
+                                        </Grid>
 
-                                        <Form.Group className="mb-3">
-                                            <TextField label="state" name='state' value={kycDetail.state} variant="outlined"  fullWidth onChange={handleProfileChange} />
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField label="state" name='state' value={Kycdetails ? kycDetail.state : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                            </Form.Group>
+                                        </Grid>
 
-                                        <Form.Group className="mb-3">
-                                            <TextField label="city" name='city' value={kycDetail.city} variant="outlined"  fullWidth onChange={handleProfileChange} />
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField label="city" name='city' value={Kycdetails ? kycDetail.city : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                            </Form.Group>
+                                        </Grid>
 
-                                        <Form.Group className="mb-3">
-                                            <TextField label="landmark" name='landmark' value={kycDetail.landmark} variant="outlined"  fullWidth onChange={handleProfileChange} />
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField label="landmark" name='landmark' value={Kycdetails ? kycDetail.landmark : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                            </Form.Group>
+                                        </Grid>
 
-                                        <Form.Group className="mb-3">
-                                            <TextField label="address" name='address' value={kycDetail.address} variant="outlined"  fullWidth onChange={handleProfileChange} />
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField label="address" name='address' value={Kycdetails ? kycDetail.address : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                            </Form.Group>
+                                        </Grid>
 
-                                        <Form.Group className="mb-3">
-                                            <TextField label="ID Type" name='id_type' value={Kycdetails.id_type} variant="outlined"  fullWidth onChange={handleProfileChange} />
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField label="ID Type" name='id_type' value={Kycdetails ? Kycdetails.id_type : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                            </Form.Group>
+                                        </Grid>
 
-                                        <Form.Group className="mb-3">
-                                            <TextField label="ID Number" name='id_number' value={Kycdetails.id_number} variant="outlined"  fullWidth onChange={handleProfileChange} />
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField label="ID Number" name='id_number' value={Kycdetails ? Kycdetails.id_number : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                            </Form.Group>
+                                        </Grid>
 
-                                        <Form.Group className="mb-3">
-                                            <TextField label="ID Expiry Date" name='id_expiry_date' value={Kycdetails.id_expiry_date} variant="outlined"  fullWidth onChange={handleProfileChange} />
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <TextField 
+                                                     label="ID Expiry Date" 
+                                                     name='id_expiry_date' 
+                                                     value={Kycdetails ? Kycdetails.id_expiry_date : 'NA'} 
+                                                     variant="outlined"  
+                                                     fullWidth 
+                                                     onChange={handleProfileChange} 
+                                                />
+                                            </Form.Group>
+                                        </Grid>
 
-                                        <Form.Group className="mb-3">
-                                            <FormControl fullWidth variant="outlined">
-                                                <InputLabel>Group</InputLabel>
-                       
-                                                <Select
-                                                    value={groupValue}
-                                                    onChange={(event)=> {handleProfileChange(event), handleGroupValueChange(event)}}
-                                                    label="Group"
-                                                    // name='group'
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <FormControl fullWidth variant="outlined">
+                                                    <InputLabel>Group</InputLabel>
+                        
+                                                    <Select
+                                                        value={groupValue}
+                                                        onChange={(event)=> {handleProfileChange(event), handleGroupValueChange(event)}}
+                                                        label="Group"
+                                                        // name='group'
+                                                        >
+                                                            {allGroup.map((group) => (
+                                                                <MenuItem key={group.id} value={group.name}>
+                                                                    {group.name}
+                                                                </MenuItem>
+                                                            ))}
+                                                    </Select>
+                                            
+                                                </FormControl>
+                                            </Form.Group>
+                                        </Grid>
+
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <FormControl fullWidth variant="outlined">
+                                                    <InputLabel>Status</InputLabel>
+                                                    <Select
+                                                        value={statusValue}
+                                                        onChange={(event) => {handleProfileChange(event); handleProfileStatusMessage(event); handleStatusValueUpdate(event);}}
+                                                        label="Status"
+                                                        name='status'
+                                                        // onClick={handleProfileStatusMessage}
                                                     >
-                                                        {allGroup.map((group) => (
-                                                            <MenuItem key={group.id} value={group.name}>
-                                                                {group.name}
-                                                            </MenuItem>
-                                                        ))}
-                                                </Select>
-                                           
-                                            </FormControl>
-                                        </Form.Group>
+                                                        <MenuItem value="Active">Active</MenuItem>
+                                                        <MenuItem value="Inactive">Inactive</MenuItem>
+                                                        <MenuItem value="Suspended">Suspended</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                                {statusMessage && <p className="text-danger">{statusMessage}</p>}
+                                            </Form.Group>
+                                        </Grid>
 
-                                        {/* <Form.Group className="mb-3">
-                                            <TextField label="Password" name='password' variant="outlined" fullWidth type="password" onChange={handleProfileChange} />
-                                        </Form.Group>
-
-                                        <Form.Group className="mb-3">
-                                            <TextField label="Confirm Password" name='confirm_password' variant="outlined" fullWidth type="password" onChange={handleProfileChange} />
-                                        </Form.Group> */}
-
-                                        <Form.Group className="mb-3">
-                                            <FormControl fullWidth variant="outlined">
-                                                <InputLabel>Status</InputLabel>
-                                                <Select
-                                                    value={statusValue}
-                                                    onChange={(event) => {handleProfileChange(event); handleProfileStatusMessage(event); handleStatusValueUpdate(event);}}
-                                                    label="Status"
-                                                    name='status'
-                                                    // onClick={handleProfileStatusMessage}
-                                                >
-                                                    <MenuItem value="Active">Active</MenuItem>
-                                                    <MenuItem value="Inactive">Inactive</MenuItem>
-                                                    <MenuItem value="Suspended">Suspended</MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                            {statusMessage && <p className="text-danger">{statusMessage}</p>}
-                                        </Form.Group>
+                                        <Grid item xs={12} md={4}>
+                                            <div style={{maxWidth: '150px', maxHeight: '200px', overflow: 'hidden'}}>
+                                                <img src={userDetails ? userDetails.document : 'NA'} alt="Document" style={{maxWidth: '100%', height: 'auto'}}/>
+                                            </div>
+                                                <a href={userDetails ? userDetails.document : 'NA'}> Click to view</a>
+                                        </Grid>
+                                    </Grid>
 
                                         <div className="d-flex justify-content-between">
                                             <Button variant="danger">Cancel</Button>
@@ -702,6 +770,7 @@ const handleUserWallets = () => {
                                         </div>
                                         {error &&  <p className="text-danger">{error}</p>}
                                         {successMessage && <p className="text-success">{successMessage}</p>}
+
                                     </Form>
                                 </Card.Body>
                             </Card>
