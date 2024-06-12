@@ -1,4 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -10,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 function MerchantCreateForm({open}) {
+    
   const navigate = useNavigate();
   const initialFormData = Object.freeze({
     'user_id': '',

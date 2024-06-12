@@ -14,10 +14,10 @@ import DashboardLineChart from './Charts/DashLinechart';
 import TotalProfit from './Profit';
 import LatestTickets from './LatestTickets';
 import LatestDispute from './LatestDispute';
-import {Row, Col} from'react-bootstrap';
 import Grid from '@mui/material/Grid';
 import { useEffect, useState } from 'react';
 import axiosInstance from './Authentication/axios';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -25,6 +25,7 @@ import axiosInstance from './Authentication/axios';
 
 function Dashboard({open}) {
     const [countUsers, setCountUsers] = useState(0)
+    const navigate = useNavigate();
 
     useEffect(() => {
       axiosInstance.get(`api/v1/user/count/`).then((res)=> {
@@ -39,6 +40,11 @@ function Dashboard({open}) {
 
       })
     }, [])
+
+
+    const handleUserInfo = ()=> {
+        navigate('/admin/users/')
+    }
     
 
     return(
@@ -64,7 +70,7 @@ function Dashboard({open}) {
                 </CardContent>
 
                 <CardActions sx={{backgroundColor: 'rgba(0,0,0,0.1)', marginTop: '10px', '&:hover': {backgroundColor: 'rgba(0,0,0,0.3)'},  }}>
-                    <Button size="small" style={{ marginLeft: '5.3rem', color: 'white'}}>
+                    <Button size="small" style={{ marginLeft: '5.3rem', color: 'white'}} onClick={handleUserInfo}>
                        More Info &nbsp; <ArrowCircleRightRoundedIcon />
                     </Button>
                 </CardActions>

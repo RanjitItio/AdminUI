@@ -13,10 +13,10 @@ import UpperNavbar from '../UpNavbar';
 import LeftNavbar from  '../LeftNavbar';
 import Dashboard from "../Dashboard";
 import UsersData from '../Users/users';
-import MerchantDetails from '../Users/merchant';
+import MerchantDetails from '../Merchant/merchant';
 import AdminDetails from '../Users/Admin';
 import UserCreateForm from '../Users/userCreateForm';
-import MerchantCreateForm from '../Users/MerchantCreateForm';
+import MerchantCreateForm from '../Merchant/MerchantCreateForm';
 import AdminCreateForm from '../Users/AdminCreateForm';
 import AllTransactionData from '../Transaction/AllTransaction';
 import AllDepositDetail from '../Transaction/Deposit';
@@ -47,6 +47,7 @@ import TicketAddForm from '../Ticket/TicketAdd.jsx';
 import TicketUpdateForm from '../Ticket/TicketUpdate.jsx';
 import ActivityLogData from '../ActivityLog/ActivityLog.jsx';
 import TransferTransactionDetail from '../Transaction/TransferDetails.jsx';
+import MerchantProfile from '../Merchant/MerchantProfile.jsx';
 
 
 
@@ -112,6 +113,7 @@ const AuthRoutes = () => {
                           <Route exact path='/' element={<Dashboard open={open} />}></Route>
                           <Route exact path="/admin/users/" element={<UsersData open={open} />} ></Route>
                           <Route exact path="/admin/merchant/" element={<MerchantDetails open={open} />} ></Route>
+                          <Route exact path="/admin/merchant/details/" element={<MerchantProfile open={open} />} ></Route>
                           <Route exact path="/admin/admin-user/" element={<AdminDetails open={open} />} ></Route>
                           <Route exact path="/admin/create-user/" element={<UserCreateForm open={open} />} ></Route>
                           <Route exact path="/admin/create-merchant/" element={<MerchantCreateForm open={open} />} ></Route>
@@ -145,6 +147,7 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/dispute/" element={<Dispute open={open} />} ></Route>
                           <Route exact path="/admin/dispute/discussion/" element={<DisputeDiscussion open={open} />} ></Route>
                           <Route exact path="/admin/activitylogs/" element={<ActivityLogData open={open} />} ></Route>
+                          
                       </Routes>
                     </Box>
                   }></Route>

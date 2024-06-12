@@ -623,7 +623,14 @@ if (userDetails === undefined) {
 
                                         <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
-                                                <TextField label="First Name" name='first_name' value={kycDetail ? kycDetail.first_name : 'NA'} variant="outlined" fullWidth onChange={handleProfileChange} />
+                                                <TextField 
+                                                    label="First Name" 
+                                                    name='first_name' 
+                                                    value={kycDetail ? kycDetail.first_name : 'NA'} 
+                                                    variant="outlined" 
+                                                    fullWidth 
+                                                    onChange={handleProfileChange} 
+                                                    />
                                             </Form.Group>
                                         </Grid>
                                         

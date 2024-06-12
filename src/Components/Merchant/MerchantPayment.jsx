@@ -21,13 +21,16 @@ import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { visuallyHidden } from '@mui/utils';
 import TextField from '@mui/material/TextField';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import Button from '@mui/material/Button';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
 import Badge from '@mui/material/Badge';
 import EditIcon from '@mui/icons-material/Edit';
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
+import axiosInstance from '../Authentication/axios';
 import { useNavigate } from 'react-router-dom';
-
-
 
 
 
@@ -53,10 +56,7 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
+
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -122,7 +122,7 @@ EnhancedTableHead.propTypes = {
 
 function EnhancedTableToolbar(props) {
   const { numSelected } = props;
-  const navigate = useNavigate();
+
 
   return (
     <Toolbar
@@ -166,36 +166,77 @@ function EnhancedTableToolbar(props) {
         <TextField
         hiddenLabel
         id="filled-hidden-label-small"
-        placeholder='Search users'
+        placeholder='Search...'
         variant="filled"
         size="small"
       />
-        <Tooltip title="Add New Merchant">
-            <Fab color="primary" aria-label="add" style={{marginLeft: '20px'}}>
-                <AddIcon onClick={()=> navigate('/admin/create-merchant/')} />
-            </Fab>
-        </Tooltip>
+
+    <Tooltip title="Download as CSV">
+        <Button variant="contained" startIcon={<FileDownloadIcon />} style={{marginLeft: '5px'}}>
+            CSV
+        </Button>        
+    </Tooltip>
+
+    <Tooltip title="Download as PDF">
+        <Button variant="contained" startIcon={<FileDownloadIcon />} style={{marginLeft: '5px'}}>
+            PDF
+        </Button>        
+    </Tooltip>
       </>
       )}
     </Toolbar>
   );
 }
 
+
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
 
+function getStatusColor(status){
+    switch (status) {
+        case 'Success':
+            return 'green';
+        case 'Pending':
+            return 'orange';
+        case 'Cancelled':
+            return 'red';
+        default:
+            return 'black';
+    }
+}
 
 
 
-export default function MerchantTable({headCells, rows, TableName}) {
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
+export default function MerchantPaymentTable({headCells, rows, TableName}) {
+  const [order, setOrder]             = React.useState('asc');
+  const [orderBy, setOrderBy]         = React.useState('calories');
+  const [selected, setSelected]       = React.useState([]);
+  const [page, setPage]               = React.useState(0);
+  const [dense, setDense]             = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // const [transactionUserID, updateTransactionUserID] = React.useState('')
+
+  const navigate = useNavigate()
+
+
+  // TO change the pagination of Table after page load
+  React.useEffect(()=> {
+    setTimeout(() => {
+      setRowsPerPage(25);
+      setPage(0);
+      // console.log('Changed')
+
+    }, 1000);
+
+  }, [])
+
+  const handleEditButtonClicked = (id) => {
+    navigate('/admin/users/transaction/details/')
+  }
+  
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -235,10 +276,13 @@ export default function MerchantTable({headCells, rows, TableName}) {
     setPage(newPage);
   };
 
+ 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+    
   };
+
 
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
@@ -259,11 +303,127 @@ export default function MerchantTable({headCells, rows, TableName}) {
     [order, orderBy, page, rowsPerPage],
   );
 
+
+
+  const [dateFormat, setDateFormt] = React.useState('')
+  const [currency, setCurrency] = React.useState('');
+  const [wStatus, setwStatus] = React.useState('')
+  const [payMethod, setPaymethod] =  React.useState('');
+
+
+  const handleDateFormatChange = (event)=> {
+    setDateFormt(event.target.value)
+  }
+
+  const handleCurrencyChange = (event)=> {
+    setCurrency(event.target.value)
+  }
+
+  const handleStausChange = (event)=> {
+    setwStatus(event.target.value)
+  }
+
+  const handelPaymentMethodChange = (event)=> {
+    setPaymethod(event.target.value)
+  }
+  
+  const getLastSevenDays = ()=> {
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    
+    const formatDate = `0${sevenDaysAgo.getMonth()}/0${sevenDaysAgo.getDate()}/${sevenDaysAgo.getFullYear()}`;
+    return formatDate;
+  }
+
+  const PaymentMethods = [
+    {value: 'Bank'},
+    {value: 'Crypto'},
+    {value: 'Card'},
+    {value: 'Stripe'},
+    {value: 'Paypal'},
+    {value: 'UPI'},
+  ]
+
+  const WithdrawlStatus = [
+    {value: 'All'},
+    {value: 'Success'},
+    {value: 'Pending'},
+    {value: 'Cancelled'},
+  ]
+
+  const currencies = [
+    {value: 'USD'},
+    {value: 'CYN'},
+    {value: 'INR'},
+    {value: 'EUR'},
+  ]
+
+  const dateFormats = [
+    {label: 'Today', value: '01/02/2024'},
+    {label: 'Yesterday', value: '03/04/2024'},
+    {label: 'Last 7 Days', value: getLastSevenDays()},
+    {label: 'Last 30 Days', value: '10/02/2024'},
+    {label: 'This Month', value: '10/02/2024'},
+    {label: 'Last month', value: '10/02/2024'},
+  ]
+
+  
+  if (rows.length === 0) {
+    return (
+      <p className='d-flex justify-content-center fs-3'>Under Maintainance</p>
+    )
+  };
+
   return (
+    <>
     <Box sx={{ width: '100%' }}>
+
+        <Paper sx={{ width: '100%', height: '90px', mb: 2 }}>
+            <FormControl sx={{minWidth: 170, marginTop: '14px', marginLeft: '10px'}} >
+                <InputLabel id="demo-simple-select-helper-label">Pick a date range</InputLabel>
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={dateFormat} label="DateFormat" onChange={handleDateFormatChange}>
+                    {dateFormats.map((format, index)=> (
+                        <MenuItem key={index} value={format.value}>{format.label}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <FormControl sx={{minWidth: 120, marginTop: '14px', marginLeft: '10px'}} >
+                <InputLabel id="demo-simple-select-helper-label">Currency</InputLabel>
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={currency} label="Currency" onChange={handleCurrencyChange}>
+                    {currencies.map((cur, index)=> (
+                        <MenuItem key={index} value={cur.value}>{cur.value}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <FormControl sx={{minWidth: 120, marginTop: '14px', marginLeft: '10px'}} >
+                <InputLabel id="demo-simple-select-helper-label">Status</InputLabel>
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={wStatus} label="wStatus" onChange={handleStausChange}>
+                    {WithdrawlStatus.map((w, index)=> (
+                        <MenuItem key={index} value={w.value}>{w.value}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>  
+
+            <FormControl sx={{minWidth: 165, marginTop: '14px', marginLeft: '10px'}} >
+                <InputLabel id="demo-simple-select-helper-label">Payment Method</InputLabel>
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={payMethod} label="Payment Method" onChange={handelPaymentMethodChange}>
+                    {PaymentMethods.map((pm, index)=> (
+                        <MenuItem key={index} value={pm.value}>{pm.value}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <TextField sx={{marginTop: '14px', marginLeft: '10px'}}  id="outlined-basic" label="Enter user name" variant="outlined" />
+
+            <Button sx={{marginTop: '20px', marginRight: '10px', float: 'right'}} variant="contained">Filter</Button>
+        </Paper>
+
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} TableName={TableName} />
-
+      
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -279,6 +439,7 @@ export default function MerchantTable({headCells, rows, TableName}) {
               rowCount={rows.length}
               headCells={headCells}
             />
+        
             <TableBody>
               {visibleRows.map((row, index) => {
                 const isItemSelected = isSelected(row.id);
@@ -291,7 +452,7 @@ export default function MerchantTable({headCells, rows, TableName}) {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.id}
+                    key={index}
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
@@ -302,32 +463,56 @@ export default function MerchantTable({headCells, rows, TableName}) {
                         inputProps={{
                           'aria-labelledby': labelId,
                         }}
-                        onClick={(event) => handleClick(event, row.id)}
+                      onClick={(event) => handleClick(event, row.id)}
                       />
                     </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.id}
-                    </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.user_id}
-                    </TableCell>
-                    <TableCell align="left">{row.name}</TableCell>
-                    <TableCell align="left">{row.user}</TableCell>
-                    <TableCell align="left">{row.date}</TableCell>
-                    <TableCell align="left">{row.type}</TableCell>
-                    <TableCell align="left">{row.group}</TableCell>
-                    <TableCell align="left">
-                        <a href={row.url}>{row.url}</a></TableCell>
-                    <TableCell align="left">
-                        {<img src={row.logo} alt="Logo" style={{ maxWidth: '40px', maxHeight: '40px' }} />}
-                    </TableCell>
-                    <TableCell align="left">{row.status}</TableCell>
-                    <TableCell align="right">
-                        <Badge color="success" >
-                            <EditIcon color="" style={{color:'#0e3080'}} />
-                            <DeleteIcon style={{color:'#b23344'}} />
-                        </Badge>
-                    </TableCell>
+                    
+                        <TableCell component="th" id={labelId} scope="row" align="left" padding="none">
+                          {row.id}
+                        </TableCell>
+
+                        <TableCell align="left">
+                          {row.id}
+                        </TableCell>
+
+                        <TableCell align="left">
+                          {row.id} {row.id}
+                        </TableCell>
+
+                        
+
+                        <TableCell align="left">{row.id}</TableCell>
+
+                        <TableCell align="left">{(row.id).toFixed(2)}</TableCell>
+
+                        <TableCell align="left">{(row.id).toFixed(2)}</TableCell>
+
+                        <TableCell align="left" style={{color: parseFloat(row.id) >= 0 ? 'green' : 'red'}}>
+                            {(row.id).toFixed(2)}
+                        </TableCell>
+
+                        <TableCell align="left">
+                            {row.id}
+                        </TableCell>
+
+                        <TableCell align="left">
+                            Full Name
+                        </TableCell>
+
+                        <TableCell align="left">
+                          
+                            <p className="text-success">Success</p> 
+                            
+                        </TableCell>
+
+                        
+                        <TableCell align="left">
+                            <Badge color="success" >
+                                <EditIcon color="" style={{color:'#0e3080'}} onClick={() => handleEditButtonClicked(row.id)}  />
+                                
+                            </Badge>
+                        </TableCell>
+                   
                   </TableRow>
                 );
               })}
@@ -335,13 +520,14 @@ export default function MerchantTable({headCells, rows, TableName}) {
                 <TableRow
                   style={{
                     height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
+                  }}>
+                  <TableCell align="right" style={{fontFamily: 'sedan', fontSize: '15px'}}><b>1</b></TableCell>
                 </TableRow>
               )}
+              
             </TableBody>
           </Table>
+
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
@@ -358,6 +544,8 @@ export default function MerchantTable({headCells, rows, TableName}) {
         label="Dense padding"
       />
     </Box>
+
+    </>
   );
 }
 
