@@ -29,7 +29,6 @@ function MerchantDetails({open}) {
             if (res.data.data) {
                 updateMerchantData(res.data.data)
                 setLoader(false) 
-                
             
             }
 
@@ -76,7 +75,7 @@ if (merchantData.length === 0) {
            TableName={TableName} 
            updateMerchantData={updateMerchantData}
            setOffset={setOffset}
-           fetchMerchantData={fetchMerchantData}
+        //    fetchMerchantData={fetchMerchantData}
            rerender={rerender}
            setRerender={setRerender}
            />

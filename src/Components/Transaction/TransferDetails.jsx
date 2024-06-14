@@ -60,7 +60,8 @@ export default function TransferTransactionDetail({ open }) {
     const [transactionStatus, updateTransactionStatus] = useState(initialFormData);
     const [statusValue, updateStatusValue]             = useState('')
     const [successMessage, SetSuccessMessage]          = useState('')
-    const [loader, setLoader]                          = useState(true)
+    const [loader, setLoader]                          = useState(true);
+    const [error, setError]                             = useState('');
 
 
     if (TransactionID) {
@@ -98,6 +99,10 @@ export default function TransferTransactionDetail({ open }) {
 
         }).catch((error)=> {
             console.log(error)
+
+            if (error.response.data.msg === 'Sender donot have sufficient balance in wallet'){
+              setError('Donot have sufficient wallet in Sender account')
+          }
 
         })
     };
@@ -224,6 +229,7 @@ export default function TransferTransactionDetail({ open }) {
                             <Button variant="primary" className="ms-3 w-25" onClick={handleTransactionStatusUpdate}>Update</Button>
 
                             {successMessage && <p className='text-success'>{successMessage}</p>}
+                            {error && <p className='text-danger'>{error}</p>}
                         </>
                          }
                         

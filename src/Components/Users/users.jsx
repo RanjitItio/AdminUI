@@ -105,19 +105,7 @@ useEffect(() => {
   }).catch((error)=> {
     console.log(error.response)
 
-    if (error.response.data.msg == 'Authentication Failed Please provide auth token') {
-        setError("Authentication Failed")
-
-    } else if (error.response.data.msg == 'Token has expired') {
-        setError("Session Expired please try to login")
-        
-    } else if (error.response.data.msg == 'Invalid token'){
-      setError("Invalid session please try to login")
-
-    } else if(error.response.data.msg == 'Authentication Failed please login') {
-      setError("Authentication Failed")
-
-    } else if (error.response.data.msg == 'Only admin can view all the KYC'){
+    if (error.response.data.msg == 'Only admin can view all the KYC'){
         setError("Only admin can view the Users kyc")
 
     } else if (error.response.data.msg == 'Unable to get Admin detail'){

@@ -256,7 +256,7 @@ EnhancedTableToolbar.propTypes = {
 
 
 
-export default function MerchantTable({headCells, rows, TableName, updateMerchantData, setOffset, fetchMerchantData, rerender, setRerender}) {
+export default function MerchantTable({headCells, TableName,rows, updateMerchantData, rerender, setRerender}) {
 
   const navigate = useNavigate();
 
@@ -266,6 +266,7 @@ export default function MerchantTable({headCells, rows, TableName, updateMerchan
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
+
 
 
   const handleRequestSort = (event, property) => {
@@ -313,8 +314,8 @@ export default function MerchantTable({headCells, rows, TableName, updateMerchan
     //   console.log(value)
       // const offset = value
       // setOffset(offset)
-      fetchMerchantData()
-      setRerender(true)
+      // fetchMerchantData()
+      // setRerender(true)
   };
 
   // const handleChangePage = (event, newPage) => {
@@ -364,6 +365,17 @@ export default function MerchantTable({headCells, rows, TableName, updateMerchan
 
     navigate('/admin/merchant/details/', {state: {merchant: merchant_detail, user: user_details, group: group_details, currency: currency_details}})
   }
+
+  // TO change the pagination of Table after page load
+  useEffect(()=> {
+    setTimeout(() => {
+      setRowsPerPage(25);
+      setPage(0);
+      // console.log('Changed')
+
+    }, 1000);
+
+  }, [])
 
   return (
     <Box sx={{ width: '100%' }}>
