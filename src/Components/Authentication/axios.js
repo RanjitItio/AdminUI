@@ -1,9 +1,15 @@
 import axios from 'axios';
 
 
+const IS_DEVELOPMENT = import.meta.env.VITE_IS_DEVELOPMENT;
+let baseURL = '';
 
-const baseURL = 'https://python-uat.oyefin.com/'
-// const baseURL = 'http://127.0.0.1:8000/'
+
+if (IS_DEVELOPMENT === 'True') {
+   baseURL = 'http://127.0.0.1:8000/'
+} else {
+    baseURL = 'https://python-uat.oyefin.com/'
+}
 
 
 
