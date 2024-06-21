@@ -24,7 +24,7 @@ import Withdrawls from '../Transaction/Withdrawl';
 import TransferDetails from '../Transaction/Transfer';
 import CurrencyExchange from '../Transaction/CurrencyExchange';
 import RequestPaymentDetails from '../Transaction/RequestPayment';
-import MerchantPaymentDetails from '../Transaction/MerchantPayment';
+import MerchantPaymentDetails from '../MerchantTransactions/merchantPayment.jsx';
 import CryptoSentDetails from  '../Transaction/CryptoSent';
 import CryptoReceivedDetails from '../Transaction/CryptoReceived';
 import Logout from '../Authentication/Logout';
@@ -48,6 +48,7 @@ import TicketUpdateForm from '../Ticket/TicketUpdate.jsx';
 import ActivityLogData from '../ActivityLog/ActivityLog.jsx';
 import TransferTransactionDetail from '../Transaction/TransferDetails.jsx';
 import MerchantProfile from '../Merchant/MerchantProfile.jsx';
+import MerchantPaymentUpdate from '../MerchantTransactions/paymentUpdate.jsx';
 
 
 
@@ -112,11 +113,12 @@ const AuthRoutes = () => {
                       <Routes>
                           <Route exact path='/' element={<Dashboard open={open} />}></Route>
                           <Route exact path="/admin/users/" element={<UsersData open={open} />} ></Route>
+                          <Route exact path="/admin/create-merchant/" element={<MerchantCreateForm open={open} />} ></Route>
                           <Route exact path="/admin/merchant/" element={<MerchantDetails open={open} />} ></Route>
                           <Route exact path="/admin/merchant/details/" element={<MerchantProfile open={open} />} ></Route>
+                          <Route exact path="/admin/merchant/payment/update/" element={<MerchantPaymentUpdate open={open} />} ></Route>
                           <Route exact path="/admin/admin-user/" element={<AdminDetails open={open} />} ></Route>
                           <Route exact path="/admin/create-user/" element={<UserCreateForm open={open} />} ></Route>
-                          <Route exact path="/admin/create-merchant/" element={<MerchantCreateForm open={open} />} ></Route>
                           <Route exact path="/admin/create-admin/" element={<AdminCreateForm open={open} />} ></Route>
                           <Route exact path="/admin/all-transaction/" element={<AllTransactionData open={open} />} ></Route>
                           <Route exact path="/admin/all-transaction/detial/" element={<AllTransactionDetail open={open} />} ></Route>

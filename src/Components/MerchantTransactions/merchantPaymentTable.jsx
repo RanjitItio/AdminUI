@@ -30,7 +30,11 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import MerchantPaymentEditModal from './MerchantPaymentEditModal';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import axiosInstance from '../Authentication/axios';
+// import MerchantPaymentEditModal from './MerchantPaymentEditModal';
 
 
 
@@ -58,10 +62,7 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
+
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -82,6 +83,7 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
+
 
   return (
     <TableHead>
@@ -214,31 +216,22 @@ function getStatusColor(status){
 
 
 
-export default function MerchantPaymentTable({headCells, rows, TableName , updateTransactionID, handleTransactionStatusUpdate, setStaus, status}) {
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [open, setOpen] = React.useState(false);
+export default function MerchantPaymentTable({headCells, rows, TableName, loadTable}) {
+//   Default States
+  const [order, setOrder]             = useState('asc');
+  const [orderBy, setOrderBy]         = useState('calories');
+  const [selected, setSelected]       = useState([]);
+  const [page, setPage]               = useState(0);
+  const [dense, setDense]             = useState(false);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
+//   Custom States 
+  const navigate = useNavigate();
+  const [dateFormat, setDateFormt] = useState('');
+  const [currency, setCurrency]    = useState('');
+  const [wStatus, setwStatus]      = useState('');
+  const [payMethod, setPaymethod]  = useState('');
 
-  const handleDepositEdit = () => {
-    setOpen(true);
-  };
-
-  // Close the Edit Modal
-  const handleWihdrawlEditClose = () => {
-    setOpen(false);
-  };
-
-
-  // Update the transaction id and send in API request
-  const handleWithdrawlTransactionID = (transaction)=> {
-      // updateTransactionID(transaction)
-      handleDepositEdit();
-   };
 
 
   const handleRequestSort = (event, property) => {
@@ -305,13 +298,6 @@ export default function MerchantPaymentTable({headCells, rows, TableName , updat
   );
 
 
-
-  const [dateFormat, setDateFormt] = React.useState('')
-  const [currency, setCurrency] = React.useState('');
-  const [wStatus, setwStatus] = React.useState('')
-  const [payMethod, setPaymethod] =  React.useState('');
-
-
   const handleDateFormatChange = (event)=> {
     setDateFormt(event.target.value)
   }
@@ -372,6 +358,24 @@ export default function MerchantPaymentTable({headCells, rows, TableName , updat
     {label: 'Last month', value: '10/02/2024'},
   ]
 
+   const handleEditIconClicked = (business_payments)=> {
+        navigate('/admin/merchant/payment/update/', {state: {payments: business_payments}})
+    }
+
+  // To change the pagination of table after page loads
+  useEffect(() => {
+
+    setTimeout(() => {
+      setRowsPerPage(25);
+      setPage(0);
+      // console.log('Changed')
+
+    }, 1000);
+
+  }, [])
+  
+
+    
 
   return (
     <>
@@ -421,7 +425,7 @@ export default function MerchantPaymentTable({headCells, rows, TableName , updat
       <Paper sx={{ mb: 2, marginTop: '30px', transition: 'width 20px' }} className='shadow-lg rounded border border-dark' >
         <EnhancedTableToolbar numSelected={selected.length} TableName={TableName} />
 
-        <TableContainer component={Paper} >
+        <TableContainer component={Paper}>
           <Table
             sx={{ minWidth: 200}}
             aria-labelledby="tableTitle"
@@ -437,72 +441,99 @@ export default function MerchantPaymentTable({headCells, rows, TableName , updat
               headCells={headCells}
             />
             <TableBody>
-              {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${index}`;
+            {loadTable ? (
+            <TableRow>
+              <TableCell colSpan={12} align="center">
+                <p>Wait</p>
+              </TableCell>
+            </TableRow>
+          ) : (
+            visibleRows.map((row, index) => {
+              const isItemSelected = isSelected(row.business_transaction.id);
+              const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    hover
-                    // onClick={(event) => handleClick(event, row.id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.id}
-                    selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId,
-                        }}
-                        onClick={(event) => handleClick(event, row.id)}
-                      />
-                    </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.id}
-                    </TableCell>
-                    <TableCell align="left" padding="none">{row.date}</TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="normal">
-                      {row.user}
-                    </TableCell>
-                    <TableCell align="left">{row.merchant}</TableCell>
-                    <TableCell align="left">{row.amount}</TableCell>
-                    <TableCell align="left">{row.fees}</TableCell>
-                    <TableCell align="left" style={{color: parseFloat(row.total) >= 0 ? 'green' : 'red'}}>
-                        {row.total}
-                    </TableCell>
-                    <TableCell align="left">{row.currency}</TableCell>
-                    <TableCell align="left">{row.payment_method}</TableCell>
-                    <TableCell align="left" style={{color: getStatusColor(row.status)}}>
-                        {row.status}
-                    </TableCell>
-                    <TableCell align="left">
-                        <Badge color="success" >
-                        <Tooltip title="Edit">
-                        <EditIcon color="" style={{color:'#0e3080'}} onClick={()=> handleWithdrawlTransactionID(row.id)} />
-
-                        </Tooltip>
-                        <Tooltip title="Delete">
-                            <DeleteIcon style={{color:'#b23344'}} />
-                        </Tooltip>
-                        </Badge>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-              {emptyRows > 0 && (
+              return (
                 <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
+                  hover
+                  onClick={(event) => handleClick(event, row.business_transaction.id)}
+                  role="checkbox"
+                  aria-checked={isItemSelected}
+                  tabIndex={-1}
+                  key={row.business_transaction.id}
+                  selected={isItemSelected}
+                  sx={{ cursor: 'pointer' }}
                 >
-                  <TableCell colSpan={6} />
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      color="primary"
+                      checked={isItemSelected}
+                      inputProps={{
+                        'aria-labelledby': labelId,
+                      }}
+                      onClick={(event) => handleClick(event, row.business_transaction.id)}
+                    />
+                  </TableCell>
+                  {/* Transaction ID */}
+                  <TableCell component="th" id={labelId} scope="row" padding="none" align='center'>
+                    {row.business_transaction.id}
+                  </TableCell>
+
+                  {/* Date */}
+                  <TableCell align="left" padding="none">{row.business_transaction.date}</TableCell>
+
+                  {/* User */}
+                  <TableCell component="th" id={labelId} scope="row" padding="normal">
+                    {row.business_transaction.user}
+                  </TableCell>
+
+                  {/* Merchant */}
+                  <TableCell align="left">{row.business_transaction.merchant}</TableCell>
+
+                  {/* Credited Amount */}
+                  <TableCell align="left">{row.business_transaction.amount}</TableCell>
+
+                  {/* Fees Deducted */}
+                  <TableCell align="left">{row.business_transaction.fee}</TableCell>
+
+                  {/* Total Amount */}
+                  <TableCell align="left" style={{ color: parseFloat(row.business_transaction.total_amount) >= 0 ? 'green' : 'red' }}>
+                    {row.business_transaction.total_amount}
+                  </TableCell>
+
+                  {/* Currency */}
+                  <TableCell align="left">{row.business_transaction.currency}</TableCell>
+
+                  {/* Payment Method */}
+                  <TableCell align="left">{row.business_transaction.pay_mode}</TableCell>
+
+                  {/* Status */}
+                  <TableCell align="left" style={{ color: getStatusColor(row.business_transaction.status) }}>
+                    {row.business_transaction.status}
+                  </TableCell>
+
+                  <TableCell align="left">
+                    <Badge color="success">
+                      <Tooltip title="Edit">
+                        <EditIcon style={{ color: '#0e3080' }} onClick={() => { handleEditIconClicked(row.business_transaction) }} />
+                      </Tooltip>
+                      {/* <Tooltip title="Delete">
+                          <DeleteIcon style={{ color: '#b23344' }} />
+                        </Tooltip> */}
+                    </Badge>
+                  </TableCell>
                 </TableRow>
-              )}
+              );
+            })
+          )}
+          {emptyRows > 0 && (
+            <TableRow
+              style={{
+                height: (dense ? 33 : 53) * emptyRows,
+              }}
+            >
+              <TableCell colSpan={12} />
+            </TableRow>
+          )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -520,7 +551,7 @@ export default function MerchantPaymentTable({headCells, rows, TableName , updat
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
       />
-    <MerchantPaymentEditModal open={open} handleClose={handleWihdrawlEditClose} handleTransactionStatusUpdate={handleTransactionStatusUpdate} setStaus={setStaus} status={status} />
+    {/* <MerchantPaymentEditModal open={open} handleClose={handleWihdrawlEditClose} handleTransactionStatusUpdate={handleTransactionStatusUpdate} setStaus={setStaus} status={status} /> */}
 
     </Box>
     </>
