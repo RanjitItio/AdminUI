@@ -110,6 +110,8 @@ export default function MerchantPaymentUpdate({ open }) {
 
                             <p><b>Payment Method</b> : {business_payments.pay_mode}</p>
 
+                            <p><b>Order ID</b> : {business_payments.order_id}</p>
+
                             <p><b>Date</b> : {business_payments.date}</p>
 
                             {/* Transaction Status */}
