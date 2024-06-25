@@ -37,6 +37,7 @@ import KeyboardDoubleArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardDou
 import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
 import FingerprintOutlinedIcon from '@mui/icons-material/FingerprintOutlined';
 import GoogleIcon from '@mui/icons-material/Google';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 
 
@@ -52,20 +53,21 @@ const NavContent = [
 },
 
   { text: 'Users', subItems: [
-    {text:'-Users', icon: <Person2OutlinedIcon />, url: '/admin/users/'},
-    {text: '-Merchants', icon: <StorefrontOutlinedIcon />, url: '/admin/merchant/'}, 
+    {text:'Users', icon: <Person2OutlinedIcon />, url: '/admin/users/'},
+    {text: 'Merchants', icon: <StorefrontOutlinedIcon />, url: '/admin/merchant/'}, 
+    {text: 'Bank Accounts', icon: <AccountBalanceIcon />, url: '/admin/merchant/bank/account/'}, 
     {text: '-Admins', icon: <SupervisorAccountOutlinedIcon />, url: '/admin/admin-user/'}, 
   ],
   icon: <AccountCircleOutlinedIcon />},
 
   { text: 'Transactions', subItems: [
-    {text: '+All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all-transaction/'},
+    {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all-transaction/'},
     {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
     {text: '-Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
-    {text: '-Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
+    {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
     {text: '-Currency Exchange', icon: <PaymentsOutlinedIcon />, url: '/admin/exchanges/'},
     {text: '-Request Payments', icon: <CalculateOutlinedIcon />, url: '/admin/request-payments/'},
-    {text: '-Merchant Payment', icon: <PaymentsOutlinedIcon />, url: '/admin/merchant-payments/'},
+    {text: 'Merchant Payment', icon: <PaymentsOutlinedIcon />, url: '/admin/merchant-payments/'},
     {text: '-Crypto Sent', icon: <KeyboardDoubleArrowRightOutlinedIcon />, url: '/admin/crypto-sent-transactions/'},
     {text: '-Crypto Received', icon: <KeyboardDoubleArrowLeftOutlinedIcon />, url: "/admin/crypto-received-transactions"},
   ],

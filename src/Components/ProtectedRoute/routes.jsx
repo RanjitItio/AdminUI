@@ -49,6 +49,7 @@ import ActivityLogData from '../ActivityLog/ActivityLog.jsx';
 import TransferTransactionDetail from '../Transaction/TransferDetails.jsx';
 import MerchantProfile from '../Merchant/MerchantProfile.jsx';
 import MerchantPaymentUpdate from '../MerchantTransactions/paymentUpdate.jsx';
+import MerchantBankDetail from '../Users/Bank/BankDetails.jsx';
 
 
 
@@ -117,6 +118,9 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/merchant/" element={<MerchantDetails open={open} />} ></Route>
                           <Route exact path="/admin/merchant/details/" element={<MerchantProfile open={open} />} ></Route>
                           <Route exact path="/admin/merchant/payment/update/" element={<MerchantPaymentUpdate open={open} />} ></Route>
+                          <Route exact path="/admin/merchant/payment/detail/" element={<MerchantBankDetail open={open} />} ></Route>
+                          {/* <Route exact path="/admin/merchant/bank/account/" element={<MerchantBankAccounts open={open} />} ></Route> */}
+                          <Route exact path="/admin/merchant-payments/" element={<MerchantPaymentDetails open={open} />} ></Route>
                           <Route exact path="/admin/admin-user/" element={<AdminDetails open={open} />} ></Route>
                           <Route exact path="/admin/create-user/" element={<UserCreateForm open={open} />} ></Route>
                           <Route exact path="/admin/create-admin/" element={<AdminCreateForm open={open} />} ></Route>
@@ -128,7 +132,6 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/transfers/details/" element={<TransferTransactionDetail open={open} />} ></Route>
                           <Route exact path="/admin/exchanges/" element={<CurrencyExchange open={open} />} ></Route>
                           <Route exact path="/admin/request-payments/" element={<RequestPaymentDetails open={open} />} ></Route>
-                          <Route exact path="/admin/merchant-payments/" element={<MerchantPaymentDetails open={open} />} ></Route>
                           <Route exact path="/admin/crypto-sent-transactions/" element={<CryptoSentDetails open={open} />} ></Route>
                           <Route exact path="/admin/crypto-received-transactions/" element={<CryptoReceivedDetails open={open} />} ></Route>
                           <Route exact path="/admin/deposits/update/" element={<DepositUpdate open={open} />} ></Route>

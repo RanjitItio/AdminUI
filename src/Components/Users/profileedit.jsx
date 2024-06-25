@@ -6,17 +6,25 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import { Main, DrawerHeader } from "../Content"
-import TicketTable from "./UsersTecketTable"
-import WalletTable from './UserWalletsTable';
 import TransactionTable from './UsersTransactionTable';
 import DisputeTable from './UserDisputesTable'
 import Modal from 'react-bootstrap/Modal';
 import UserDeposit from './UserDeposit';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../Authentication/axios';
-// import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
+import TicketTable from "./UsersTecketTable"
+import WalletTable from './UserWalletsTable';
+import MerchantBankAccountsTable from './Bank/MerchantBankTable';
+import MerchantBankColumn from './Bank/Column';
+import { MerchantBankAccountTableName } from './Bank/Column';
+import { TicketTableName, TicketTableColumns, WalletTableColumns, 
+    TransactionTableColumns, DisputeTableColumn, WalletsTableName,
+    TransactionTableName, DisputeTableName
+ } from './Columns';
+
+
 
 
 
@@ -128,7 +136,6 @@ const Profile = ({ open }) => {
     }, [])
 
 
-    
 const handleKYCStatusUpdate = ()=> {
     // value = event.target.value;
 
@@ -250,208 +257,9 @@ const handleKYCStatusUpdate = ()=> {
       };
     }
 
-    
-
-
-    const TicketTableHead = [
-        {
-            id: "date",
-            numeric: false,
-            disablePadding: true,
-            label: "Date",
-        },
-        {
-            id: "subject",
-            numeric: false,
-            disablePadding: false,
-            label: "Subject",
-        },
-        {
-            id: "status",
-            numeric: false,
-            disablePadding: true,
-            label: "Status",
-        },
-        {
-            id: "priority",
-            numeric: false,
-            disablePadding: false,
-            label: "Priority",
-        },
-
-        {
-            id: "lastreply",
-            numeric: false,
-            disablePadding: false,
-            label: "Last Reply",
-        },
-
-        {
-            id: "action",
-            numeric: false,
-            disablePadding: false,
-            label: "Action",
-        },
-
-
-    ];
-
-    const WalletTableHead = [
-        {
-            id: "ID",
-            numeric: false,
-            disablePadding: true,
-            label: "ID",
-        },
-        {
-            id: "Date Created",
-            numeric: false,
-            disablePadding: false,
-            label: "Date Created",
-        },
-        {
-            id: "Currency",
-            numeric: false,
-            disablePadding: true,
-            label: "Currency",
-        },
-        {
-            id: "Balance",
-            numeric: false,
-            disablePadding: false,
-            label: "Balance",
-        },
-        {
-            id: "Status",
-            numeric: false,
-            disablePadding: false,
-            label: "Status",
-        },
-
-
-    ];
-
-    const TransactionTableHead = [
-        {
-            id: "Transaction ID",
-            numeric: false,
-            disablePadding: true,
-            label: "Transaction ID",
-        },
-        {
-            id: "date",
-            numeric: false,
-            disablePadding: true,
-            label: "Date",
-        },
-        {
-            id: "Sender",
-            numeric: false,
-            disablePadding: false,
-            label: "Sender",
-        },
-        {
-            id: "Type",
-            numeric: false,
-            disablePadding: true,
-            label: "Type",
-        },
-        {
-            id: "Amount",
-            numeric: false,
-            disablePadding: false,
-            label: "amount",
-        },
-        {
-            id: "fees",
-            numeric: false,
-            disablePadding: false,
-            label: "Fees",
-        },
-        {
-            id: "Total Amount",
-            numeric: false,
-            disablePadding: false,
-            label: "Total Amount",
-        },
-        {
-            id: "currency",
-            numeric: false,
-            disablePadding: false,
-            label: "Currency",
-        },
-        {
-            id: "receiver",
-            numeric: false,
-            disablePadding: false,
-            label: "Receiver",
-        },
-        {
-            id: "status",
-            numeric: false,
-            disablePadding: false,
-            label: "Status",
-        },
-        {
-            id: "action",
-            numeric: false,
-            disablePadding: false,
-            label: "Action",
-        },
-
-    ];
-    const DisputeTableHead = [
-        {
-            id: "date",
-            numeric: false,
-            disablePadding: true,
-            label: "Date",
-        },
-        {
-            id: "dispute_id",
-            numeric: false,
-            disablePadding: false,
-            label: "Disputes",
-        },
-        {
-            id: "title",
-            numeric: false,
-            disablePadding: true,
-            label: "Title",
-        },
-        {
-            id: "claimant",
-            numeric: false,
-            disablePadding: false,
-            label: "Claimant",
-        },
-        {
-            id: "transaction_id",
-            numeric: false,
-            disablePadding: false,
-            label: "Transaction ID",
-        },
-
-        {
-            id: "status",
-            numeric: false,
-            disablePadding: false,
-            label: "Status",
-        },
-
-
-    ];
-
-    const TicketTableName = "Tickets"
-    const WalletsTableName = " Wallets"
-    const TransactionTableName = "Transactions"
-    const DisputeTableName = "Dispute"
-
-
-    // Sample data for the table
-
-    const ticketData = [];
-    const DisputeData = [];
+// Sample data for the table
+const ticketData = [];
+const DisputeData = [];
 
 // console.log(kycDetail.status)
 
@@ -532,6 +340,7 @@ if (userDetails === undefined) {
 
 
     return (
+        <>
         <Main open={open}>
             <DrawerHeader />
 
@@ -567,23 +376,37 @@ if (userDetails === undefined) {
                 <Row className="my-3">
                     <Col>
                         <Nav variant="tabs" activeKey={activeTab} onSelect={setActiveTab}>
+
+                            {/* Profile */}
                             <Nav.Item>
                                 <Nav.Link eventKey="profile">Profile</Nav.Link>
                             </Nav.Item>
 
+                            {/* Transactions */}
                             <Nav.Item>
                                 <Nav.Link eventKey="transactions" onClick={handleUserTransactions}>Transactions</Nav.Link>
                             </Nav.Item>
 
+                            {/* Wallets */}
                             <Nav.Item>
                                 <Nav.Link eventKey="wallets" onClick={handleUserWallets}>Wallets</Nav.Link>
                             </Nav.Item>
+
+                            {/* Bank Accounts */}
+                            <Nav.Item>
+                                <Nav.Link eventKey="accounts">Bank Accounts</Nav.Link>
+                            </Nav.Item>
+
+                            {/* Tickets */}
                             <Nav.Item>
                                 <Nav.Link eventKey="tickets">Tickets</Nav.Link>
                             </Nav.Item>
+
+                            {/* Disputes */}
                             <Nav.Item>
                                 <Nav.Link eventKey="disputes">Disputes</Nav.Link>
                             </Nav.Item>
+
                         </Nav>
                     </Col>
                 </Row>
@@ -656,55 +479,116 @@ if (userDetails === undefined) {
 
                                         <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
-                                                <TextField label="Email" variant="outlined" fullWidth type="email" name='email' value={kycDetail.email}/>
+                                                <TextField 
+                                                     label="Email" 
+                                                     variant="outlined" 
+                                                     fullWidth 
+                                                     type="email" 
+                                                     name='email' 
+                                                     value={kycDetail.email}
+                                                     />
                                             </Form.Group>
                                         </Grid>
 
                                         <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
-                                                <TextField label="DOB" name='dob' value={kycDetail ? kycDetail.dob : 'NA'} variant="outlined" fullWidth onChange={handleProfileChange} />
+                                                <TextField 
+                                                      label="DOB" 
+                                                      name='dob' 
+                                                      value={kycDetail ? kycDetail.dob : 'NA'} 
+                                                      variant="outlined" 
+                                                      fullWidth 
+                                                      onChange={handleProfileChange} 
+                                                      />
                                             </Form.Group>
                                         </Grid>
                                         
                                         <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
-                                                <TextField label="Gender" name='gender' value={Kycdetails ? Kycdetails.gander : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                                <TextField 
+                                                     label="Gender" 
+                                                     name='gender' 
+                                                     value={Kycdetails ? Kycdetails.gander : 'NA'} 
+                                                     variant="outlined"  fullWidth onChange={handleProfileChange} 
+                                                     />
                                             </Form.Group>
                                         </Grid>
 
                                         <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
-                                                <TextField label="state" name='state' value={Kycdetails ? kycDetail.state : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                                <TextField 
+                                                      label="state" 
+                                                      name='state' 
+                                                      value={Kycdetails ? kycDetail.state : 'NA'} 
+                                                      variant="outlined"  
+                                                      fullWidth 
+                                                      onChange={handleProfileChange} 
+                                                      />
                                             </Form.Group>
                                         </Grid>
 
                                         <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
-                                                <TextField label="city" name='city' value={Kycdetails ? kycDetail.city : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                                <TextField 
+                                                    label="city" 
+                                                    name='city' 
+                                                    value={Kycdetails ? kycDetail.city : 'NA'} 
+                                                    variant="outlined"  
+                                                    fullWidth 
+                                                    onChange={handleProfileChange} 
+                                                     />
                                             </Form.Group>
                                         </Grid>
 
                                         <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
-                                                <TextField label="landmark" name='landmark' value={Kycdetails ? kycDetail.landmark : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                                <TextField 
+                                                    label="landmark" 
+                                                    name='landmark' 
+                                                    value={Kycdetails ? kycDetail.landmark : 'NA'} 
+                                                    variant="outlined"  
+                                                    fullWidth 
+                                                    onChange={handleProfileChange} 
+                                                    />
                                             </Form.Group>
                                         </Grid>
 
                                         <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
-                                                <TextField label="address" name='address' value={Kycdetails ? kycDetail.address : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                                <TextField 
+                                                    label="address" 
+                                                    name='address' 
+                                                    value={Kycdetails ? kycDetail.address : 'NA'} 
+                                                    variant="outlined"  
+                                                    fullWidth 
+                                                    onChange={handleProfileChange} 
+                                                    />
                                             </Form.Group>
                                         </Grid>
 
                                         <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
-                                                <TextField label="ID Type" name='id_type' value={Kycdetails ? Kycdetails.id_type : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                                <TextField 
+                                                    label="ID Type" 
+                                                    name='id_type' 
+                                                    value={Kycdetails ? Kycdetails.id_type : 'NA'} 
+                                                    variant="outlined"  
+                                                    fullWidth 
+                                                    onChange={handleProfileChange} 
+                                                    />
                                             </Form.Group>
                                         </Grid>
 
                                         <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
-                                                <TextField label="ID Number" name='id_number' value={Kycdetails ? Kycdetails.id_number : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
+                                                <TextField 
+                                                    label="ID Number" 
+                                                    name='id_number' 
+                                                    value={Kycdetails ? Kycdetails.id_number : 'NA'} 
+                                                    variant="outlined"  
+                                                    fullWidth 
+                                                    onChange={handleProfileChange} 
+                                                    />
                                             </Form.Group>
                                         </Grid>
 
@@ -786,25 +670,36 @@ if (userDetails === undefined) {
                 )}
 
                 {activeTab === 'wallets' && (
-                    <WalletTable headCells={WalletTableHead} TableName={WalletsTableName} rows={userWallet} />
+                    <WalletTable headCells={WalletTableColumns} TableName={WalletsTableName} rows={userWallet} />
 
                 )}
                 {activeTab === 'tickets' && (
                     <>
 
-                    <TicketTable headCells={TicketTableHead} TableName={TicketTableName} rows={ticketData} />
+                    <TicketTable headCells={TicketTableColumns} TableName={TicketTableName} rows={ticketData} />
                     </>
 
                 )}
                 {activeTab === 'transactions' && (
-                    <TransactionTable headCells={TransactionTableHead} TableName={TransactionTableName} rows={userTransactions}  userID={Kycdetails.user_id} updateUserTransactions={updateUserTransactions} />
+                    <TransactionTable headCells={TransactionTableColumns} TableName={TransactionTableName} rows={userTransactions}  userID={Kycdetails.user_id} updateUserTransactions={updateUserTransactions} />
                 )}
                 {activeTab === 'disputes' && (
-                    <DisputeTable headCells={DisputeTableHead} TableName={DisputeTableName} rows={DisputeData} />
+                    <DisputeTable headCells={DisputeTableColumn} TableName={DisputeTableName} rows={DisputeData} />
                 )}
+
+                {activeTab === 'accounts' && (
+                    <MerchantBankAccountsTable 
+                              headCells={MerchantBankColumn} 
+                              TableName={MerchantBankAccountTableName} 
+                              rows={DisputeData} 
+                              userID={Kycdetails.user_id}
+                              />
+                )}
+
             </Container>
         </Main>
 
+        </>
     );
 };
 
