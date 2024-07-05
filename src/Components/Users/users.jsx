@@ -94,10 +94,9 @@ const TableName = "Users KYC Detail"
 
 useEffect(() => {
    axiosInstance.get(`api/v1/user/kyc/`).then((res)=> {
-    // console.log(res.data.all_Kyc)
 
     if(res.data && res.data.all_Kyc) {
-        // const sortedData = res.data.all_Kyc.reverse()
+
         updateKycData(res.data.all_Kyc)
         // console.log(res.data.all_Kyc)
     }
@@ -130,63 +129,6 @@ useEffect(() => {
   })
   }, [])
 
-
-
-// const handleKYCStatusUpdate = ()=> {
-//     // value = event.target.value;
-
-//     axiosInstance.put(`api/v1/user/kyc/`, {
-//       status: status,
-//       kyc_id: kycID 
-
-//     }).then((res)=> {
-//       console.log(res)
-
-//     }).catch((error)=> {
-//       console.log(error.response)
-
-//     if (error.response.data.msg == 'Authentication Failed Please provide auth token') {
-//         setError("Authentication Failed")
-
-//     } else if (error.response.data.msg == 'Token has expired') {
-//         setError("Session Expired please try to login")
-        
-//     } else if (error.response.data.msg == 'Invalid token'){
-//       setError("Invalid session please try to login")
-
-//     } else if (error.response.data.msg == 'Only Admin can update the Kyc'){
-//       setError("Only admin can view the Users kyc")
-
-//     } else if (error.response.data.msg == 'Authentication Failed'){
-//         setError("Authentication Failed")
-
-//     } else if (error.response.data.msg == 'Unable to get Admin detail'){
-//         setError("Admin details not found")
-
-//     } else if (error.response.data.msg == 'Unable to locate kyc'){
-//         setError("Unknowc kyc error")
-
-//     } else if (error.response.data.msg == 'Error while fetching user detail'){
-//         setError("Unknow user detail error")
-
-//     } else if (error.response.data.msg == 'Error while updating KYC details'){
-//         setError("Unknow kyc update error")
-
-//     } else if (error.response.data.msg == 'Kyc not found'){
-//         setError("Kyc detail not found")
-
-//     } else if (error.response.data.msg == 'Error while updating the user'){
-//         setError("Unknown user error")
-
-//     } else if (error.response.data.msg == 'Server error'){
-//         setError("Server error")
-        
-//     } else {
-//       setError("")
-//     }
-
-//     })
-// };
 
 
 

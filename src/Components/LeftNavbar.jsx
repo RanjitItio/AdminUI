@@ -37,7 +37,8 @@ import KeyboardDoubleArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardDou
 import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
 import FingerprintOutlinedIcon from '@mui/icons-material/FingerprintOutlined';
 import GoogleIcon from '@mui/icons-material/Google';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import ContactlessIcon from '@mui/icons-material/Contactless';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 
 
@@ -54,11 +55,17 @@ const NavContent = [
 
   { text: 'Users', subItems: [
     {text:'Users', icon: <Person2OutlinedIcon />, url: '/admin/users/'},
-    {text: 'Merchants', icon: <StorefrontOutlinedIcon />, url: '/admin/merchant/'}, 
-    {text: 'Bank Accounts', icon: <AccountBalanceIcon />, url: '/admin/merchant/bank/account/'}, 
+    {text: 'Businesses', icon: <StorefrontOutlinedIcon />, url: '/admin/merchant/'},  
     {text: '-Admins', icon: <SupervisorAccountOutlinedIcon />, url: '/admin/admin-user/'}, 
   ],
   icon: <AccountCircleOutlinedIcon />},
+
+  { text: 'Pipe', subItems: [
+    {text:'All Pipes', icon: <ContactlessIcon />, url: '/admin/pipes/'},
+    {text: 'Pipe Settings', icon: <SettingsIcon />, url: '/admin/pipes/'},  
+  ],
+  icon: <ContactlessIcon />},
+
 
   { text: 'Transactions', subItems: [
     {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all-transaction/'},
@@ -119,13 +126,13 @@ export default function LeftNavbar({handleDrawerClose, open}) {
   const theme = useTheme();
   const [dropDown, setDropdown] = React.useState({});
 
-
   const handleClick = (index) => {
     setDropdown(prevOpen => ({ ...prevOpen, [index]: !prevOpen[index] }));
   };
 
   return(
     <>
+
     <Drawer
         sx={{
           width: drawerWidth,

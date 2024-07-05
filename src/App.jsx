@@ -1,21 +1,21 @@
-import { useEffect } from "react";
 import AuthProvider from "./Components/ProtectedRoute/authProvider";
 import AuthRoutes from "./Components/ProtectedRoute/routes";
 
 
 
 
-
 function App() {
-  
-  
+
 
   return (  
-        <AuthProvider>
-            <AuthRoutes />
-        </AuthProvider>
-  )
-}
+
+    
+    <AuthProvider>
+          <AuthRoutes />
+      </AuthProvider>
+       
+  );
+};
 
 
 

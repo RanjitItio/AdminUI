@@ -1,8 +1,20 @@
-import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
+import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
+import SaveIcon from '@mui/icons-material/Save';
+import PrintIcon from '@mui/icons-material/Print';
+import ShareIcon from '@mui/icons-material/Share';
+
 
 
 const drawerWidth = 240;
+
+
+
 
 
 
@@ -39,9 +51,11 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
 
 
 export default function ContentArea({open}) {
+
+
     return(
         <>
-        
+
         <Main open={open}>
         <DrawerHeader />
        

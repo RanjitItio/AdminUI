@@ -192,6 +192,67 @@ export const DisputeTableColumn = [
 
 ];
 
+export const PipeTableColumns = [
+    {
+        id: "gateway_id",
+        numeric: false,
+        disablePadding: true,
+        label: "Gateway ID",
+    },
+    {
+        id: "merchant",
+        numeric: false,
+        disablePadding: false,
+        label: "Merchant",
+    },
+    {
+        id: "pipe_name",
+        numeric: false,
+        disablePadding: false,
+        label: "Pipe Name",
+    },
+    {
+        id: "date_created",
+        numeric: false,
+        disablePadding: true,
+        label: "Date Created",
+    },
+    {
+        id: "mode",
+        numeric: false,
+        disablePadding: false,
+        label: "Mode",
+    },
+    {
+        id: "currency",
+        numeric: false,
+        disablePadding: false,
+        label: "Currency",
+    },
+    {
+        id: "fee",
+        numeric: false,
+        disablePadding: false,
+        label: "Fee%",
+    },
+
+    {
+        id: "status",
+        numeric: false,
+        disablePadding: false,
+        label: "Status",
+    },
+
+    {
+        id: "action",
+        numeric: false,
+        disablePadding: false,
+        label: "Action",
+    },
+
+
+];
+
 
 
 
@@ -199,4 +260,5 @@ export const TicketTableName = "Tickets"
 export const WalletsTableName = " Wallets"
 export const TransactionTableName = "Transactions"
 export const DisputeTableName = "Dispute"
+export const PipetableName = "Pipes"
 

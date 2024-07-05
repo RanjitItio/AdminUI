@@ -50,6 +50,9 @@ import TransferTransactionDetail from '../Transaction/TransferDetails.jsx';
 import MerchantProfile from '../Merchant/MerchantProfile.jsx';
 import MerchantPaymentUpdate from '../MerchantTransactions/paymentUpdate.jsx';
 import MerchantBankDetail from '../Users/Bank/BankDetails.jsx';
+import Allpipe from '../Pipe/Allpipe.jsx';
+import AddNewPipe from '../Pipe/AddPipe.jsx';
+import UpdatePipe from '../Pipe/updatePipe.jsx';
 
 
 
@@ -152,7 +155,12 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/dispute/" element={<Dispute open={open} />} ></Route>
                           <Route exact path="/admin/dispute/discussion/" element={<DisputeDiscussion open={open} />} ></Route>
                           <Route exact path="/admin/activitylogs/" element={<ActivityLogData open={open} />} ></Route>
-                          
+
+                          {/* Pipe Paths */}
+                          <Route exact path="/admin/pipes/" element={<Allpipe open={open} />} ></Route>
+                          <Route exact path="/admin/add/pipe/" element={<AddNewPipe open={open} />} ></Route>
+                          <Route exact path="/admin/update/pipe/" element={<UpdatePipe open={open} />} ></Route>
+
                       </Routes>
                     </Box>
                   }></Route>

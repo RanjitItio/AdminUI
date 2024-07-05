@@ -21,8 +21,9 @@ import MerchantBankColumn from './Bank/Column';
 import { MerchantBankAccountTableName } from './Bank/Column';
 import { TicketTableName, TicketTableColumns, WalletTableColumns, 
     TransactionTableColumns, DisputeTableColumn, WalletsTableName,
-    TransactionTableName, DisputeTableName
+    TransactionTableName, DisputeTableName, PipetableName, PipeTableColumns
  } from './Columns';
+ import UserPipeTable from './pipe/pipeTable';
 
 
 
@@ -299,7 +300,7 @@ const handleUserWallets = () => {
         user_id: Kycdetails.user_id,
 
       }).then((res) => {
-        console.log(res.data.user_wallet_data)
+        // console.log(res.data.user_wallet_data)
         const SortedWallet = res.data.user_wallet_data
         updateUserWallet(SortedWallet)
 
@@ -397,6 +398,11 @@ if (userDetails === undefined) {
                                 <Nav.Link eventKey="accounts">Bank Accounts</Nav.Link>
                             </Nav.Item>
 
+                            {/* Assign pipes */}
+                            <Nav.Item>
+                                <Nav.Link eventKey="pipes">Pipes</Nav.Link>
+                            </Nav.Item>
+
                             {/* Tickets */}
                             <Nav.Item>
                                 <Nav.Link eventKey="tickets">Tickets</Nav.Link>
@@ -416,13 +422,6 @@ if (userDetails === undefined) {
                             <Row className="">
                                 <Col className="d-flex align-items-center justify-content-between mb-3">
                                     <h3>{kycDetail ? Kycdetails.firstname : 'NA'} {kycDetail ? Kycdetails.lastname : 'NA'} 
-                                    {/* {userDetails ? (
-                                        userDetails.active === true ? 
-                                            (<span className="badge bg-success">Active</span>) :
-                                            (<span className="badge bg-danger">Inactive</span>)
-                                    ) : (
-                                        <></>
-                                    )} */}
                                     
                                     </h3>
                                     <div>
@@ -685,6 +684,15 @@ if (userDetails === undefined) {
                 )}
                 {activeTab === 'disputes' && (
                     <DisputeTable headCells={DisputeTableColumn} TableName={DisputeTableName} rows={DisputeData} />
+                )}
+
+                {activeTab === 'pipes' && (
+                    <UserPipeTable 
+                           headCells={PipeTableColumns} 
+                           TableName={PipetableName} 
+                           rows={DisputeData} 
+                           userID={Kycdetails.user_id}
+                           />
                 )}
 
                 {activeTab === 'accounts' && (
