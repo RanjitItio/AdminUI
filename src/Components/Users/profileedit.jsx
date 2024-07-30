@@ -137,6 +137,7 @@ const Profile = ({ open }) => {
     }, [])
 
 
+// Method to update user Kyc details
 const handleKYCStatusUpdate = ()=> {
     // value = event.target.value;
 
@@ -152,10 +153,12 @@ const handleKYCStatusUpdate = ()=> {
     } else if (kycDetail.mobile_number === '') {
         setError("Please fill up the Mobile Number")
 
-    } else if (kycDetail.email === '') {
+    } 
+    else if (kycDetail.email === '') {
         setError("Please fill up the Email ID")
 
-    } else if (kycDetail.dob === '') {
+    } 
+    else if (kycDetail.dob === '') {
         setError("Please fill up User DOB")
 
     } else if (kycDetail.gender === '') {
@@ -253,10 +256,10 @@ const handleKYCStatusUpdate = ()=> {
           else {
             setError("")
           }
-      
+
           })
       };
-    }
+    };
 
 // Sample data for the table
 const ticketData = [];

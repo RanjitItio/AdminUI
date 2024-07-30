@@ -111,9 +111,10 @@ function AllTransactionData({open}) {
   ];
 
 
-  
+
+
 useEffect(() => {
-  axiosInstance.get(`api/v4/transactions/`).then((res)=> {
+   axiosInstance.get(`api/v4/transactions/`).then((res)=> {
 
     // console.log(allTransactionData)
     if(res.data && res.data.data) {
@@ -187,16 +188,17 @@ const TableName = "Transaction Detail"
             <Alert severity="warning">{error}</Alert>
           </Stack>
         ) : (
+          
           <AllTransactionTable 
-                 headCells={headCells} 
-                 rows={allTransactionData} 
-                 TableName={TableName} 
-                 updateTransactionID={updateAllTransactionID}
-                 handleTransactionStatusUpdate={handleTransactionStatusUpdate}
-                 setStaus={setStaus}
-                 status={status}
-                 updateAllTransactionData={updateAllTransactionData}
-                 />
+              headCells={headCells} 
+              rows={allTransactionData} 
+              TableName={TableName} 
+              updateTransactionID={updateAllTransactionID}
+              handleTransactionStatusUpdate={handleTransactionStatusUpdate}
+              setStaus={setStaus}
+              status={status}
+              updateAllTransactionData={updateAllTransactionData}
+              />
         )}
     </Main>
     </>

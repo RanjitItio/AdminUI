@@ -1,7 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
+import {Box, Grid} from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -88,7 +88,7 @@ function EnhancedTableHead(props) {
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
-          <Checkbox
+          {/* <Checkbox
             color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
@@ -96,7 +96,7 @@ function EnhancedTableHead(props) {
             inputProps={{
               'aria-label': 'select all desserts',
             }}
-          />
+          /> */}
         </TableCell>
         {props.headCells.map((headCell) => (
           <TableCell key={headCell.id} align={headCell.numeric ? 'right' : 'left'} padding={headCell.disablePadding ? 'none' : 'normal'} sortDirection={orderBy === headCell.id ? order : false}>
@@ -303,9 +303,6 @@ export default function AllTransactionTable({headCells, rows, TableName , handle
   const [payMethod, setPaymethod]               = useState('');
 
 
-  const handleAllTransectionEdit = () => {
-    setOpen(true);
-  };
 
   // Close the Edit Modal
   const handleAllTransectionEditClose = () => {
@@ -634,86 +631,125 @@ export default function AllTransactionTable({headCells, rows, TableName , handle
   return (
     <>
     <Box sx={{ width: '100%' }}>
-    <Paper sx={{ width: '100%', height: '90px', mb: 2 }}>
-            <FormControl sx={{minWidth: 170, marginTop: '14px', marginLeft: '10px'}} >
+        <Paper sx={{ width: '100%', height: 'auto', mb: 2, p: 2 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={2} lg={2}>
+              <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-helper-label">Pick a date range</InputLabel>
-                <Select 
-                     labelId="demo-simple-select-label" 
-                     id="demo-simple-select" 
-                     value={dateFormat} 
-                     label="DateFormat" 
-                     onChange={handleDateFormatChange}
-                     >
-                    {dateFormats.map((format, index)=> (
-                        <MenuItem key={index} value={format.value}>{format.label}</MenuItem>
-                    ))}
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={dateFormat}
+                  label="DateFormat"
+                  onChange={handleDateFormatChange}
+                >
+                  {dateFormats.map((format, index) => (
+                    <MenuItem key={index} value={format.value}>
+                      {format.label}
+                    </MenuItem>
+                  ))}
                 </Select>
-            </FormControl>
+              </FormControl>
+            </Grid>
 
-            <FormControl sx={{minWidth: 120, marginTop: '14px', marginLeft: '10px'}} >
+            <Grid item xs={12} sm={6} md={2} lg={2}>
+              <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-helper-label">Currency</InputLabel>
-                <Select 
-                     labelId="demo-simple-select-label" 
-                     id="demo-simple-select" 
-                     name='currency' 
-                     value={selectedCurrency} 
-                     label="Currency" 
-                     onChange={(event)=> {handleCurrencyChange(event); handleFilterChange(event); }}
-                     >
-                    {currencies.map((cur, index)=> (
-                        <MenuItem key={index} value={cur.name}>{cur.name}</MenuItem>
-                    ))}
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name="currency"
+                  value={selectedCurrency}
+                  label="Currency"
+                  onChange={(event) => {
+                    handleCurrencyChange(event);
+                    handleFilterChange(event);
+                  }}
+                >
+                  {currencies.map((cur, index) => (
+                    <MenuItem key={index} value={cur.name}>
+                      {cur.name}
+                    </MenuItem>
+                  ))}
                 </Select>
-            </FormControl>
+              </FormControl>
+            </Grid>
 
-            <FormControl sx={{minWidth: 120, marginTop: '14px', marginLeft: '10px'}} >
+            <Grid item xs={12} sm={6} md={2} lg={2}>
+              <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-helper-label">Status</InputLabel>
-                <Select 
-                    labelId="demo-simple-select-label" 
-                    id="demo-status-select" 
-                    name='status'
-                    value={wStatus} 
-                    label="wStatus"
-                    onChange={(event)=>{handleStausChange(event); handleFilterChange(event); }}
-                    >
-                    {AllTransactionStatus.map((w, index)=> (
-                        <MenuItem key={index} value={w.value}>{w.value}</MenuItem>
-                    ))}
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-status-select"
+                  name="status"
+                  value={wStatus}
+                  label="wStatus"
+                  onChange={(event) => {
+                    handleStausChange(event);
+                    handleFilterChange(event);
+                  }}
+                >
+                  {AllTransactionStatus.map((w, index) => (
+                    <MenuItem key={index} value={w.value}>
+                      {w.value}
+                    </MenuItem>
+                  ))}
                 </Select>
-            </FormControl>  
+              </FormControl>
+            </Grid>
 
-            <FormControl sx={{minWidth: 165, marginTop: '14px', marginLeft: '10px'}} >
+            <Grid item xs={12} sm={6} md={2} lg={2}>
+              <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-helper-label">Payment Method</InputLabel>
-                <Select labelId="demo-simple-select-label" id="demo-payment-mode-select" name='payment_mode' value={payMethod} label="Payment Method" onChange={(event)=>{handelPaymentMethodChange(event); handleFilterChange(event);}}>
-                    {PaymentMethods.map((pm, index)=> (
-                        <MenuItem key={index} value={pm.value}>{pm.value}</MenuItem>
-                    ))}
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-payment-mode-select"
+                  name="payment_mode"
+                  value={payMethod}
+                  label="Payment Method"
+                  onChange={(event) => {
+                    handelPaymentMethodChange(event);
+                    handleFilterChange(event);
+                  }}
+                >
+                  {PaymentMethods.map((pm, index) => (
+                    <MenuItem key={index} value={pm.value}>
+                      {pm.value}
+                    </MenuItem>
+                  ))}
                 </Select>
-            </FormControl>
+              </FormControl>
+            </Grid>
 
-            <TextField 
-                   sx={{marginTop: '14px', marginLeft: '10px'}}  
-                  id="outlined-basic" 
-                  label="Enter user name" 
-                  variant="outlined" 
-                  name='user_name'
-                  onChange={handleFilterChange} 
-                  />
-
-            <Button sx={{marginTop: '20px', marginRight: '10px', float: 'right'}} variant="contained" onClick={handleFilterSubmit}>Filter</Button>
-        </Paper>
+            <Grid item xs={12} sm={6} md={2} lg={2}>
+              <TextField
+                fullWidth
+                id="outlined-basic"
+                label="Enter user name"
+                variant="outlined"
+                name="user_name"
+                onChange={handleFilterChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2} lg={2} textAlign="center" mt={1}>
+              <Button variant="contained" onClick={handleFilterSubmit}>
+                Filter
+              </Button>
+            </Grid>
+          </Grid>
+      </Paper>
 
      <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar 
-                  numSelected={selected.length} 
-                  TableName={TableName} 
-                  setRowsPerPage={setRowsPerPage}
-                  setPage={setPage}
-                  rows={rows}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  updateAllTransactionData={updateAllTransactionData}
-                  />
+        {/* <EnhancedTableToolbar 
+            numSelected={selected.length} 
+            TableName={TableName} 
+            setRowsPerPage={setRowsPerPage}
+            setPage={setPage}
+            rows={rows}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            updateAllTransactionData={updateAllTransactionData}
+            /> */}
 
         <TableContainer>
           <Table
@@ -721,6 +757,8 @@ export default function AllTransactionTable({headCells, rows, TableName , handle
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
           >
+             
+             {/* Contain all te Column names */}
             <EnhancedTableHead
               numSelected={selected.length}
               order={order}
@@ -732,16 +770,6 @@ export default function AllTransactionTable({headCells, rows, TableName , handle
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                // console.log(row)
-
-                // if (loading) {
-                //     return <p>Loading</p>;
-                //   }
-                
-                // if (!rows || rows.length === 0) {
-                //   return <tr>NA</tr>;
-                // }
-                
 
                 const isItemSelected = isSelected(row.transaction.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
@@ -750,22 +778,22 @@ export default function AllTransactionTable({headCells, rows, TableName , handle
                   <TableRow
                     hover
                     // onClick={(event) => handleClick(event, row.id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
+                    // role="checkbox"
+                    // aria-checked={isItemSelected}
+                    // tabIndex={-1}
                     key={row.transaction.id}
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
                     <TableCell padding="checkbox">
-                      <Checkbox
+                      {/* <Checkbox
                         color="primary"
                         checked={isItemSelected}
                         inputProps={{
                           'aria-labelledby': labelId,
                         }}
                         onClick={(event) => handleClick(event, row.id)}
-                      />
+                      /> */}
                     </TableCell>
 
                      {/* Sl No. */}

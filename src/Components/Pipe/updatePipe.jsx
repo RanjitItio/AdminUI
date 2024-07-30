@@ -132,6 +132,7 @@ export default function UpdatePipe({open}) {
     })
 
     const [status, setStatus]                         = useState(location_pipe_data?.status || '');   // pipe status state
+    const [paymentMedium, setPaymentMedium]           = useState(location_pipe_data?.payment_medium || '');   // pipe Payment Medium state
     const [processMode, setProcessMode]               = useState(location_pipe_data?.process_mode || '');   // pipe process mode state
     const [connectionMode, setConnectionMode]         = useState(location_pipe_data?.connection_mode || '');   // pipe connection mode state
     const [settleMentPeriod, setSettleMentPeriod]     = useState('');   // settlement period state
@@ -254,16 +255,20 @@ export default function UpdatePipe({open}) {
         else if (name === 'conect_mode') {
             setConnectionMode(value)
         }
+        else if (name === 'payment_medium') {
+            setPaymentMedium(value)
+        }
         else if (name === 'process_mode') {
             setProcessMode(value)
-
-        } else if (name === 'test_url') {
+        }
+        else if (name === 'test_url') {
             if (!validateURL(value)) {
                 setTestUrlError('Please type correct url format');
             } else {
                 setTestUrlError('');
             }
-        } else if (name === 'prod_url') {
+        }
+        else if (name === 'prod_url') {
             if (!validateURL(value)) {
                 setProdURLError('Please type correct url format');
             } else {
@@ -341,7 +346,9 @@ export default function UpdatePipe({open}) {
                 pipe_id:          location_pipe_data.id,
                 pipe_name:        formData.pipe_name,
                 status:           status,
-                connect_mode:     connectionMode, 
+                connect_mode:     connectionMode,
+                payment_medium:    paymentMedium,
+
                 process_mod:      processMode,
                 process_cur:      parseInt(processingCurrency),
                 // URL
@@ -464,6 +471,25 @@ export default function UpdatePipe({open}) {
                             >
                             <MenuItem value={'Active'}>Active</MenuItem>
                             <MenuItem value={'Inactive'}>Inactive</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4}>
+                        <FormControl fullWidth size='small'>
+                            <InputLabel id="payment-medium-label">Payment Medium</InputLabel>
+                            <Select
+                                labelId="payment-medium-label"
+                                id="payment-medium-label"
+                                name='payment_medium'
+                                value={paymentMedium}
+                                label="Payment Medium"
+                                onChange={(event)=> {handleFormValueChange(event)}}
+                            >
+                            <MenuItem value={'UPI'}>UPI</MenuItem>
+                            <MenuItem value={'Card'}>Card</MenuItem>
+                            <MenuItem value={'Net Banking'}>Net Banking</MenuItem>
+                            <MenuItem value={'Wallet'}>Wallet</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>

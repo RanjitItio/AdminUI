@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 
 const drawerWidth = 240;
 
+
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
@@ -34,6 +35,7 @@ const AppBar = styled(MuiAppBar, {
     }),
   }),
 }));
+
 
 const settings = [
            {text: '-Profile', url: '/'},
@@ -64,8 +66,8 @@ function UpperNavbar({handleDrawerOpen, open}){
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: 'none' }) }}
+            edge='start'
+            sx={{ mr: 0, ...(open && { display: 'none' }) }}
           >
             <MenuIcon />
           </IconButton>

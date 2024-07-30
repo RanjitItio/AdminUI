@@ -62,21 +62,21 @@ const NavContent = [
 
   { text: 'Pipe', subItems: [
     {text:'All Pipes', icon: <ContactlessIcon />, url: '/admin/pipes/'},
-    {text: 'Pipe Settings', icon: <SettingsIcon />, url: '/admin/pipes/'},  
+    // {text: 'Pipe Settings', icon: <SettingsIcon />, url: '/admin/pipes/'},  
   ],
   icon: <ContactlessIcon />},
 
 
   { text: 'Transactions', subItems: [
     {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all-transaction/'},
-    {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
     {text: '-Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
-    {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
-    {text: '-Currency Exchange', icon: <PaymentsOutlinedIcon />, url: '/admin/exchanges/'},
-    {text: '-Request Payments', icon: <CalculateOutlinedIcon />, url: '/admin/request-payments/'},
-    {text: 'Merchant Payment', icon: <PaymentsOutlinedIcon />, url: '/admin/merchant-payments/'},
-    {text: '-Crypto Sent', icon: <KeyboardDoubleArrowRightOutlinedIcon />, url: '/admin/crypto-sent-transactions/'},
-    {text: '-Crypto Received', icon: <KeyboardDoubleArrowLeftOutlinedIcon />, url: "/admin/crypto-received-transactions"},
+    // {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
+    // {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
+    // {text: '-Currency Exchange', icon: <PaymentsOutlinedIcon />, url: '/admin/exchanges/'},
+    // {text: '-Request Payments', icon: <CalculateOutlinedIcon />, url: '/admin/request-payments/'},
+    // {text: 'Merchant Payment', icon: <PaymentsOutlinedIcon />, url: '/admin/merchant-payments/'},
+    // {text: '-Crypto Sent', icon: <KeyboardDoubleArrowRightOutlinedIcon />, url: '/admin/crypto-sent-transactions/'},
+    // {text: '-Crypto Received', icon: <KeyboardDoubleArrowLeftOutlinedIcon />, url: "/admin/crypto-received-transactions"},
   ],
   icon: <ReceiptLongOutlinedIcon />},
 

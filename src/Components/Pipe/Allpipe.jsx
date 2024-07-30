@@ -7,7 +7,7 @@ import { AllPipeColumn } from "./Column";
 
 
 
-
+// All Availabale Pipes
 function Allpipe({open}) {
 
   const [pipeData, updatePipeData] = useState([]);
@@ -22,7 +22,8 @@ useEffect(() => {
     // console.log(res.data.all_pipes_data)
 
     if(res.data && res.data.all_pipes_data) {
-        const sortedData = res.data.all_pipes_data.sort((a, b)=> a.id - b.id)
+        const sortedData = res.data.all_pipes_data.sort((a, b)=> b.id - a.id)
+        // console.log(sortedData)
         updatePipeData(sortedData)
     }
     

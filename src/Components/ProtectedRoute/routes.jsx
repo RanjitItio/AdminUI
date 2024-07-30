@@ -53,6 +53,8 @@ import MerchantBankDetail from '../Users/Bank/BankDetails.jsx';
 import Allpipe from '../Pipe/Allpipe.jsx';
 import AddNewPipe from '../Pipe/AddPipe.jsx';
 import UpdatePipe from '../Pipe/updatePipe.jsx';
+import AllMerchantPGTransactions from '../MerchantPGTransactions/AllTransactions.jsx';
+import MerchantPGTransactionUpdate from '../MerchantPGTransactions/TransactionUpdate.jsx';
 
 
 
@@ -68,7 +70,7 @@ import UpdatePipe from '../Pipe/updatePipe.jsx';
 
 
 const AuthRoutes = () => {
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -109,7 +111,7 @@ const AuthRoutes = () => {
 
                     
                   <Route exact path='*' element={
-                    <Box sx={{ display: 'flex' }}>
+                    <Box>
 
                     <UpperNavbar handleDrawerOpen={handleDrawerOpen} open={open} />
                     <LeftNavbar handleDrawerClose={handleDrawerClose} open={open} />
@@ -127,8 +129,14 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/admin-user/" element={<AdminDetails open={open} />} ></Route>
                           <Route exact path="/admin/create-user/" element={<UserCreateForm open={open} />} ></Route>
                           <Route exact path="/admin/create-admin/" element={<AdminCreateForm open={open} />} ></Route>
-                          <Route exact path="/admin/all-transaction/" element={<AllTransactionData open={open} />} ></Route>
+
+                          {/* Transactions */}
+                          {/* <Route exact path="/admin/all-transaction/" element={<AllTransactionData open={open} />} ></Route> */}
+                          <Route exact path="/admin/all-transaction/" element={<AllMerchantPGTransactions open={open} />} ></Route>
+                          <Route exact path="/admin/update/merchant/pg/transactions/" element={<MerchantPGTransactionUpdate open={open} />} ></Route>
+
                           <Route exact path="/admin/all-transaction/detial/" element={<AllTransactionDetail open={open} />} ></Route>
+
                           <Route exact path="/admin/deposits/" element={<AllDepositDetail open={open} />} ></Route>
                           <Route exact path="/admin/withdrawls/" element={<Withdrawls open={open} />} ></Route>
                           <Route exact path="/admin/transfers/" element={<TransferDetails open={open} />} ></Route>

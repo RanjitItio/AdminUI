@@ -22,11 +22,12 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-
+// Admin dashboard section
 function Dashboard({open}) {
     const [countUsers, setCountUsers] = useState(0)
     const navigate = useNavigate();
 
+    // Call API to Get all the available users
     useEffect(() => {
       axiosInstance.get(`api/v1/user/count/`).then((res)=> {
         // console.log(res.data.total_users)
@@ -38,13 +39,18 @@ function Dashboard({open}) {
       }).catch((error)=> {
         console.log(error.response)
 
+        if (error.response.statusText === 'Unauthorized') {
+            window.location.href = '/signin/'
+        }
+
       })
     }, [])
 
 
+    // Method to redirect to all users page
     const handleUserInfo = ()=> {
         navigate('/admin/users/')
-    }
+    };
     
 
     return(

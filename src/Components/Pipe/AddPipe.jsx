@@ -80,6 +80,8 @@ export default function AddNewPipe({open}) {
         query:      '',
         auth_keys:  '',
 
+        payment_medium: '',
+
         type:       0,
         refund_url: '',
         refund_pol: '',
@@ -121,6 +123,7 @@ export default function AddNewPipe({open}) {
     const [mopIDs, updateMopIDs]                      = useState([]);   // Mode of Payment ID status
     const [error, setError]                           = useState('');  // Error Message
     const [disableSubmit, setDisableSubmit]           = useState(false);
+    const [paymentMedium, setPaymentMedium]           = useState('');
 
 
 
@@ -140,6 +143,10 @@ export default function AddNewPipe({open}) {
     // Method to handle status of pie
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
+    };
+
+    const handlePaymentMediumChange = (event) => {
+        setPaymentMedium(event.target.value);
     };
 
     // Method to handle processing mode of pipe
@@ -242,6 +249,9 @@ export default function AddNewPipe({open}) {
         else if (connectionMode === '') {
             setError('Please select connection mode')
         }
+        else if (paymentMedium === '') {
+            setError('Please select Payment medium')
+        }
         else if (processingCurrency === '') {
             setError('Please select processing currency')
         }
@@ -260,6 +270,7 @@ export default function AddNewPipe({open}) {
             pipe_name:        formData.pipe_name,
             status:           status,
             connect_mode:     connectionMode, 
+            payment_medium:   paymentMedium,
             // URL
             prod_url:         formData.prod_url,
             test_url:         formData.test_url,
@@ -304,7 +315,7 @@ export default function AddNewPipe({open}) {
             bnk_min_fl_count:        formData.bnk_min_fl_count,
 
         }).then((res)=> {
-            console.log(res)
+            // console.log(res)
 
             if (res.status === 201) {
                 
@@ -363,6 +374,24 @@ export default function AddNewPipe({open}) {
                             >
                             <MenuItem value={'Active'}>Active</MenuItem>
                             <MenuItem value={'Inactive'}>Inactive</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4}>
+                        <FormControl fullWidth size='small'>
+                            <InputLabel id="payemnt-medium-label">Payment Medium</InputLabel>
+                            <Select
+                            labelId="payemnt-medium-label"
+                            id="payemnt-medium-label"
+                            value={paymentMedium}
+                            label="Payment Medium"
+                            onChange={handlePaymentMediumChange}
+                            >
+                            <MenuItem value={'UPI'}>UPI</MenuItem>
+                            <MenuItem value={'Card'}>Card</MenuItem>
+                            <MenuItem value={'Net Banking'}>Net Banking</MenuItem>
+                            <MenuItem value={'Wallet'}>Wallet</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
