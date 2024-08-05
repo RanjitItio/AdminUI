@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableContainer, 
-         TableHead, TableRow, Paper, Box } from '@mui/material';
+         TableHead, TableRow, Paper, Box, Grid } from '@mui/material';
 import { Main, DrawerHeader } from '../Content';
 import { useEffect, useState } from 'react';
 import axiosInstance from '../Authentication/axios';
@@ -16,6 +16,7 @@ import Input from '@mui/joy/Input';
 import SearchIcon from '@mui/icons-material/Search';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { useTheme } from '@mui/material/styles';
 
 
 
@@ -93,7 +94,9 @@ export default function AllMerchantPGTransactions({open}) {
     const [transactionData, updateTransactionData] = useState([]); // All Transaction data state
     const [modeName, setModeName] = useState('Production Mode');   // Mode Name
     const [exportData, updateExportData] = useState([]);
+
     const navigate = useNavigate();
+    const theme = useTheme();
 
 
     // Call API to fetch all the Transactions
@@ -231,7 +234,14 @@ export default function AllMerchantPGTransactions({open}) {
             <DrawerHeader />
 
             <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}> 
-            <Box sx={{display:'flex', justifyContent:'end', mx:3, my:2}}>
+
+            <Box 
+                sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'start',
+                    alignItems: 'center',
+                    p:2
+                    }}>
                 <Input placeholder="Type in here…" />
                 <IconButton aria-label="Example">
                     <SearchIcon color='primary' />

@@ -30,15 +30,12 @@ import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
 import NorthOutlinedIcon from '@mui/icons-material/NorthOutlined';
 import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
-import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
-import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowRightOutlined';
-import KeyboardDoubleArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowLeftOutlined';
 import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
 import FingerprintOutlinedIcon from '@mui/icons-material/FingerprintOutlined';
 import GoogleIcon from '@mui/icons-material/Google';
 import ContactlessIcon from '@mui/icons-material/Contactless';
-import SettingsIcon from '@mui/icons-material/Settings';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+
 
 
 
@@ -70,8 +67,6 @@ const NavContent = [
   { text: 'Transactions', subItems: [
     {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all-transaction/'},
     {text: '-Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
-    // {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
-    // {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
     // {text: '-Currency Exchange', icon: <PaymentsOutlinedIcon />, url: '/admin/exchanges/'},
     // {text: '-Request Payments', icon: <CalculateOutlinedIcon />, url: '/admin/request-payments/'},
     // {text: 'Merchant Payment', icon: <PaymentsOutlinedIcon />, url: '/admin/merchant-payments/'},
@@ -79,6 +74,14 @@ const NavContent = [
     // {text: '-Crypto Received', icon: <KeyboardDoubleArrowLeftOutlinedIcon />, url: "/admin/crypto-received-transactions"},
   ],
   icon: <ReceiptLongOutlinedIcon />},
+
+  { text: 'UAT Transactions', subItems: [
+      {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all/uat/transaction/'},
+      {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
+      {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
+    ],
+    icon: <ReceiptIcon />
+  },
 
   { text: '-Revenues', subItems: [
     {text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: '/admin/revenues/'},],

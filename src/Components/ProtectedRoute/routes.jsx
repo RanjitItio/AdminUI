@@ -131,7 +131,7 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/create-admin/" element={<AdminCreateForm open={open} />} ></Route>
 
                           {/* Transactions */}
-                          {/* <Route exact path="/admin/all-transaction/" element={<AllTransactionData open={open} />} ></Route> */}
+                          <Route exact path="/admin/all/uat/transaction/" element={<AllTransactionData open={open} />} ></Route>
                           <Route exact path="/admin/all-transaction/" element={<AllMerchantPGTransactions open={open} />} ></Route>
                           <Route exact path="/admin/update/merchant/pg/transactions/" element={<MerchantPGTransactionUpdate open={open} />} ></Route>
 
