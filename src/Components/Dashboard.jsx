@@ -24,24 +24,34 @@ import { useNavigate } from 'react-router-dom';
 
 // Admin dashboard section
 function Dashboard({open}) {
-    const [countUsers, setCountUsers] = useState(0)
+    const [countUsers, setCountUsers] = useState(0)   // All users
+    const [countMerchants, setCountMerchants] = useState(0) // All Merchant use
+    const [allTransactions, setAllTransactions] = useState(0);
     const navigate = useNavigate();
 
     // Call API to Get all the available users
     useEffect(() => {
       axiosInstance.get(`api/v1/user/count/`).then((res)=> {
-        // console.log(res.data.total_users)
+        // console.log(res.data.total_users)w   
 
         if (res.data.total_users) {
             setCountUsers(res.data.total_users)
-        }
+        };
+
+        if (res.data.total_merchants) {
+            setCountMerchants(res.data.total_merchants)
+        };
+
+        if (res.data.total_merchants) {
+            setAllTransactions(res.data.total_transactions)
+        };
 
       }).catch((error)=> {
-        console.log(error.response)
+        console.log(error)
 
         if (error.response.statusText === 'Unauthorized') {
             window.location.href = '/signin/'
-        }
+        };
 
       })
     }, [])
@@ -88,7 +98,7 @@ function Dashboard({open}) {
                 <StorefrontRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
                 <CardContent>
                     <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
-                        <b>5</b>
+                        <b>{countMerchants}</b>
                     </Typography>
                     
                     <Typography variant="p" component="div" >
@@ -109,16 +119,16 @@ function Dashboard({open}) {
                 <ConfirmationNumberRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
                 <CardContent>
                     <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
-                        <b>5</b>
+                        <b>{allTransactions}</b>
                     </Typography>
                     
                     <Typography variant="p" component="div" >
-                      Total Tickets
+                      Total Transactions
                     </Typography>
                 </CardContent>
 
                 <CardActions sx={{backgroundColor: 'rgba(0,0,0,0.1)', marginTop: '10px', '&:hover': {backgroundColor: 'rgba(0,0,0,0.3)'},  }}>
-                    <Button size="small" style={{ marginLeft: '5.3rem', color: 'white'}}>
+                    <Button size="small" style={{ marginLeft: '5.3rem', color: 'white'}} onClick={()=> {navigate('/admin/all-transaction/')}}>
                         More Info &nbsp; <ArrowCircleRightRoundedIcon />
                     </Button>
                 </CardActions>
@@ -130,11 +140,11 @@ function Dashboard({open}) {
                 <DisabledByDefaultRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
                 <CardContent>
                     <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
-                        <b>5</b>
+                        <b>0</b>
                     </Typography>
                     
                     <Typography variant="p" component="div" >
-                      Total Dispute
+                      Total Withdrawls
                     </Typography>
                 </CardContent>
 
@@ -164,8 +174,9 @@ function Dashboard({open}) {
 
         </Main>
     
-    )
-}
+
+    );
+};
 
 
 

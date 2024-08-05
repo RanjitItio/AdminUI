@@ -28,6 +28,7 @@ const rows = [
 
 
 export default function LatestTickets() {
+  
   return (
     <Card style={{position: 'relative', marginTop: '2rem'}} >
     <CardContent>

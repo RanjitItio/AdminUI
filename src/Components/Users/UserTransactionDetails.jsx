@@ -1,10 +1,7 @@
 import { Main, DrawerHeader } from '../Content';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
-import { Card } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import {Row , Col, Button} from 'react-bootstrap';
-import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import axiosInstance from '../Authentication/axios';
 

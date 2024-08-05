@@ -1,8 +1,5 @@
-// import 'bootstrap/dist/css/bootstrap.min.css'
-// import { useHistory } from 'react-router-dom';
 import { useState } from 'react';
 import axiosInstance from './axios';
-// import '/src/styles/signup.css'
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { RiUser3Line } from "react-icons/ri";
@@ -11,7 +8,7 @@ import './tailwind.css';
 
 
 
-
+// User Signup
 function Signup() {
     const navigate = useNavigate();
 
