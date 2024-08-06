@@ -11,14 +11,23 @@ import * as React from 'react';
 
 
 
-const drawerWidth = 0;
+let drawerWidth = 240;
 
+const setDrawerWidth = ()=> {
+    if (window.matchMedia('(min-width: 768px)').matches) {
+      drawerWidth = 240;
+    } else {
+      drawerWidth = 0;
+    };
+};
 
+setDrawerWidth();
 
 
 
 
 export const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
+
     ({ theme, open }) => ({
       flexGrow: 1,
       padding: theme.spacing(3),

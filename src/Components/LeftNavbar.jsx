@@ -39,11 +39,42 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 
 
 
+const UserNavContent = [
+  { text: 'Dashboard', subItems: [
+    {text: '-Dashboard', icon: <DashboardCustomizeOutlinedIcon />, url: '/'}
+  ],
+  icon: <DashboardCustomizeOutlinedIcon />
+},
+
+  { text: 'Users', subItems: [
+    {text:'Users', icon: <Person2OutlinedIcon />, url: '/admin/users/'}, 
+    {text: '-Admins', icon: <SupervisorAccountOutlinedIcon />, url: '/admin/admin-user/'}, 
+  ],
+  icon: <AccountCircleOutlinedIcon />},
+
+  { text: 'Transactions', subItems: [
+    {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all-transaction/'},
+    {text: '-Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
+    // {text: '-Currency Exchange', icon: <PaymentsOutlinedIcon />, url: '/admin/exchanges/'},
+    // {text: '-Request Payments', icon: <CalculateOutlinedIcon />, url: '/admin/request-payments/'},
+    // {text: 'Merchant Payment', icon: <PaymentsOutlinedIcon />, url: '/admin/merchant-payments/'},
+    // {text: '-Crypto Sent', icon: <KeyboardDoubleArrowRightOutlinedIcon />, url: '/admin/crypto-sent-transactions/'},
+    // {text: '-Crypto Received', icon: <KeyboardDoubleArrowLeftOutlinedIcon />, url: "/admin/crypto-received-transactions"},
+  ],
+  icon: <ReceiptLongOutlinedIcon />},
+
+  { text: 'Crypto Transactions', subItems: [
+      {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all/uat/transaction/'},
+      {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
+      {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
+    ],
+    icon: <ReceiptIcon />
+  },
+];
 
 
 
-
-const NavContent = [
+const MerchantNavContent = [
   { text: 'Dashboard', subItems: [
     {text: '-Dashboard', icon: <DashboardCustomizeOutlinedIcon />, url: '/'}
   ],
@@ -83,41 +114,42 @@ const NavContent = [
     icon: <ReceiptIcon />
   },
 
-  { text: '-Revenues', subItems: [
-    {text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: '/admin/revenues/'},],
-    icon: <AccountBalanceOutlinedIcon />
-  },
-  { text: '-Disputes', subItems: [
-    {text: '-Disputes', icon: <ConfirmationNumberOutlinedIcon />, url: '/admin/dispute/'},],
-    icon: <ConfirmationNumberOutlinedIcon />
-  },
-  { text: 'Tickets', subItems: [
-    {text: 'Tickets', icon: <LocalActivityOutlinedIcon />, url: '/tickets/'}],
-    icon: <LocalActivityOutlinedIcon />
-  },
-  { text: '-Activity Logs', subItems: [
-    {text: '-Activity Logs', icon: <RemoveRedEyeOutlinedIcon />, url: '/admin/activitylogs/'}],
-    icon: <RemoveRedEyeOutlinedIcon />
-  },
-  { text: '-Verifications', subItems: [
-    {text: '-Identity Verification', icon: <FingerprintOutlinedIcon />, url: 'https://cssgradient.io/'}, 
-    {text: '-Address Verification', icon: <ContactsOutlinedIcon />, url: 'https://cssgradient.io/'}],
-    icon: <VerifiedOutlinedIcon /> 
-  }
+  // { text: '-Revenues', subItems: [
+  //   {text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: '/admin/revenues/'},],
+  //   icon: <AccountBalanceOutlinedIcon />
+  // },
+  // { text: '-Disputes', subItems: [
+  //   {text: '-Disputes', icon: <ConfirmationNumberOutlinedIcon />, url: '/admin/dispute/'},],
+  //   icon: <ConfirmationNumberOutlinedIcon />
+  // },
+  // { text: 'Tickets', subItems: [
+  //   {text: 'Tickets', icon: <LocalActivityOutlinedIcon />, url: '/tickets/'}],
+  //   icon: <LocalActivityOutlinedIcon />
+  // },
+  // { text: '-Activity Logs', subItems: [
+  //   {text: '-Activity Logs', icon: <RemoveRedEyeOutlinedIcon />, url: '/admin/activitylogs/'}],
+  //   icon: <RemoveRedEyeOutlinedIcon />
+  // },
+  // { text: '-Verifications', subItems: [
+  //   {text: '-Identity Verification', icon: <FingerprintOutlinedIcon />, url: 'https://cssgradient.io/'}, 
+  //   {text: '-Address Verification', icon: <ContactsOutlinedIcon />, url: 'https://cssgradient.io/'}],
+  //   icon: <VerifiedOutlinedIcon /> 
+  // }
 ];
 
 
-const Configurations = ['-Currencies', '-Crypto Provider', '-Templates', '-Settings', '-System Update']
-const Addons = ['-Agent', '-Crypto Exchange', '-Investment', '-Addon Manager', '-Cache Clear']
+const Configurations = ['-Currencies', '-Crypto Provider', '-Settings']
+const Addons = ['-Crypto Exchange', '-Investment']
+
 
 
 const drawerWidth = 240;
+
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: 'flex-end',
 }));
@@ -125,7 +157,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 
 
-export default function LeftNavbar({handleDrawerClose, open}) {
+// Leftbar
+export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
   const theme = useTheme();
   const [dropDown, setDropdown] = React.useState({});
 
@@ -133,9 +166,10 @@ export default function LeftNavbar({handleDrawerClose, open}) {
     setDropdown(prevOpen => ({ ...prevOpen, [index]: !prevOpen[index] }));
   };
 
+  console.log(merchantContent)
+
   return(
     <>
-
     <Drawer
         sx={{
           width: drawerWidth,
@@ -157,36 +191,79 @@ export default function LeftNavbar({handleDrawerClose, open}) {
         </DrawerHeader>
         <Divider />
 
-        <List style={{backgroundColor: '#0f3785', color: '#e7ebf2'}}>
-          {NavContent.map((item, index) => (
-          <React.Fragment key={item.text}>
-            <ListItem disablePadding>
-              <ListItemButton onClick={() => handleClick(index)} >
-                <ListItemIcon style={{color: '#e7ebf2'}}>
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText primary={item.text} />
-                  {dropDown[index] ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-            </ListItem>
-           
-            <Collapse in={dropDown[index]} timeout="auto" unmountOnExit >
-              <List component="div" disablePadding >
-                {item.subItems.map((subItem, subIndex) => (
-                  <ListItem key={subIndex} disablePadding >
-                    <ListItemButton component="a" href={subItem.url} rel="noopener noreferrer">
-                    <ListItemIcon style={{ marginLeft: '1rem', color: 'white' }}>
-                      {subItem.icon}
-                    </ListItemIcon>
-                      <ListItemText primary={subItem.text} />
+        {merchantContent ? 
+           <>
+           <List style={{backgroundColor: '#0f3785', color: '#e7ebf2'}}>
+                {MerchantNavContent.map((item, index) => (
+                <React.Fragment key={item.text}>
+                  <ListItem disablePadding>
+                    <ListItemButton onClick={() => handleClick(index)} >
+                      <ListItemIcon style={{color: '#e7ebf2'}}>
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText primary={item.text} />
+                        {dropDown[index] ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
                   </ListItem>
-                ))}
+                
+                  <Collapse in={dropDown[index]} timeout="auto" unmountOnExit >
+                    <List component="div" disablePadding >
+                      {item.subItems.map((subItem, subIndex) => (
+                        <ListItem key={subIndex} disablePadding >
+                          <ListItemButton component="a" href={subItem.url} rel="noopener noreferrer">
+                          <ListItemIcon style={{ marginLeft: '1rem', color: 'white' }}>
+                            {subItem.icon}
+                          </ListItemIcon>
+                            <ListItemText primary={subItem.text} />
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
               </List>
+
+
             </Collapse>
         </React.Fragment>
       ))}
         </List>
+           </>
+        : 
+          <>
+          <List style={{backgroundColor: '#0f3785', color: '#e7ebf2'}}>
+                {UserNavContent.map((item, index) => (
+                <React.Fragment key={item.text}>
+                  <ListItem disablePadding>
+                    <ListItemButton onClick={() => handleClick(index)} >
+                      <ListItemIcon style={{color: '#e7ebf2'}}>
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText primary={item.text} />
+                        {dropDown[index] ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                  </ListItem>
+                
+                  <Collapse in={dropDown[index]} timeout="auto" unmountOnExit >
+                    <List component="div" disablePadding >
+                      {item.subItems.map((subItem, subIndex) => (
+                        <ListItem key={subIndex} disablePadding >
+                          <ListItemButton component="a" href={subItem.url} rel="noopener noreferrer">
+                          <ListItemIcon style={{ marginLeft: '1rem', color: 'white' }}>
+                            {subItem.icon}
+                          </ListItemIcon>
+                            <ListItemText primary={subItem.text} />
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+              </List>
+
+
+            </Collapse>
+        </React.Fragment>
+      ))}
+        </List>
+          </>
+        }
+      
+              
         <Divider/>
 
         <List style={{backgroundColor: '#0f3785', color: '#e7ebf2'}}>
@@ -217,8 +294,9 @@ export default function LeftNavbar({handleDrawerClose, open}) {
         </List>
       </Drawer>
     </>
+
   )
-}
+};
 
 
 

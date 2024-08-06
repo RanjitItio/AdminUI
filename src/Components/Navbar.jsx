@@ -1,8 +1,6 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
 import UpperNavbar from './UpNavbar';
 import LeftNavbar from './LeftNavbar';
-import ContentArea from './Content';
+import { useState } from 'react';
 
 
 
@@ -10,29 +8,34 @@ import ContentArea from './Content';
 
 
 
-export default function MainNavbar() {
+
+export default function MainNavbar({handleDrawerOpen, handleDrawerClose, open}) {
 //   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+const [merchantContent, setMerchantContent] = useState(true) // Merchant and Default user clicked data
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+// Method to handel User and merchant, User swicth clicked
+const handleMerchantUserSwitch = (event)=> {
+    setMerchantContent(event)
+};
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
+
 
 
   return (
-    <Box sx={{ display: 'flex' }}>
-        {/* App Bar */}
-      <UpperNavbar handleDrawerOpen={handleDrawerOpen} open={open} />
+    <>
+      {/* App Bar */}
+      <UpperNavbar 
+            handleDrawerOpen={handleDrawerOpen} 
+            open={open} 
+            handleMerchantUserSwitch={handleMerchantUserSwitch}
+          />
 
       {/* Drawer */}
-      <LeftNavbar handleDrawerClose={handleDrawerClose} open={open} />
-
-      {/* Content Area */}
-        <ContentArea open={open} />      
-    </Box>
+      <LeftNavbar 
+            handleDrawerClose={handleDrawerClose} 
+            open={open}
+            merchantContent={merchantContent} 
+            /> 
+    </>
   );
-}
+};

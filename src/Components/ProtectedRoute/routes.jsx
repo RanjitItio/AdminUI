@@ -106,6 +106,7 @@ const AddNewPipe = React.lazy(()=> import('../Pipe/AddPipe'))
 const UpdatePipe = React.lazy(()=> import('../Pipe/updatePipe'))
 const AllMerchantPGTransactions = React.lazy(()=> import('../MerchantPGTransactions/AllTransactions'))
 const MerchantPGTransactionUpdate = React.lazy(()=> import('../MerchantPGTransactions/TransactionUpdate'))
+const MainNavbar = React.lazy(()=> import('../Navbar'))
 
 
 
@@ -138,7 +139,7 @@ const AuthRoutes = () => {
       },
     ];
   
-   
+
     const routesForAuthenticatedOnly = [
       {
         path: "*",
@@ -154,11 +155,14 @@ const AuthRoutes = () => {
                     <Route exact path='/signout/' element={<Logout />}></Route>
                     
                   <Route exact path='*' element={
-                    <Box>
+                    <Box sx={{display: {xs: 'block', sm:'block', md:'block', lg:'flex'}}}>
+                    <CssBaseline />
 
-                    <UpperNavbar handleDrawerOpen={handleDrawerOpen} open={open} />
-                    <LeftNavbar handleDrawerClose={handleDrawerClose} open={open} />
+                    {/* <UpperNavbar handleDrawerOpen={handleDrawerOpen} open={open} />
+                    <LeftNavbar handleDrawerClose={handleDrawerClose} open={open} /> */}
+                    <MainNavbar handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} open={open} />
 
+                      
                       <Routes>
                           <Route exact path='/' element={<Dashboard open={open} />}></Route>
                           <Route exact path="/admin/users/" element={<UsersData open={open} />} ></Route>
@@ -211,9 +215,10 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/pipes/" element={<Allpipe open={open} />} ></Route>
                           <Route exact path="/admin/add/pipe/" element={<AddNewPipe open={open} />} ></Route>
                           <Route exact path="/admin/update/pipe/" element={<UpdatePipe open={open} />} ></Route>
-
                       </Routes>
+                    
                     </Box>
+
                   }></Route>
                 </Routes>
                 </Suspense>

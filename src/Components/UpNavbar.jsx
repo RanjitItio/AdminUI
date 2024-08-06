@@ -12,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Switch } from 'antd'
 
 
 
@@ -45,7 +46,7 @@ const settings = [
           ];
 
 
-function UpperNavbar({handleDrawerOpen, open}){
+function UpperNavbar({handleDrawerOpen, open, handleMerchantUserSwitch}){
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -74,6 +75,14 @@ function UpperNavbar({handleDrawerOpen, open}){
           <Typography variant="h6" noWrap component="div">
             Itio Innovex
           </Typography>
+          &nbsp;
+
+          <Switch 
+              checkedChildren="Merchant" 
+              unCheckedChildren="User" 
+              defaultChecked 
+              onChange={(event)=> {handleMerchantUserSwitch(event)}}
+              />
 
 
            {/* Avatar Section */}
