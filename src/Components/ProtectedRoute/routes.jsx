@@ -149,7 +149,6 @@ const AuthRoutes = () => {
             element: (
               <Suspense fallback={<div>Loading...</div>}>
               <Routes>
-                  
                     <Route exact path='/signup/' element={<Signup />}></Route>
                     <Route exact path='/signin/' element={<Signin />}></Route>
                     <Route exact path='/signout/' element={<Logout />}></Route>
