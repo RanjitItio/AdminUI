@@ -41,7 +41,7 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 
 const UserNavContent = [
   { text: 'Dashboard', subItems: [
-    {text: '-Dashboard', icon: <DashboardCustomizeOutlinedIcon />, url: '/'}
+    {text: 'Dashboard', icon: <DashboardCustomizeOutlinedIcon />, url: '/user/dashboard/'}
   ],
   icon: <DashboardCustomizeOutlinedIcon />
 },
@@ -76,7 +76,7 @@ const UserNavContent = [
 
 const MerchantNavContent = [
   { text: 'Dashboard', subItems: [
-    {text: '-Dashboard', icon: <DashboardCustomizeOutlinedIcon />, url: '/'}
+    {text: 'Dashboard', icon: <DashboardCustomizeOutlinedIcon />, url: '/'}
   ],
   icon: <DashboardCustomizeOutlinedIcon />
 },
@@ -166,7 +166,7 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
     setDropdown(prevOpen => ({ ...prevOpen, [index]: !prevOpen[index] }));
   };
 
-  console.log(merchantContent)
+
 
   return(
     <>

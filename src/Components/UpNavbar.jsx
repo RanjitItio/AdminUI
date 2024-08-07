@@ -46,7 +46,7 @@ const settings = [
           ];
 
 
-function UpperNavbar({handleDrawerOpen, open, handleMerchantUserSwitch}){
+function UpperNavbar({handleDrawerOpen, open, handleMerchantUserSwitch, merchantContent}){
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -81,6 +81,7 @@ function UpperNavbar({handleDrawerOpen, open, handleMerchantUserSwitch}){
               checkedChildren="Merchant" 
               unCheckedChildren="User" 
               defaultChecked 
+              value={merchantContent}
               onChange={(event)=> {handleMerchantUserSwitch(event)}}
               />
 

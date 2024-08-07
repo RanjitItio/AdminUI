@@ -1,3 +1,4 @@
+import React from 'react';
 import {Main, DrawerHeader} from './Content';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -18,6 +19,15 @@ import Grid from '@mui/material/Grid';
 import { useEffect, useState } from 'react';
 import axiosInstance from './Authentication/axios';
 import { useNavigate } from 'react-router-dom';
+import { Paper } from '@mui/material';
+import ButtonBase from '@mui/material/ButtonBase';
+import TransactionChart from './TransactionChart';
+
+
+
+
+const DashboardAcquirer = React.lazy(()=> import('./DashboardAcquirer'))
+
 
 
 
@@ -72,105 +82,126 @@ function Dashboard({open}) {
             <Box sx={{flexGrow: 1}}>
             <Grid container spacing={3} justifyContent="center">
 
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-            <Card style={{backgroundColor: '#51e56d', color: 'white', position: 'relative'}} >
-                <PersonRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}}/>
-                <CardContent>
-                    <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
-                        <b>{countUsers}</b>
-                    </Typography>
-                    
-                    <Typography variant="p" component="div" >
-                       Total Users
-                    </Typography>
-                </CardContent>
+                <Grid item xs={12} sm={6} md={3} >
+                    <Paper  elevation={8} style={{backgroundColor: '#51e56d', color: 'white', position: 'relative', borderRadius:'10px'}} >
+                    <ButtonBase onClick={handleUserInfo} sx={{ display: 'block', width: '100%', height: '100%', textAlign: 'inherit'}}>
+                        <PersonRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '63%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}}/>
+                        <CardContent>
+                            <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
+                                <b>{countUsers}</b>
+                            </Typography>
+                            
+                            <Typography variant="p" component="div" >
+                                Total Merchants
+                            </Typography>
+                        </CardContent>
 
-                <CardActions sx={{backgroundColor: 'rgba(0,0,0,0.1)', marginTop: '10px', '&:hover': {backgroundColor: 'rgba(0,0,0,0.3)'},  }}>
-                    <Button size="small" style={{ marginLeft: '5.3rem', color: 'white'}} onClick={handleUserInfo}>
-                       More Info &nbsp; <ArrowCircleRightRoundedIcon />
-                    </Button>
-                </CardActions>
-            </Card>
-            </Grid>
-            
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-            <Card  style={{backgroundColor: '#8d0aa9', color: 'white', position: 'relative'}} >
-                <StorefrontRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
-                <CardContent>
-                    <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
-                        <b>{countMerchants}</b>
-                    </Typography>
-                    
-                    <Typography variant="p" component="div" >
-                      Total Merchants
-                    </Typography>
-                </CardContent>
+                        {/* <CardActions sx={{backgroundColor: 'rgba(0,0,0,0.1)', marginTop: '10px', '&:hover': {backgroundColor: 'rgba(0,0,0,0.3)'},  }}>
+                            <Button size="small" style={{ marginLeft: '5.3rem', color: 'white'}} onClick={handleUserInfo}>
+                                More Info &nbsp; <ArrowCircleRightRoundedIcon />
+                            </Button>
+                        </CardActions> */}
+                    </ButtonBase>
+                    </Paper>
+                </Grid>
+                
+                <Grid item xs={12} sm={6} md={3}>
+                    <Paper elevation={8}  style={{backgroundColor: '#8d0aa9', color: 'white', position: 'relative', borderRadius:'10px'}} >
+                    <ButtonBase onClick={()=> {navigate('/admin/all-transaction/')}} sx={{ display: 'block', width: '100%', height: '100%', textAlign: 'inherit'}}>
+                        <StorefrontRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
+                        <CardContent>
+                            <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
+                                <b>{countMerchants}</b>
+                            </Typography>
+                            
+                            <Typography variant="p" component="div" >
+                                Total Transactions
+                            </Typography>
+                        </CardContent>
 
-                <CardActions sx={{backgroundColor: 'rgba(0,0,0,0.1)', marginTop: '10px', '&:hover': {backgroundColor: 'rgba(0,0,0,0.3)'},  }} >
-                    <Button size="small" style={{ marginLeft: '5.3rem', color: 'white'}}>
-                        More Info &nbsp; <ArrowCircleRightRoundedIcon />
-                    </Button>
-                </CardActions>
-            </Card>
-            </Grid>
+                        {/* <CardActions sx={{backgroundColor: 'rgba(0,0,0,0.1)', marginTop: '10px', '&:hover': {backgroundColor: 'rgba(0,0,0,0.3)'},  }} >
+                            <Button size="small" style={{ marginLeft: '5.3rem', color: 'white'}}>
+                                More Info &nbsp; <ArrowCircleRightRoundedIcon />
+                            </Button>
+                        </CardActions> */}
+                    </ButtonBase>
+                    </Paper>
+                </Grid>
 
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-            <Card  style={{backgroundColor: '#0a8aa9', color: 'white', position: 'relative'}} >
-                <ConfirmationNumberRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
-                <CardContent>
-                    <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
-                        <b>{allTransactions}</b>
-                    </Typography>
-                    
-                    <Typography variant="p" component="div" >
-                      Total Transactions
-                    </Typography>
-                </CardContent>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Paper elevation={8}  style={{backgroundColor: '#0a8aa9', color: 'white', position: 'relative', borderRadius:'10px'}} >
+                    <ButtonBase sx={{ display: 'block', width: '100%', height: '100%', textAlign: 'inherit'}}>
+                        <ConfirmationNumberRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
+                        <CardContent>
+                            <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
+                                <b>{allTransactions}</b>
+                            </Typography>
+                            
+                            <Typography variant="p" component="div" >
+                            Total Withdrawl
+                            </Typography>
+                        </CardContent>
 
-                <CardActions sx={{backgroundColor: 'rgba(0,0,0,0.1)', marginTop: '10px', '&:hover': {backgroundColor: 'rgba(0,0,0,0.3)'},  }}>
-                    <Button size="small" style={{ marginLeft: '5.3rem', color: 'white'}} onClick={()=> {navigate('/admin/all-transaction/')}}>
-                        More Info &nbsp; <ArrowCircleRightRoundedIcon />
-                    </Button>
-                </CardActions>
-            </Card>
-            </Grid>
+                        {/* <CardActions sx={{backgroundColor: 'rgba(0,0,0,0.1)', marginTop: '10px', '&:hover': {backgroundColor: 'rgba(0,0,0,0.3)'},  }}>
+                            <Button size="small" style={{ marginLeft: '5.3rem', color: 'white'}} onClick={()=> {navigate('/admin/all-transaction/')}}>
+                                More Info &nbsp; <ArrowCircleRightRoundedIcon />
+                            </Button>
+                        </CardActions> */}
+                    </ButtonBase>
+                    </Paper>
+                </Grid>
 
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-            <Card style={{backgroundColor: '#a90a4a', color: 'white', position: 'relative'}} >
-                <DisabledByDefaultRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
-                <CardContent>
-                    <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
-                        <b>0</b>
-                    </Typography>
-                    
-                    <Typography variant="p" component="div" >
-                      Total Withdrawls
-                    </Typography>
-                </CardContent>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Paper elevation={8} style={{backgroundColor: '#a90a4a', color: 'white', position: 'relative', borderRadius:'10px'}}>
+                    <ButtonBase onClick={()=> {navigate('/admin/all-transaction/')}} sx={{ display: 'block', width: '100%', height: '100%', textAlign: 'inherit'}}>
+                        <DisabledByDefaultRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
+                        <CardContent>
+                            <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
+                                <b>0</b>
+                            </Typography>
+                            
+                            <Typography variant="p" component="div" >
+                                Total Withdrawls
+                            </Typography>
+                        </CardContent>
 
-                <CardActions sx={{backgroundColor: 'rgba(0,0,0,0.1)', marginTop: '10px', '&:hover': {backgroundColor: 'rgba(0,0,0,0.3)'}  }}>
-                    <Button size="small" style={{ marginLeft: '5.3rem', color: 'white'}}>
-                        More Info &nbsp; <ArrowCircleRightRoundedIcon />
-                    </Button>
-                </CardActions>
-            </Card>
-            </Grid>
+                        {/* <CardActions sx={{backgroundColor: 'rgba(0,0,0,0.1)', marginTop: '10px', '&:hover': {backgroundColor: 'rgba(0,0,0,0.3)'}  }}>
+                            <Button size="small" style={{ marginLeft: '5.3rem', color: 'white'}}>
+                                More Info &nbsp; <ArrowCircleRightRoundedIcon />
+                            </Button>
+                        </CardActions> */}
+                    </ButtonBase>
+                    </Paper>
+                </Grid>
         
             </Grid>
             </Box>
 
             {/* Dash Board Line Chart Starts */}
-                <DashboardLineChart />
+                {/* <DashboardLineChart /> */}
             {/* Dash Borad Line Chart Ends */}
+
+            {/* Transaction Chart */}
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={12} md={7}>
+                    <TransactionChart />
+                </Grid>
+
+                <Grid item xs={12} sm={12} md={5}>
+                    <DashboardAcquirer />
+                </Grid>
+              </Grid>
+               
+            {/* Transaction Chart */}
 
             {/* Total Profit Section Starts */}
                 <TotalProfit />
             {/* Total Profit Section Ends */}
 
 
-            <LatestTickets />
+            {/* <LatestTickets /> */}
 
-            <LatestDispute />
+            {/* <LatestDispute /> */}
 
         </Main>
     

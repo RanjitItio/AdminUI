@@ -1,10 +1,11 @@
-import React, {Suspense} from "react";
+import React, {Suspense, useEffect} from "react";
 import { Route, Routes } from 'react-router-dom';
 import CssBaseline from "@mui/material/CssBaseline"; /// Donot remove this component
 import Box from '@mui/material/Box';
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { useAuth } from "./authProvider";
 import { ProtectedRoute } from "./protectedroutes";
+import { AdditionalAuthenticatedRoutes } from "../../UserComponents/ProtectedRoute/routes";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 // import Signup from '../Authentication/Signup';
@@ -60,8 +61,6 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const Signup = React.lazy(()=> import('../Authentication/Signup'))
 const Signin = React.lazy(()=> import('../Authentication/Signin'))
-const UpperNavbar = React.lazy(()=> import('../UpNavbar'))
-const LeftNavbar = React.lazy(()=> import('../LeftNavbar'))
 const Dashboard = React.lazy(()=> import('../Dashboard'))
 const UsersData = React.lazy(()=> import('../Users/users'))
 const MerchantDetails = React.lazy(()=> import('../Merchant/merchant'))
@@ -116,6 +115,29 @@ const MainNavbar = React.lazy(()=> import('../Navbar'))
 // All the paths
 const AuthRoutes = () => {
     const [open, setOpen] = React.useState(false);
+    const additionalAuthenticatedRoutes = AdditionalAuthenticatedRoutes(open);
+
+    // Set the Leftbar open for large screen
+    useEffect(() => {
+      const setBar = ()=> {
+        if (window.matchMedia('(min-width: 768px)').matches) {
+          setOpen(true)
+        } else {
+          setOpen(false)
+        };
+    };
+  
+    setBar();
+    // Adding event listener for window resize to handle dynamic resizing
+    window.addEventListener('resize', setBar);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', setBar);
+    };
+    
+    }, []);
+    
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -141,6 +163,7 @@ const AuthRoutes = () => {
   
 
     const routesForAuthenticatedOnly = [
+      // ...additionalAuthenticatedRoutes,
       {
         path: "*",
         element: <ProtectedRoute />, 
@@ -158,12 +181,18 @@ const AuthRoutes = () => {
                     <Box sx={{display: {xs: 'block', sm:'block', md:'block', lg:'flex'}}}>
                     <CssBaseline />
 
-                    {/* <UpperNavbar handleDrawerOpen={handleDrawerOpen} open={open} />
-                    <LeftNavbar handleDrawerClose={handleDrawerClose} open={open} /> */}
+                
                     <MainNavbar handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} open={open} />
 
                       
                       <Routes>
+                          {additionalAuthenticatedRoutes.map((route, index) => (
+                            <Route 
+                                key={index} 
+                                path={route.path} 
+                                element={React.cloneElement(route.element, { open })}
+                                />
+                          ))}
                           <Route exact path='/' element={<Dashboard open={open} />}></Route>
                           <Route exact path="/admin/users/" element={<UsersData open={open} />} ></Route>
                           <Route exact path="/admin/create-merchant/" element={<MerchantCreateForm open={open} />} ></Route>
