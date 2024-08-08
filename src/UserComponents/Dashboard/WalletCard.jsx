@@ -25,16 +25,17 @@ const WalletCard = () => {
 
         <Grid item xs={12} sm={12} md={6}>
             <Paper sx={{ 
-                        display: 'flex', 
-                        flexDirection: 'row', 
-                        alignItems: 'center', 
-                        padding: 2, 
-                        height:200, 
-                        mt:2,
-                        backgroundColor: '#00b0dc',
-                        borderRadius:'10px',
-                        justifyContent: 'space-between'
-                        }}>
+                    display: 'flex', 
+                    flexDirection: 'row', 
+                    alignItems: 'center', 
+                    padding: 3, 
+                    height:200,
+                    mt:2,
+                    backgroundColor: '#00b0dc',
+                    borderRadius:'10px',
+                    justifyContent: 'space-between',
+                    position: 'relative'
+                    }}>
                 <Box sx={{ flexGrow: 1 }}>
                     <JoinFullIcon fontSize='large' sx={{color:'#d6dbe2', mb:2}} />
                     <Typography variant="h5" style={{color:'white'}}>$824,571.93</Typography>
@@ -42,21 +43,23 @@ const WalletCard = () => {
                     <span style={{color:'white'}}>+0.8%</span>
                 </Box>
 
-                <Box sx={{ 
-                        display: 'flex', 
-                        flexDirection: 'column', 
-                        alignItems: 'flex-end',
-                        flexShrink: 0,
-                        justifyContent: 'center' 
-                        }}>
+                {/* <Box sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'flex-end',
+                    justifyContent: 'center',
+                    ml:'auto'
+                    }}> */}
                     <Button
                         variant="contained"
                         startIcon={<CachedIcon />}
                         endIcon={<ArrowRightIcon />}
                         sx={{
+                            position: 'absolute',
+                            right: -60,
                             transform: 'rotate(90deg)',
                             transformOrigin: 'center',
-                            height: 'auto',
+                            height: '40px',
                             width:188,
                             padding: 1,
                             backgroundColor: 'white',
@@ -64,9 +67,9 @@ const WalletCard = () => {
                             boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset'
                         }}
                     >
-                        Get Balance
+                        Get Balance     
                     </Button>
-                </Box>
+                {/* </Box> */}
             </Paper>
         </Grid>
         

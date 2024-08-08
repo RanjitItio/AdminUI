@@ -1,5 +1,5 @@
 import React from 'react';
-import {Main, DrawerHeader} from './Content';
+import {Main, DrawerHeader} from '../Content';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -11,13 +11,14 @@ import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded';
 import ConfirmationNumberRoundedIcon from '@mui/icons-material/ConfirmationNumberRounded';
 import DisabledByDefaultRoundedIcon from '@mui/icons-material/DisabledByDefaultRounded';
-import DashboardLineChart from './Charts/DashLinechart';
-import TotalProfit from './Profit';
+import DashboardLineChart from '../Charts/DashLinechart';
+// import TotalProfit from './Profit';
+import RecentTransactions from './RecentTransactions';
 import LatestTickets from './LatestTickets';
 import LatestDispute from './LatestDispute';
 import Grid from '@mui/material/Grid';
 import { useEffect, useState } from 'react';
-import axiosInstance from './Authentication/axios';
+import axiosInstance from '../Authentication/axios';
 import { useNavigate } from 'react-router-dom';
 import { Paper } from '@mui/material';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -191,17 +192,11 @@ function Dashboard({open}) {
                     <DashboardAcquirer />
                 </Grid>
               </Grid>
-               
             {/* Transaction Chart */}
 
-            {/* Total Profit Section Starts */}
-                <TotalProfit />
-            {/* Total Profit Section Ends */}
-
-
-            {/* <LatestTickets /> */}
-
-            {/* <LatestDispute /> */}
+            {/* Recent Transactions Section Starts */}
+                <RecentTransactions />
+            {/* Recent Transactions Section Ends */}
 
         </Main>
     

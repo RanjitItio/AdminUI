@@ -9,6 +9,7 @@ import AddToHomeScreenIcon from '@mui/icons-material/AddToHomeScreen';
 import WalletCard from './WalletCard';
 import ActivityCard from './Activity';
 import TransactionOverView from './TransactionOverview';
+import RecentTransactions from './RecentTransaction';
 
 
 
@@ -74,9 +75,13 @@ export default function UserDashBoard({open}) {
                 </Grid>
             </Grid>
 
-            <Grid container mt={2}>
+            <Grid container mt={2} spacing={2}>
                 <Grid item xs={12} sm={6} md={6}>
                     <TransactionOverView/>
+                </Grid>
+
+                <Grid item xs={12} sm={6} md={6}>
+                    <RecentTransactions/>
                 </Grid>
             </Grid>
         </Box>

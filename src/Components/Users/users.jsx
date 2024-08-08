@@ -8,13 +8,14 @@ import Stack from '@mui/material/Stack';
 
 
 
-
+// Merchant data
 function UsersData({open}) {
 
   const [kycData, updateKycData] = useState([]);
-  const [kycID, updateKycID] = useState('');
-  const [error, setError] = useState('');
+  const [kycID, updateKycID]     = useState('');
+  const [error, setError]        = useState('');
 
+  
   // Transaction Status
   const [status, setStaus] = useState('');
 
@@ -88,7 +89,7 @@ function UsersData({open}) {
 
 
 
-const TableName = "Users KYC Detail"
+const TableName = "Merchant KYC Detail"
 
 
 
@@ -127,7 +128,7 @@ useEffect(() => {
     };
 
   })
-  }, [])
+  }, []);
 
 
 
@@ -155,6 +156,6 @@ return (
     </Main>
     </>
   );
-}
+};
 
 export default UsersData;

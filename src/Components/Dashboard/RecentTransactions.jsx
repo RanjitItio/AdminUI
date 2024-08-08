@@ -6,7 +6,7 @@ import { blue, green, orange, red } from '@mui/material/colors';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useEffect } from 'react';
-import axiosInstance from './Authentication/axios';
+import axiosInstance from '../Authentication/axios';
 import { useState } from 'react';
 
 
@@ -26,7 +26,7 @@ const transactions = [
 
 
 // Total Profit
-export default function TotalProfit() {
+export default function RecentTransactions() {
   const [transactionData, updateTransactionData] = useState([]); // All Transaction data state
   const [transactionAmount, updateTransactionAmount] = useState([]);
 
@@ -97,10 +97,10 @@ export default function TotalProfit() {
 
 
 return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
-      <Grid container spacing={3}>
+    <Box sx={{ flexGrow: 1, mt: 2 }}>
+      <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          <Paper elevation={9} sx={{borderRadius:'20px'}}>
+          <Paper elevation={8} sx={{borderRadius:'20px'}}>
             <CardContent>
               <Typography variant="h6">Recent Transactions</Typography>
 

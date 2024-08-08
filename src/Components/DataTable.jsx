@@ -255,8 +255,8 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
 
   const navigate = useNavigate()
 
-  const [open, setOpen] = React.useState(false);
-  const [deleteUserID, updateDeleteUserID] = React.useState(0)
+  const [open, setOpen] = React.useState(false); // Delete popup state
+  const [deleteUserID, updateDeleteUserID] = React.useState(0);  // Delete user id state
   
   // Open the edit modal
   const handleKYCDelete = (event, id) => {
@@ -267,13 +267,12 @@ export default function DataTable({headCells, rows, TableName, status, setStaus,
   // Close the Edit Modal
   const handleKYCEditClose = () => {
       setOpen(false);
-      
   };
 
   // Open the edit modal and update the kyc ID
   const handleUpdateKYCID = (kyc, user) => {
       navigate('/admin/users/details/', {state: {kycID: kyc, userID: user}})
-  }
+  };
 
 
   const handleRequestSort = (event, property) => {

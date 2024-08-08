@@ -47,7 +47,7 @@ const UserNavContent = [
 },
 
   { text: 'Users', subItems: [
-    {text:'Users', icon: <Person2OutlinedIcon />, url: '/admin/users/'}, 
+    {text:'Users', icon: <Person2OutlinedIcon />, url: '/admin/users/data/'}, 
     {text: '-Admins', icon: <SupervisorAccountOutlinedIcon />, url: '/admin/admin-user/'}, 
   ],
   icon: <AccountCircleOutlinedIcon />},

@@ -61,7 +61,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const Signup = React.lazy(()=> import('../Authentication/Signup'))
 const Signin = React.lazy(()=> import('../Authentication/Signin'))
-const Dashboard = React.lazy(()=> import('../Dashboard'))
+const Dashboard = React.lazy(()=> import('../Dashboard/Dashboard'));
 const UsersData = React.lazy(()=> import('../Users/users'))
 const MerchantDetails = React.lazy(()=> import('../Merchant/merchant'))
 const AdminDetails = React.lazy(()=> import('../Users/Admin'))

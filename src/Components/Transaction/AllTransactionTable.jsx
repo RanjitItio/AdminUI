@@ -739,7 +739,7 @@ export default function AllTransactionTable({headCells, rows, TableName , handle
           </Grid>
       </Paper>
 
-     <Paper sx={{ width: '100%', mb: 2 }}>
+     <Paper sx={{ width: '100%', mb: 2, overflowX:'auto' }}>
         {/* <EnhancedTableToolbar 
             numSelected={selected.length} 
             TableName={TableName} 
@@ -751,6 +751,7 @@ export default function AllTransactionTable({headCells, rows, TableName , handle
             updateAllTransactionData={updateAllTransactionData}
             /> */}
 
+        
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -870,6 +871,7 @@ export default function AllTransactionTable({headCells, rows, TableName , handle
             </TableBody>
           </Table>
         </TableContainer>
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, 50, 100]}
           component="div"
