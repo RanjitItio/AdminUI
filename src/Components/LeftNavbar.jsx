@@ -53,7 +53,9 @@ const UserNavContent = [
   icon: <AccountCircleOutlinedIcon />},
 
   { text: 'Transactions', subItems: [
-    {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all-transaction/'},
+    {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all/uat/transaction/'},
+    {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
+    {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
     {text: '-Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
     // {text: '-Currency Exchange', icon: <PaymentsOutlinedIcon />, url: '/admin/exchanges/'},
     // {text: '-Request Payments', icon: <CalculateOutlinedIcon />, url: '/admin/request-payments/'},
