@@ -106,6 +106,10 @@ const UpdatePipe = React.lazy(()=> import('../Pipe/updatePipe'))
 const AllMerchantPGTransactions = React.lazy(()=> import('../MerchantPGTransactions/AllTransactions'))
 const MerchantPGTransactionUpdate = React.lazy(()=> import('../MerchantPGTransactions/TransactionUpdate'))
 const MainNavbar = React.lazy(()=> import('../Navbar'))
+const AllMerchantPGWithdrawals = React.lazy(()=> import('../Withdrawals/AllWithdrawals'))
+const UpdateMerchantWithdrawals = React.lazy(()=> import('../Withdrawals/UpdateWithdrawal'))
+import CircularProgress from '@mui/joy/CircularProgress';
+
 
 
 
@@ -171,7 +175,7 @@ const AuthRoutes = () => {
           {
             path: "*",
             element: (
-              <Suspense fallback={<div>Loading...</div>}>
+              <Suspense fallback={<CircularProgress />}>
               <Routes>
                     <Route exact path='/signup/' element={<Signup />}></Route>
                     <Route exact path='/signin/' element={<Signin />}></Route>
@@ -244,6 +248,11 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/pipes/" element={<Allpipe open={open} />} ></Route>
                           <Route exact path="/admin/add/pipe/" element={<AddNewPipe open={open} />} ></Route>
                           <Route exact path="/admin/update/pipe/" element={<UpdatePipe open={open} />} ></Route>
+
+                          {/* Withdrawals */}
+                          <Route exact path="/admin/merchant/withdrawals/" element={<AllMerchantPGWithdrawals open={open} />} ></Route>
+                          <Route exact path="/admin/merchant/update/withdrawals/" element={<UpdateMerchantWithdrawals open={open} />} ></Route>
+                          
                       </Routes>
                     
                     </Box>

@@ -202,7 +202,6 @@ export default function MerchantPGTransactionUpdate({open}) {
         }
     };
 
-    console.log(formData.status)
 
     return (
         <Main open={open}>

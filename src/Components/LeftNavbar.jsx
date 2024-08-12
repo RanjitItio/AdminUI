@@ -99,7 +99,7 @@ const MerchantNavContent = [
 
   { text: 'Transactions', subItems: [
     {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all-transaction/'},
-    {text: '-Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
+    {text: 'Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/merchant/withdrawals/'},
     // {text: '-Currency Exchange', icon: <PaymentsOutlinedIcon />, url: '/admin/exchanges/'},
     // {text: '-Request Payments', icon: <CalculateOutlinedIcon />, url: '/admin/request-payments/'},
     // {text: 'Merchant Payment', icon: <PaymentsOutlinedIcon />, url: '/admin/merchant-payments/'},
