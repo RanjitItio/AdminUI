@@ -1,20 +1,64 @@
 import TextField from '@mui/material/TextField';
 import { Paper, Typography, Grid } from '@mui/material';
 import { Main, DrawerHeader } from '../Content';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import BackupIcon from '@mui/icons-material/Backup';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
+import axiosInstance from '../Authentication/axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 
 
 // Update Withdrawal status
 export default function UpdateMerchantWithdrawals({open}) {
-    const [successMessage, setSuccessMessage] = useState('');
-    const [error, setError]                   = useState('');
+    const navigate = useNavigate();
+    const location = useLocation();
+    const states = location?.state
+
+    const [successMessage, setSuccessMessage] = useState('');  // Success Message state
+    const [error, setError]                   = useState('');  // Error Message state
+    const [status, updateStatus]              = useState(states.withdrawal?.status || '');  // Withdrawal status state
+
+
+    // Capture Status value
+    const handleUpdateStatus = (e, newValue)=> {
+        updateStatus(newValue)
+    };
+
+    // Update Status method
+    const handleUpdateWithdrawal = ()=> {
+
+        axiosInstance.put(`api/v4/admin/merchant/withdrawal/update/`, {
+            status: status,
+            withdrawal_id: states.withdrawal.id
+
+        }).then((res)=> {
+            // console.log(res)
+            if (res.status === 200 && res.data.message === 'Updated Successfully') {
+                setSuccessMessage('Updated Successfully')
+
+                setTimeout(() => {
+                    navigate('/admin/merchant/withdrawals/')
+                }, 2000);
+            };
+
+        }).catch((error)=> {
+            // console.log(error)
+            if (error.response.data.message === 'No Withdrawal request found with given information') {
+                setError('No withdrawal request found')
+            } else if (error.response.data.message == 'Insufficient balance to withdrawal') {
+                setError('Insuficient funds in Account')
+            } else if (error.response.data.error === 'Server Error') {
+                setError('Unknow error occured, Please retry after sometime')
+            };
+
+        })
+    };
+
 
 
     return (
@@ -26,9 +70,9 @@ export default function UpdateMerchantWithdrawals({open}) {
                 sx={{
                     padding: 3,
                     marginTop: 1,
-                    borderRadius: 2,
+                    borderRadius: 7,
                     '&:hover': {
-                    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                    boxShadow: '-9px 17px 5px 0px rgba(0,0,0,0.75)',
                     },
                 }}
                 >
@@ -40,163 +84,123 @@ export default function UpdateMerchantWithdrawals({open}) {
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             disabled 
-                            id="transactionID" 
-                            label="Transaction ID" 
+                            id="merchantName" 
+                            label="Merchant Name" 
                             variant="outlined" 
                             fullWidth
-                            name='transactionID'
-                            // value={formData.transactionID}
+                            name='merchantName'
+                            value={states.withdrawal?.merchant_name || ''}
                             />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             disabled 
-                            id="merchant" 
-                            label="Merchant Name" 
+                            id="merchantEmail" 
+                            label="Merchant Email" 
                             variant="outlined" 
                             fullWidth 
-                            name='merchantName'
-                            // value={formData.merchantName}
+                            name='merchantEmail'
+                            value={states.withdrawal?.merchant_email || ''}
                             />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='number' 
-                            id="amount" 
-                            label="Amount" 
+                            id="withdrawalAmount" 
+                            label="Withdrawal Amount" 
                             variant="outlined" 
                             fullWidth 
-                            name='amount'
-                            // value={formData.amount}
-                            // onChange={handleChange}
-                            />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        
-                        <Select
-                                placeholder="Select Currency"
-                                id="currency" 
-                                name="currency"
-                                // defaultValue={formData?.currency || ''}
-                                // onChange={(e, newValue)=> {handleCurrencyChange(e, newValue)}}
-                                required
-                                sx={{ minWidth: 200, height: 55 }}
-                            >
-                                <Option value="USD">USD</Option>
-                                <Option value="INR">INR</Option>
-                                <Option value="GBP">GBP</Option>
-                                <Option value="EUR">EUR</Option>
-                        </Select>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <Select
-                                placeholder="Select Payment Mode"
-                                id="paymentMode" 
-                                name="paymentMode"
-                                // defaultValue={formData?.paymentMode || ''}
-                                // onChange={(e, newValue)=> {handlePaymentModeChange(e, newValue)}}
-                                required
-                                sx={{ minWidth: 200, height: 55 }}
-                            >
-                                <Option value="UPI">UPI</Option>
-                                <Option value="Card">Card</Option>
-                                <Option value="Net Banking">Net Banking</Option>
-                                <Option value="Wallet">Wallet</Option>
-                        </Select>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <TextField 
-                            disabled 
-                            id="dateTime" 
-                            label="Date and Time" 
-                            variant="outlined" 
-                            fullWidth 
-                            name='dateTime'
-                            // value={formData.dateTime}
-                            // onChange={handleChange}
+                            name='withdrawalAmount'
+                            value={states.withdrawal?.withdrawalAmount || ''}
                             />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
-                            id="merchantOrderId" 
-                            label="merchant Order ID" 
+                            type='text' 
+                            id="withdrawalCurrency" 
+                            label="Withdrawal Currency" 
                             variant="outlined" 
                             fullWidth 
-                            name='merchantOrderID'
-                            // value={formData.merchantOrderID}
-                            // onChange={handleChange}
+                            name='withdrawalCurrency'
+                            value={states.withdrawal?.withdrawalCurrency || ''}
                             />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
-                            id="merchantRedirectUrl" 
-                            label="Merchant Redirect URL" 
+                            type='text' 
+                            id="depositBank" 
+                            label="Deposit Bank" 
                             variant="outlined" 
-                            fullWidth
-                            name='merchantRedirectURL'
-                            // value={formData.merchantRedirectURL}
-                            // onChange={handleChange}
+                            fullWidth 
+                            name='depositBank'
+                            value={states.withdrawal?.bank_account || ''}
+                            />
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <TextField 
+                            type='text' 
+                            id="bankCurrency" 
+                            label="Bank Currency" 
+                            variant="outlined" 
+                            fullWidth 
+                            name='bankCurrency'
+                            value={states.withdrawal?.bankCurrency || ''}
+                            />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <TextField  
+                            id="date" 
+                            label="Date" 
+                            variant="outlined" 
+                            fullWidth 
+                            name='date'
+                            value={states.withdrawal?.createdAt.split('T')[0]}
                             />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
-                            id="merchantWebhookUrl" 
-                            label="Merchant Webhook URL" 
+                            id="time" 
+                            label="Time" 
                             variant="outlined" 
                             fullWidth 
-                            name='merchantCallbackURL'
-                            // value={formData.merchantCallbackURL}
-                            // onChange={handleChange}
+                            name='time'
+                            value={states.withdrawal?.createdAt.split('T')[1]}
                             />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
-                            id="merchantMobileNumber" 
-                            label="Merchant Mobile Number" 
+                            id="merchantAccountBalance" 
+                            label="merchant Account Balance" 
                             variant="outlined" 
                             fullWidth 
-                            name='merchantMobileNumber'
-                            // value={formData.merchantMobileNumber}
-                            // onChange={handleChange}
+                            name='merchantAccountBalance'
+                            value={`${states.withdrawal?.account_balance || ''} ${states.withdrawal?.account_currency || ''}`} 
                             />
                     </Grid>
-
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <TextField 
-                            id="merchantPaymentType" 
-                            label="Mercnant payment Type(PAY_PAGE/S2S)" 
-                            variant="outlined" 
-                            fullWidth 
-                            name='merchantPaymentType'
-                            disabled
-                            // value={formData.merchantPaymentType}
-                            // onChange={handleChange}
-                            />
-                    </Grid>
-
+                    
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <Select
-                            placeholder="Select Payment Status"
-                            id="paymentStaus" 
-                            name="status"
-                            // defaultValue={formData?.status || ''}
-                            // onChange={(e, newValue)=> {handlePaymentStatusChange(e, newValue)}}
+                            placeholder="Select Status"
+                            id="withdrawalStaus" 
+                            name="withdrawalStaus"
+                            // defaultValue={states.withdrawal?.status || ''}
+                            value={status}
+                            onChange={(e, newValue)=> {handleUpdateStatus(e, newValue)}}
                             required
                             sx={{ minWidth: 200, height: 55 }}
                             >
-                                <Option value="PAYMENT_INITIATED">PAYMENT INITIATE</Option>
-                                <Option value="PAYMENT_PENDING">PAYMENT PENDING</Option>
-                                <Option value="PAYMENT_FAILED">PAYMENT FAILED</Option>
-                                <Option value="PAYMENT_SUCCESS">PAYMENT SUCCESS</Option>
+                                <Option value="Pending">Pending</Option>
+                                <Option value="Approved">Approved</Option>
+                                <Option value="Rejected">Rejected</Option>
+                                <Option value="Hold">On Hold</Option>
                         </Select>
                     </Grid>
 
@@ -214,7 +218,7 @@ export default function UpdateMerchantWithdrawals({open}) {
                             sx={{mx:2}} 
                             variant="contained" 
                             endIcon={<BackupIcon />}
-                            // onClick={handleSubmit}
+                            onClick={handleUpdateWithdrawal}
                             >
                             Submit
                         </Button>

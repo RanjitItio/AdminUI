@@ -20,11 +20,12 @@ import { useNavigate } from "react-router-dom";
 export default function AllMerchantPGWithdrawals({open}) {
     const navigate = useNavigate();
     const [merchantWithdrawals, updateMerchantWithdrawals] = useState([]);
+    const [searchQuery, updateSearchQuery] = useState('');
 
     // Fetch all the merchant withdrawals
     useEffect(() => {
       axiosInstance.get(`/api/v4/admin/merchant/pg/withdrawals/`).then((res)=> {
-        console.log(res)
+        // console.log(res)
         if (res.status === 200 && res.data.success === true) {
             updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
         };
@@ -36,8 +37,8 @@ export default function AllMerchantPGWithdrawals({open}) {
     }, []);
 
     // Method to redirect the user to Edit page
-    const handleEditClicked = ()=> {
-        navigate('/admin/merchant/update/withdrawals/')
+    const handleEditClicked = (withdrawalRequests)=> {
+        navigate('/admin/merchant/update/withdrawals/', {state: {withdrawal: withdrawalRequests}})
     };
 
     // Change status color according to the transaction status
@@ -47,13 +48,33 @@ export default function AllMerchantPGWithdrawals({open}) {
                  return 'primary'
             case 'Rejected':
                 return 'error'
-            case 'Success':
+            case 'Approved':
                 return 'success'
             case 'Pending':
                 return 'warning'
             default:
                 return 'primary'
         }
+    };
+
+    // Search Withdrawal Transactions
+    const handleSearch = ()=> {
+        axiosInstance.get(`api/v4/admin/merchant/withdrawal/search/?query=${searchQuery}`).then((res)=> {
+            // console.log(res)
+
+            if (res.status === 200 && res.data.success === true) {
+                updateMerchantWithdrawals(res.data.merchant_withdrawal_search)
+            };
+
+        }).catch((error)=> {
+            console.log(error)
+
+        })
+    };
+
+    // Input Search values
+    const handleSearchInputChange = (e)=> {
+        updateSearchQuery(e.target.value);
     };
 
     
@@ -70,8 +91,8 @@ export default function AllMerchantPGWithdrawals({open}) {
                     alignItems: 'center',
                     p:2
                     }}>
-                <Input placeholder="Type in here…" />
-                <IconButton aria-label="Example">
+                <Input placeholder="Type in here…" onChange={handleSearchInputChange}/>
+                <IconButton aria-label="Example" onClick={handleSearch}>
                     <SearchIcon color='primary' />
                 </IconButton>
                 <Button sx={{mx:1}}>Export</Button>
@@ -136,7 +157,7 @@ export default function AllMerchantPGWithdrawals({open}) {
                                 </TableCell>
 
                                 <TableCell component="th" scope="row" align="center">
-                                    <IconButton aria-label="Example" onClick={handleEditClicked}>
+                                    <IconButton aria-label="Example" onClick={()=> {handleEditClicked(transaction)}}>
                                         <ModeEditSharpIcon color='secondary'/>
                                     </IconButton>
                                 </TableCell>
