@@ -24,12 +24,47 @@ import { saveAs } from 'file-saver';
 
 // All Transaction Data
 export default function AllMerchantPGTransactions({open}) {
+    const navigate = useNavigate();
     const [transactionData, updateTransactionData] = useState([]); // All Transaction data state
     const [modeName, setModeName] = useState('Production Mode');   // Mode Name
-    const [exportData, updateExportData] = useState([]);
+    const [exportData, updateExportData] = useState([]);  // Excel data
+    const [searchedText, updateSearchedText] = useState('');
 
-    const navigate = useNavigate();
 
+    // Method to get Search input value
+     const handleUpdateSearchedText = (e)=> {
+        updateSearchedText(e.target.value);
+     };
+
+     // Method to get searched data
+     const handleSearchedData = ()=> {
+        if(modeName === 'Production Mode') {
+            // Fetch Production Data
+            axiosInstance.get(`api/v2/admin/merchant/pg/prod/search/transactions/?query=${searchedText}`).then((res)=> {
+                // console.log(res)
+                if (res.status === 200) {
+                    updateTransactionData(res.data.admin_merchant_searched_prod_transactions)
+                }
+
+            }).catch((error)=> {
+                console.log(error)
+
+            })
+
+        } else if (modeName === 'Test Mode') {
+            // Fetch Sandbox data
+            axiosInstance.get(`api/v2/admin/merchant/pg/sb/search/transactions/?query=${searchedText}`).then((res)=> {
+                // console.log(res)
+                if (res.status === 200) {
+                    updateTransactionData(res.data.admin_merchant_searched_sb_transactions)
+                };
+
+            }).catch((error)=> {
+                console.log(error)
+
+            })
+        }
+     };
 
     // Call API to fetch all the Transactions
     useEffect(()=> {
@@ -51,6 +86,8 @@ export default function AllMerchantPGTransactions({open}) {
          const value = e.target.checked
 
          if (value === false) {
+            setModeName('Test Mode')
+
             axiosInstance.get(`/api/v2/admin/merchant/pg/sandbox/transactions/`).then((res)=> {
                 // console.log(res)
     
@@ -64,6 +101,8 @@ export default function AllMerchantPGTransactions({open}) {
                 
             })
          } else if (value === true) {
+            setModeName('Production Mode')
+
             axiosInstance.get(`api/v2/admin/merchant/pg/transactions/`).then((res)=> {
                 // console.log(res)
     
@@ -174,8 +213,8 @@ export default function AllMerchantPGTransactions({open}) {
                     alignItems: 'center',
                     p:2
                     }}>
-                <Input placeholder="Type in here…" />
-                <IconButton aria-label="Example">
+                <Input placeholder="Type in here…" onChange={handleUpdateSearchedText} />
+                <IconButton aria-label="Example" onClick={handleSearchedData}>
                     <SearchIcon color='primary' />
                 </IconButton>
                 <Button sx={{mx:1}} onClick={handleExportClicked}>Export</Button>
