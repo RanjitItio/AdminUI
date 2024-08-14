@@ -15,7 +15,7 @@ import Input from '@mui/joy/Input';
 import SearchIcon from '@mui/icons-material/Search';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { useTheme } from '@mui/material/styles';
+
 
 
 
@@ -29,7 +29,6 @@ export default function AllMerchantPGTransactions({open}) {
     const [exportData, updateExportData] = useState([]);
 
     const navigate = useNavigate();
-    const theme = useTheme();
 
 
     // Call API to fetch all the Transactions
@@ -157,7 +156,7 @@ export default function AllMerchantPGTransactions({open}) {
             // console.log('downloaded')
         };
         
-        updateExportData([])
+        updateExportData([]);
     };
 
 

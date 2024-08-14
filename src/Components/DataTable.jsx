@@ -31,6 +31,7 @@ import KYCDeleteModal from './Users/Kyceditmodal';
 import { useEffect } from 'react';
 import axiosInstance from './Authentication/axios';
 import { useState } from 'react';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 
 
@@ -90,7 +91,7 @@ function EnhancedTableHead(props) {
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{
-              'aria-label': 'select all desserts',
+              'aria-label': 'select all users',
             }}
           />
         </TableCell>
@@ -126,18 +127,45 @@ function EnhancedTableToolbar(props) {
   const navigate = useNavigate()
   const { numSelected } = props;
   const [triggerRender, setTriggerRender] = useState(false)
+  const [searchInput, updateSearchInput]  = useState([]);
   const timeoutIdRef = React.useRef(null);
 
+  
+  // Get user creach text
   const handleSearchChange = (event) => {
-    const input = event.target.value;
 
+    const value = event.target.value;
+
+    updateSearchInput(value)
+
+    // if (timeoutIdRef.current) {
+    //   clearTimeout(timeoutIdRef.current)
+    // };
+    
+
+    // timeoutIdRef.current = setTimeout(() => {
+    //   axiosInstance.get(`api/v1/admin/user/search/?query=${input}`).
+    //     then((res)=> {
+    //       // console.log(res.data.all_Kyc)
+    //       props.updateKycData(res.data.all_Kyc.reverse())
+    //       setTriggerRender(true)
+
+    //     }).catch((error)=> {
+    //       console.log(error.response)
+          
+    //     })
+    // }, 2000);
+};
+
+
+const handleSearchButtonClicked = ()=> {
     if (timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current)
     };
     
 
     timeoutIdRef.current = setTimeout(() => {
-      axiosInstance.get(`api/v1/admin/user/search/?query=${input}`).
+      axiosInstance.get(`api/v1/admin/user/search/?query=${searchInput}`).
         then((res)=> {
           // console.log(res.data.all_Kyc)
           props.updateKycData(res.data.all_Kyc.reverse())
@@ -168,7 +196,7 @@ useEffect(() => {
         props.setPage(0)
       }
         
-        console.log('Page Changed')
+        // console.log('Page Chang  ed')
         setTriggerRender(false)
 
     }, 1000);
@@ -218,13 +246,18 @@ useEffect(() => {
       ) : (
         <>
         <TextField
-        hiddenLabel
-        id="filled-hidden-label-small"
-        placeholder='Search users'
-        variant="filled"
-        size="small"
-        onChange={handleSearchChange}
+          hiddenLabel
+          id="filled-hidden-label-small"
+          placeholder='Search users'
+          variant="filled"
+          size="small"
+          onChange={handleSearchChange}
       />
+
+      <IconButton aria-label="delete" size="large" onClick={handleSearchButtonClicked}>
+        <ManageSearchIcon fontSize="inherit" color='primary' />
+      </IconButton>
+
         <Tooltip title="Add New User">
             <Fab color="primary" aria-label="add" style={{marginLeft: '20px'}} >
               <div >

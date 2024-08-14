@@ -11,6 +11,8 @@ import Input from '@mui/joy/Input';
 import SearchIcon from '@mui/icons-material/Search';
 import Button from "../MUIBaseButton/button";
 import { useNavigate } from "react-router-dom";
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 
 
@@ -19,8 +21,10 @@ import { useNavigate } from "react-router-dom";
 // All Merchant Withdrawal transactions of PG
 export default function AllMerchantPGWithdrawals({open}) {
     const navigate = useNavigate();
-    const [merchantWithdrawals, updateMerchantWithdrawals] = useState([]);
-    const [searchQuery, updateSearchQuery] = useState('');
+    const [merchantWithdrawals, updateMerchantWithdrawals] = useState([]);  // All merchant withdrawals
+    const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
+    const [exportData, updateExportData] = useState([]); // Excel Data
+
 
     // Fetch all the merchant withdrawals
     useEffect(() => {
@@ -77,6 +81,51 @@ export default function AllMerchantPGWithdrawals({open}) {
         updateSearchQuery(e.target.value);
     };
 
+    // Export to Excel
+    const exportToExcel = async ()=> {
+        if (exportData && exportData.length > 0) {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('sheet1')
+
+            const headers = Object.keys(exportData[0])
+
+            worksheet.addRow(headers)
+
+            exportData.forEach((item)=> {
+                worksheet.addRow(Object.values(item))
+            })
+
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            saveAs(blob, 'withdrawals.xlsx');
+        } else {
+            console.log('No Data available to Download')
+        }
+
+        
+    };
+
+
+    // Download all withdrawal requests
+    const handleDownloadWithdrawals = ()=> {
+        axiosInstance.get(`/api/v4/admin/merchant/pg/export/withdrawals/`).then((res)=> {
+            // console.log(res)
+    
+            if (res.status === 200 && res.data.success === true) {
+                updateExportData(res.data.AdminMerchantExportWithdrawalRequests);
+                
+                setTimeout(() => {
+                    exportToExcel();
+                }, 1000);
+                
+            };
+    
+          }).catch((error)=> {
+            console.log(error)
+    
+          })
+    };
+
     
     return (
         <Main open={open}>
@@ -95,7 +144,7 @@ export default function AllMerchantPGWithdrawals({open}) {
                 <IconButton aria-label="Example" onClick={handleSearch}>
                     <SearchIcon color='primary' />
                 </IconButton>
-                <Button sx={{mx:1}}>Export</Button>
+                <Button sx={{mx:1}} onClick={handleDownloadWithdrawals}>Export</Button>
             </Box>
 
             <TableContainer>
