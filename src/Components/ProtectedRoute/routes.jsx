@@ -59,6 +59,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 
 
+import CircularProgress from '@mui/joy/CircularProgress';
 const Signup = React.lazy(()=> import('../Authentication/Signup'))
 const Signin = React.lazy(()=> import('../Authentication/Signin'))
 const Dashboard = React.lazy(()=> import('../Dashboard/Dashboard'));
@@ -107,8 +108,9 @@ const AllMerchantPGTransactions = React.lazy(()=> import('../MerchantPGTransacti
 const MerchantPGTransactionUpdate = React.lazy(()=> import('../MerchantPGTransactions/TransactionUpdate'))
 const MainNavbar = React.lazy(()=> import('../Navbar'))
 const AllMerchantPGWithdrawals = React.lazy(()=> import('../Withdrawals/AllWithdrawals'))
-const UpdateMerchantWithdrawals = React.lazy(()=> import('../Withdrawals/UpdateWithdrawal'))
-import CircularProgress from '@mui/joy/CircularProgress';
+const UpdateMerchantWithdrawals = React.lazy(()=> import('../Withdrawals/UpdateWithdrawal'));
+const MerchantRefunds = React.lazy(()=> import('../Refunds/AllRefunds'));
+const UpdateMerchantRefund = React.lazy(()=> import('../Refunds/updateRefunds'));
 
 
 
@@ -253,6 +255,10 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/merchant/withdrawals/" element={<AllMerchantPGWithdrawals open={open} />} ></Route>
                           <Route exact path="/admin/merchant/update/withdrawals/" element={<UpdateMerchantWithdrawals open={open} />} ></Route>
                           
+                          
+                          {/* Refunds */}
+                          <Route exact path="/admin/merchant/refunds/" element={<MerchantRefunds open={open} />} ></Route>
+                          <Route exact path="/admin/merchant/update/refunds/" element={<UpdateMerchantRefund open={open} />} ></Route>
                       </Routes>
                     
                     </Box>

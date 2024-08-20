@@ -18,11 +18,6 @@ import React from 'react';
 import DashboardCustomizeOutlinedIcon from '@mui/icons-material/DashboardCustomizeOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
-import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
-import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined';
-import LocalActivityOutlinedIcon from '@mui/icons-material/LocalActivityOutlined';
-import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import SupervisorAccountOutlinedIcon from '@mui/icons-material/SupervisorAccountOutlined';
@@ -30,11 +25,13 @@ import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
 import NorthOutlinedIcon from '@mui/icons-material/NorthOutlined';
 import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
-import FingerprintOutlinedIcon from '@mui/icons-material/FingerprintOutlined';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 import GoogleIcon from '@mui/icons-material/Google';
 import ContactlessIcon from '@mui/icons-material/Contactless';
 import ReceiptIcon from '@mui/icons-material/Receipt';
+import { Paper } from '@mui/material';
+import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
+import { ConfirmationNumberOutlined } from '@mui/icons-material';
 
 
 
@@ -57,11 +54,6 @@ const UserNavContent = [
     {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
     {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
     {text: '-Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
-    // {text: '-Currency Exchange', icon: <PaymentsOutlinedIcon />, url: '/admin/exchanges/'},
-    // {text: '-Request Payments', icon: <CalculateOutlinedIcon />, url: '/admin/request-payments/'},
-    // {text: 'Merchant Payment', icon: <PaymentsOutlinedIcon />, url: '/admin/merchant-payments/'},
-    // {text: '-Crypto Sent', icon: <KeyboardDoubleArrowRightOutlinedIcon />, url: '/admin/crypto-sent-transactions/'},
-    // {text: '-Crypto Received', icon: <KeyboardDoubleArrowLeftOutlinedIcon />, url: "/admin/crypto-received-transactions"},
   ],
   icon: <ReceiptLongOutlinedIcon />},
 
@@ -69,8 +61,32 @@ const UserNavContent = [
       {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all/uat/transaction/'},
       {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
       {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
+      
     ],
     icon: <ReceiptIcon />
+  },
+
+  { text: 'Crypto', subItems: [
+      {text: 'Crypto Provider', icon: <HistoryOutlinedIcon />, url: ''},
+      {text: 'Setting', icon: <HistoryOutlinedIcon />, url: ''},
+      {text: 'Currencies', icon: <HistoryOutlinedIcon />, url: ''},
+      
+    ],
+    icon: <ReceiptIcon />
+  },
+  { text: 'Addons', subItems: [
+      {text: 'Crypto Exchange', icon: <HistoryOutlinedIcon />, url: ''},
+      {text: 'Investments', icon: <HistoryOutlinedIcon />, url: ''},
+    ],
+    icon: <ReceiptIcon />
+  },
+  { text: '-Revenues', subItems: [
+    {text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: '/admin/revenues/'},],
+    icon: <AccountBalanceOutlinedIcon />
+  },
+  { text: '-Disputes', subItems: [
+    {text: '-Disputes', icon: <ConfirmationNumberOutlined />, url: '/admin/dispute/'},],
+    icon: <ConfirmationNumberOutlined />
   },
 ];
 
@@ -83,16 +99,19 @@ const MerchantNavContent = [
   icon: <DashboardCustomizeOutlinedIcon />
 },
 
-  { text: 'Users', subItems: [
-    {text:'Users', icon: <Person2OutlinedIcon />, url: '/admin/users/'},
-    {text: 'Businesses', icon: <StorefrontOutlinedIcon />, url: '/admin/merchant/'},  
+  { text: 'Merchants', subItems: [
+    {text:'Merchants', icon: <Person2OutlinedIcon />, url: '/admin/users/'}, 
     {text: '-Admins', icon: <SupervisorAccountOutlinedIcon />, url: '/admin/admin-user/'}, 
   ],
   icon: <AccountCircleOutlinedIcon />},
 
+  { text: 'Business', subItems: [
+    {text: 'Businesses', icon: <StorefrontOutlinedIcon />, url: '/admin/merchant/'},   
+  ],
+  icon: <StorefrontOutlinedIcon />},
+
   { text: 'Pipe', subItems: [
-    {text:'All Pipes', icon: <ContactlessIcon />, url: '/admin/pipes/'},
-    // {text: 'Pipe Settings', icon: <SettingsIcon />, url: '/admin/pipes/'},  
+    {text:'All Pipes', icon: <ContactlessIcon />, url: '/admin/pipes/'},  
   ],
   icon: <ContactlessIcon />},
 
@@ -100,48 +119,43 @@ const MerchantNavContent = [
   { text: 'Transactions', subItems: [
     {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all-transaction/'},
     {text: 'Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/merchant/withdrawals/'},
+    {text: 'Refunds', icon: <AutorenewIcon />, url: '/admin/merchant/refunds/'},
     // {text: '-Currency Exchange', icon: <PaymentsOutlinedIcon />, url: '/admin/exchanges/'},
     // {text: '-Request Payments', icon: <CalculateOutlinedIcon />, url: '/admin/request-payments/'},
     // {text: 'Merchant Payment', icon: <PaymentsOutlinedIcon />, url: '/admin/merchant-payments/'},
     // {text: '-Crypto Sent', icon: <KeyboardDoubleArrowRightOutlinedIcon />, url: '/admin/crypto-sent-transactions/'},
     // {text: '-Crypto Received', icon: <KeyboardDoubleArrowLeftOutlinedIcon />, url: "/admin/crypto-received-transactions"},
+   
   ],
   icon: <ReceiptLongOutlinedIcon />},
-
-  { text: 'UAT Transactions', subItems: [
-      {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all/uat/transaction/'},
-      {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
-      {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
-    ],
-    icon: <ReceiptIcon />
-  },
-
-  // { text: '-Revenues', subItems: [
-  //   {text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: '/admin/revenues/'},],
-  //   icon: <AccountBalanceOutlinedIcon />
-  // },
-  // { text: '-Disputes', subItems: [
-  //   {text: '-Disputes', icon: <ConfirmationNumberOutlinedIcon />, url: '/admin/dispute/'},],
-  //   icon: <ConfirmationNumberOutlinedIcon />
-  // },
-  // { text: 'Tickets', subItems: [
-  //   {text: 'Tickets', icon: <LocalActivityOutlinedIcon />, url: '/tickets/'}],
-  //   icon: <LocalActivityOutlinedIcon />
-  // },
-  // { text: '-Activity Logs', subItems: [
-  //   {text: '-Activity Logs', icon: <RemoveRedEyeOutlinedIcon />, url: '/admin/activitylogs/'}],
-  //   icon: <RemoveRedEyeOutlinedIcon />
-  // },
-  // { text: '-Verifications', subItems: [
-  //   {text: '-Identity Verification', icon: <FingerprintOutlinedIcon />, url: 'https://cssgradient.io/'}, 
-  //   {text: '-Address Verification', icon: <ContactsOutlinedIcon />, url: 'https://cssgradient.io/'}],
-  //   icon: <VerifiedOutlinedIcon /> 
-  // }
+    { text: '-Revenues', subItems: [
+      {text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: '/admin/revenues/'},],
+      icon: <AccountBalanceOutlinedIcon />
+    },
+    { text: '-Disputes', subItems: [
+      {text: '-Disputes', icon: <ConfirmationNumberOutlined />, url: '/admin/dispute/'},],
+      icon: <ConfirmationNumberOutlined />
+    },
+    // { text: 'Tickets', subItems: [
+    //   {text: 'Tickets', icon: <LocalActivityOutlinedIcon />, url: '/tickets/'}],
+    //   icon: <LocalActivityOutlinedIcon />
+    // },
+    // { text: '-Activity Logs', subItems: [
+    //   {text: '-Activity Logs', icon: <RemoveRedEyeOutlinedIcon />, url: '/admin/activitylogs/'}],
+    //   icon: <RemoveRedEyeOutlinedIcon />
+    // },
+    // { text: '-Verifications', subItems: [
+    //   {text: '-Identity Verification', icon: <FingerprintOutlinedIcon />, url: 'https://cssgradient.io/'}, 
+    //   {text: '-Address Verification', icon: <ContactsOutlinedIcon />, url: 'https://cssgradient.io/'}],
+    //   icon: <VerifiedOutlinedIcon /> 
+    // }
 ];
 
 
-const Configurations = ['-Currencies', '-Crypto Provider', '-Settings']
-const Addons = ['-Crypto Exchange', '-Investment']
+// const Configurations = ['-Currencies', '-Crypto Provider', '-Settings']
+// const Configurations = []
+// const Addons = []
+// const Addons = ['-Crypto Exchange', '-Investment']
 
 
 
@@ -171,11 +185,12 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
 
 
   return(
-    <>
     <Drawer
         sx={{
+          height: '100vh',
           width: drawerWidth,
           flexShrink: 0,
+          height: '100vh',
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
@@ -185,6 +200,7 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
         anchor="left"
         open={open}
       >
+        
         <DrawerHeader style={{backgroundColor: '#0f3785', color: 'white'}}>
           <GoogleIcon /> &nbsp;&nbsp;<p className='my-3'><b>Itio Innovex</b></p>
           <IconButton onClick={handleDrawerClose}>
@@ -194,7 +210,8 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
         <Divider />
 
         {merchantContent ? 
-           <>
+           <div style={{height:'200%', backgroundColor:'#0f3785'}}>
+           
            <List style={{backgroundColor: '#0f3785', color: '#e7ebf2'}}>
                 {MerchantNavContent.map((item, index) => (
                 <React.Fragment key={item.text}>
@@ -221,15 +238,16 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
                         </ListItem>
                       ))}
               </List>
-
+              
 
             </Collapse>
         </React.Fragment>
       ))}
         </List>
-           </>
+           </div>
         : 
-          <>
+          <div style={{height:'200%', backgroundColor:'#0f3785'}}>
+            
           <List style={{backgroundColor: '#0f3785', color: '#e7ebf2'}}>
                 {UserNavContent.map((item, index) => (
                 <React.Fragment key={item.text}>
@@ -262,13 +280,12 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
         </React.Fragment>
       ))}
         </List>
-          </>
+          </div>
         }
-      
               
-        <Divider/>
+        {/* <Divider/> */}
 
-        <List style={{backgroundColor: '#0f3785', color: '#e7ebf2'}}>
+        {/* <List style={{backgroundColor: '#0f3785', color: '#e7ebf2'}}>
           {Configurations.map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton>
@@ -279,10 +296,10 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
               </ListItemButton>
             </ListItem>
           ))}
-        </List>
-        <Divider />
+        </List> */}
+        {/* <Divider /> */}
 
-        <List style={{backgroundColor: '#0f3785', color: 'white'}}>
+        {/* <List style={{backgroundColor: '#0f3785', color: 'white'}}>
           {Addons.map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton>
@@ -293,9 +310,8 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
               </ListItemButton>
             </ListItem>
           ))}
-        </List>
+        </List> */}
       </Drawer>
-    </>
 
   )
 };

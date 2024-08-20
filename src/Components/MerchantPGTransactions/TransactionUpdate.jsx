@@ -197,7 +197,10 @@ export default function MerchantPGTransactionUpdate({open}) {
                 };
             }).catch((error)=> {
                 console.log(error)
-    
+
+                if (error.response.data.message === 'Transaction already updated') {
+                    setError('Transaction has been updated, Can not perform this action')
+                }
             })
         }
     };

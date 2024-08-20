@@ -17,22 +17,26 @@ import { saveAs } from 'file-saver';
 
 
 
-
-// All Merchant Withdrawal transactions of PG
-export default function AllMerchantPGWithdrawals({open}) {
+// Get all the merchant Refunds
+export default function MerchantRefunds({open}) {
     const navigate = useNavigate();
-    const [merchantWithdrawals, updateMerchantWithdrawals] = useState([]);  // All merchant withdrawals
-    const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
+    const [merchantRefunds, updateMerchantRefunds] = useState([]); // Refund Transactions
+    const [totalRowCount, setTotalRowCount]        = useState(0);
     const [exportData, updateExportData] = useState([]); // Excel Data
+    const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
 
 
-    // Fetch all the merchant withdrawals
+    let countPagination = Math.ceil(totalRowCount); 
+
+    // Fetch all the Merchant refund transactions
     useEffect(() => {
-      axiosInstance.get(`/api/v4/admin/merchant/pg/withdrawals/`).then((res)=> {
+      axiosInstance.get(`api/v6/admin/merchant/refunds/`).then((res)=> {
         // console.log(res)
-        if (res.status === 200 && res.data.success === true) {
-            updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
-        };
+
+        if (res.status === 200 && res.data.success === true){
+            updateMerchantRefunds(res.data.admin_merchant_refunds)
+            setTotalRowCount(res.data.total_count)
+        }
 
       }).catch((error)=> {
         console.log(error)
@@ -40,9 +44,27 @@ export default function AllMerchantPGWithdrawals({open}) {
       })
     }, []);
 
-    // Method to redirect the user to Edit page
-    const handleEditClicked = (withdrawalRequests)=> {
-        navigate('/admin/merchant/update/withdrawals/', {state: {withdrawal: withdrawalRequests}})
+    // Method to redirect to Update page
+    const handleRedirectUpdateRefund = (refunds)=> {
+        navigate('/admin/merchant/update/refunds/', {state: {merchantRefunds: refunds}})
+    };
+
+    // Fetch all paginated data
+    const handlePaginatedData = (e, value)=> {
+        let limit = 10;
+        let offset = (value - 1) * limit;
+
+        axiosInstance.get(`api/v6/admin/merchant/refunds/?limit=${limit}&offset=${offset}`).then((res)=> {
+            // console.log(res)
+            if (res.status === 200 && res.data.success === true) {
+                updateMerchantRefunds(res.data.admin_merchant_refunds)
+                setTotalRowCount(res.data.total_count)
+            };
+
+        }).catch((error)=> {
+            console.log(error);
+
+        })
     };
 
     // Change status color according to the transaction status
@@ -61,25 +83,6 @@ export default function AllMerchantPGWithdrawals({open}) {
         }
     };
 
-    // Search Withdrawal Transactions
-    const handleSearch = ()=> {
-        axiosInstance.get(`api/v4/admin/merchant/withdrawal/search/?query=${searchQuery}`).then((res)=> {
-            // console.log(res)
-
-            if (res.status === 200 && res.data.success === true) {
-                updateMerchantWithdrawals(res.data.merchant_withdrawal_search)
-            };
-
-        }).catch((error)=> {
-            console.log(error)
-
-        })
-    };
-
-    // Input Search values
-    const handleSearchInputChange = (e)=> {
-        updateSearchQuery(e.target.value);
-    };
 
     // Export to Excel
     const exportToExcel = async ()=> {
@@ -97,20 +100,19 @@ export default function AllMerchantPGWithdrawals({open}) {
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            saveAs(blob, 'withdrawals.xlsx');
+            saveAs(blob, 'merchantRefunds.xlsx');
         } else {
             console.log('No Data available to Download')
         }
     };
 
-
-    // Download all withdrawal requests
-    const handleDownloadWithdrawals = ()=> {
-        axiosInstance.get(`/api/v4/admin/merchant/pg/export/withdrawals/`).then((res)=> {
+     // Download all withdrawal requests
+     const handleDownloadRefunds = ()=> {
+        axiosInstance.get(`/api/v6/admin/merchant/pg/export/refunds/`).then((res)=> {
             // console.log(res)
     
             if (res.status === 200 && res.data.success === true) {
-                updateExportData(res.data.AdminMerchantExportWithdrawalRequests);
+                updateExportData(res.data.admin_merchant_refunds_export);
                 
                 setTimeout(() => {
                     exportToExcel();
@@ -120,11 +122,31 @@ export default function AllMerchantPGWithdrawals({open}) {
     
           }).catch((error)=> {
             console.log(error)
-    
           })
     };
 
+    // Search Withdrawal Transactions
+    const handleSearch = ()=> {
+        axiosInstance.get(`api/v6/admin/merchant/refund/search/?query=${searchQuery}`).then((res)=> {
+            // console.log(res)
+
+            if (res.status === 200 && res.data.success === true) {
+                updateMerchantRefunds(res.data.searched_merchant_refund)
+            };
+
+        }).catch((error)=> {
+            console.log(error)
+
+        })
+    };
+
+
+    // Input Search values
+    const handleSearchInputChange = (e)=> {
+        updateSearchQuery(e.target.value);
+    };
     
+
     return (
         <Main open={open}>
             <DrawerHeader />
@@ -139,10 +161,11 @@ export default function AllMerchantPGWithdrawals({open}) {
                     p:2
                     }}>
                 <Input placeholder="Type in here…" onChange={handleSearchInputChange}/>
+
                 <IconButton aria-label="Example" onClick={handleSearch}>
                     <SearchIcon color='primary' />
                 </IconButton>
-                <Button sx={{mx:1}} onClick={handleDownloadWithdrawals}>Export</Button>
+                <Button sx={{mx:1}} onClick={()=> handleDownloadRefunds()}>Export</Button>
             </Box>
 
             <TableContainer>
@@ -153,9 +176,11 @@ export default function AllMerchantPGWithdrawals({open}) {
                             <TableCell><b>Sl No.</b></TableCell>
                             <TableCell align="center"><b>Merchant</b></TableCell>
                             <TableCell align="center"><b>Merchant Email</b></TableCell>
-                            <TableCell align="center"><b>Withdrawal Amount</b></TableCell>
                             <TableCell align="center"><b>Date</b></TableCell>
                             <TableCell align="center"><b>Time</b></TableCell>
+                            <TableCell align="center"><b>Refund Amount</b></TableCell>
+                            <TableCell align="center"><b>Transaction Amount</b></TableCell>
+                            <TableCell align="center"><b>Instant Refund</b></TableCell>
                             <TableCell align="center"><b>Status</b></TableCell>
                             <TableCell align="center"><b>Edit</b></TableCell>
                             
@@ -163,48 +188,58 @@ export default function AllMerchantPGWithdrawals({open}) {
                     </TableHead>
 
                     <TableBody>
-                        {merchantWithdrawals.map((transaction, index) => (
+                        {merchantRefunds.map((refunds, index) => (
                             <TableRow
                             key={index}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 {/* Sl No. Column */}
                                 <TableCell scope="row">
-                                    {transaction?.id}
+                                    {refunds?.id}
                                 </TableCell>
 
                                 {/* Merchant Name Column */}
                                 <TableCell scope="row" align='left'>
-                                    {transaction?.merchant_name}
+                                    {refunds?.merchant_name}
                                 </TableCell>
 
                                 {/* Merchant Email Column */}
                                 <TableCell  scope="row" align='center'>
-                                    {transaction?.merchant_email}
-                                </TableCell>
-
-                                {/* Withdrawal Amount */}
-                                <TableCell component="th" scope="row" align="center">
-                                    {transaction?.withdrawalAmount} {transaction?.withdrawalCurrency}
+                                    {refunds?.merchant_email}
                                 </TableCell>
 
                                 {/* Date Column */}
                                 <TableCell component="th" scope="row" align="center">
-                                    {transaction?.createdAt.split('T')[0]}
+                                    {refunds?.createdAt.split('T')[0]}
                                 </TableCell>
 
                                 {/* Time Column */}
                                 <TableCell component="th" scope="row" align="center">
-                                    {transaction?.createdAt.split('T')[1]}
+                                    {refunds?.createdAt.split('T')[1]}
+                                </TableCell>
+
+                                {/* Transaction Amount Amount */}
+                                <TableCell component="th" scope="row" align="center">
+                                    {refunds?.transaction_amount} {refunds?.transaction_currency}
+                                </TableCell>
+                                
+                                {/* Refund Amount */}
+                                <TableCell component="th" scope="row" align="center">
+                                    {refunds?.amount} {refunds?.currency}
+                                </TableCell>
+
+                                {/* Instant Refund */}
+                                <TableCell component="th" scope="row" align="center">
+                                    {refunds?.instant_refund ? 'Yes' : 'No'}
                                 </TableCell>
 
                                 {/* Status Column */}
                                 <TableCell component="th" scope="row" align="center">
-                                    <Chip label={transaction?.status} variant="outlined" color={getStatusColor(transaction?.status)} />
+                                    <Chip label={refunds?.status} variant="outlined" color={getStatusColor(refunds.status)} />
                                 </TableCell>
 
                                 <TableCell component="th" scope="row" align="center">
-                                    <IconButton aria-label="Example" onClick={()=> {handleEditClicked(transaction)}}>
+                                    <IconButton aria-label="Example" onClick={()=> {handleRedirectUpdateRefund(refunds)}}>
                                         <ModeEditSharpIcon color='secondary'/>
                                     </IconButton>
                                 </TableCell>
@@ -215,7 +250,12 @@ export default function AllMerchantPGWithdrawals({open}) {
             </Box>
 
             <Box sx={{display:'flex', justifyContent:'space-between'}}>
-                <Pagination count={10} color="primary" sx={{mb:2, mt:2}} />
+                <Pagination 
+                    count={countPagination} 
+                    onChange={(e, value)=> {handlePaginatedData(e, value);}}
+                    color="primary" 
+                    sx={{mb:2, mt:2}} 
+                    />
             </Box>
 
             </TableContainer>
@@ -223,4 +263,4 @@ export default function AllMerchantPGWithdrawals({open}) {
             </Paper>
         </Main>
     );
-}
+};

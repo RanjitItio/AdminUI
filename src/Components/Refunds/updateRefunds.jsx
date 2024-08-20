@@ -1,40 +1,43 @@
-import TextField from '@mui/material/TextField';
-import { Paper, Typography, Grid } from '@mui/material';
 import { Main, DrawerHeader } from '../Content';
-import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import Button from '@mui/material/Button';
 import BackupIcon from '@mui/icons-material/Backup';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import axiosInstance from '../Authentication/axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Paper, Typography, Grid } from '@mui/material';
+import TextField from '@mui/material/TextField';
 
 
 
 
-// Update Withdrawal status
-export default function UpdateMerchantWithdrawals({open}) {
+
+// Update Merchant Refund transaction by Admin
+export default function UpdateMerchantRefund() {
     const navigate = useNavigate();
     const location = useLocation();
-    const states = location?.state || '';
+    const states = location?.state || ''
 
     const [successMessage, setSuccessMessage] = useState('');  // Success Message state
     const [error, setError]                   = useState('');  // Error Message state
-    const [status, updateStatus]              = useState(states.withdrawal?.status || '');  // Withdrawal status state
+    const [status, updateStatus]              = useState(states.merchantRefunds?.status || '');  // Withdrawal status state
 
-
+    
     // Capture Status value
     const handleUpdateStatus = (e, newValue)=> {
         updateStatus(newValue)
     };
 
     // Update Status method
-    const handleUpdateWithdrawal = ()=> {
+    const handleUpdateRefund = ()=> {
 
-        axiosInstance.put(`api/v4/admin/merchant/withdrawal/update/`, {
-            status: status,
-            withdrawal_id: states.withdrawal.id
+        axiosInstance.put(`api/v6/admin/merchant/update/refunds/`, {
+            merchant_id:    states.merchantRefunds.merchant_id,
+            refund_id:      states.merchantRefunds.id,
+            transaction_id: states.merchantRefunds.transaction_id,
+            status:         status
 
         }).then((res)=> {
             // console.log(res)
@@ -42,32 +45,29 @@ export default function UpdateMerchantWithdrawals({open}) {
                 setSuccessMessage('Updated Successfully')
 
                 setTimeout(() => {
-                    navigate('/admin/merchant/withdrawals/')
+                    navigate('/admin/merchant/refunds/')
                 }, 2000);
             };
 
         }).catch((error)=> {
-            // console.log(error)
-            if (error.response.data.message === 'No Withdrawal request found with given information') {
-                setError('No withdrawal request found')
-            } else if (error.response.data.message == 'Insufficient balance to withdrawal') {
-                setError('Insuficient funds in Account')
-            } else if (error.response.data.error === 'Server Error') {
-                setError('Unknow error occured, Please retry after sometime')
-            };
-
+            console.log(error)
+            if (error.response.data.message === 'Can not perform the same action again') {
+                setError('Transaction has already been approved, Can not perform this action')
+            }
         })
     };
 
-
-    // If the values are abscent
+    // If the values are not present
     if (states === '') {
+        
         return (
-            <p>Please restart</p>
-        )
+            <Main open={open}>
+            <DrawerHeader />
+                <p>Please go back and retry</p>
+            </Main>
+        );
     };
 
-    
     return (
         <Main open={open}>
             <DrawerHeader />
@@ -84,7 +84,7 @@ export default function UpdateMerchantWithdrawals({open}) {
                 }}
                 >
                 <Typography variant="h5" gutterBottom sx={{mb:3}}>
-                    Update Merchant Withdrawal Request
+                    Update Merchant Refund Requests
                 </Typography>
 
                 <Grid container spacing={3}>
@@ -96,7 +96,7 @@ export default function UpdateMerchantWithdrawals({open}) {
                             variant="outlined" 
                             fullWidth
                             name='merchantName'
-                            value={states.withdrawal?.merchant_name || ''}
+                            value={states.merchantRefunds?.merchant_name || ''}
                             />
                     </Grid>
 
@@ -108,55 +108,67 @@ export default function UpdateMerchantWithdrawals({open}) {
                             variant="outlined" 
                             fullWidth 
                             name='merchantEmail'
-                            value={states.withdrawal?.merchant_email || ''}
-                            />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <TextField 
-                            type='number' 
-                            id="withdrawalAmount" 
-                            label="Withdrawal Amount" 
-                            variant="outlined" 
-                            fullWidth 
-                            name='withdrawalAmount'
-                            value={states.withdrawal?.withdrawalAmount || ''}
+                            value={states.merchantRefunds?.merchant_email || ''}
                             />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='text' 
-                            id="withdrawalCurrency" 
-                            label="Withdrawal Currency" 
+                            id="transactionAmount" 
+                            label="Transaction Amount" 
                             variant="outlined" 
                             fullWidth 
-                            name='withdrawalCurrency'
-                            value={states.withdrawal?.withdrawalCurrency || ''}
+                            name='transactionAmount'
+                            value={`${states.merchantRefunds?.transaction_amount || ''} ${states.merchantRefunds?.transaction_currency || ''}`.trim()}
                             />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='text' 
-                            id="depositBank" 
-                            label="Deposit Bank" 
+                            id="transactionID" 
+                            label="Transaction ID" 
                             variant="outlined" 
                             fullWidth 
-                            name='depositBank'
-                            value={states.withdrawal?.bank_account || ''}
+                            name='transactionID'
+                            value={states.merchantRefunds?.transaction_id || ''}
+                            />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <TextField 
+                            type='text'
+                            id="refundAmount"
+                            label="Refund Amount"
+                            variant="outlined"
+                            name='refundAmount'
+                            fullWidth
+                            value={`${states.merchantRefunds?.amount || ''} ${states.merchantRefunds?.currency || ''}`.trim()}
+                            />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <TextField 
+                            type='text' 
+                            id="instantRefund" 
+                            label="Instant Refund" 
+                            variant="outlined" 
+                            fullWidth 
+                            name='instantRefund'
+                            value={states.merchantRefunds.instant_refund ? 'Yes' : 'No'}
                             />
                     </Grid>
                     
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='text' 
-                            id="bankCurrency" 
-                            label="Bank Currency" 
+                            id="instantRefundAmount" 
+                            label="Instant Refund Amount" 
                             variant="outlined" 
                             fullWidth 
-                            name='bankCurrency'
-                            value={states.withdrawal?.bankCurrency || ''}
+                            name='instantRefundAmount'
+                            value={`${states.merchantRefunds?.instant_refund_amount || ''} ${states.merchantRefunds?.transaction_currency || ''}`}
                             />
                     </Grid>
 
@@ -167,7 +179,7 @@ export default function UpdateMerchantWithdrawals({open}) {
                             variant="outlined" 
                             fullWidth 
                             name='date'
-                            value={states.withdrawal?.createdAt.split('T')[0]}
+                            value={states.merchantRefunds?.createdAt.split('T')[0]}
                             />
                     </Grid>
 
@@ -178,27 +190,16 @@ export default function UpdateMerchantWithdrawals({open}) {
                             variant="outlined" 
                             fullWidth 
                             name='time'
-                            value={states.withdrawal?.createdAt.split('T')[1]}
+                            value={states.merchantRefunds?.createdAt.split('T')[1]}
                             />
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <TextField 
-                            id="merchantAccountBalance" 
-                            label="merchant Account Balance" 
-                            variant="outlined" 
-                            fullWidth 
-                            name='merchantAccountBalance'
-                            value={`${states.withdrawal?.account_balance || ''} ${states.withdrawal?.account_currency || ''}`} 
-                            />
-                    </Grid>
                     
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <Select
                             placeholder="Select Status"
                             id="withdrawalStaus" 
                             name="withdrawalStaus"
-                            // defaultValue={states.withdrawal?.status || ''}
                             value={status}
                             onChange={(e, newValue)=> {handleUpdateStatus(e, newValue)}}
                             required
@@ -225,7 +226,7 @@ export default function UpdateMerchantWithdrawals({open}) {
                             sx={{mx:2}} 
                             variant="contained" 
                             endIcon={<BackupIcon />}
-                            onClick={handleUpdateWithdrawal}
+                            onClick={handleUpdateRefund}
                             >
                             Submit
                         </Button>
