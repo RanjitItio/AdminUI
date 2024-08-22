@@ -100,10 +100,9 @@ const ActivityLogData = React.lazy(()=> import('../ActivityLog/ActivityLog'))
 const TransferTransactionDetail = React.lazy(()=> import('../Transaction/TransferDetails'))
 const MerchantProfile = React.lazy(()=> import('../Merchant/MerchantProfile'))
 const MerchantPaymentUpdate = React.lazy(()=> import('../MerchantTransactions/paymentUpdate'))
-const MerchantBankDetail = React.lazy(()=> import('../Users/Bank/BankDetails'))
-const Allpipe = React.lazy(()=> import('../Pipe/Allpipe'))
-const AddNewPipe = React.lazy(()=> import('../Pipe/AddPipe'))
-const UpdatePipe = React.lazy(()=> import('../Pipe/updatePipe'))
+const MerchantBankDetail = React.lazy(()=> import('../Users/Bank/BankDetails'));
+const AddNewPipe = React.lazy(()=> import('../Pipe/AddPipe'));
+const UpdatePipe = React.lazy(()=> import('../Pipe/updatePipe'));
 const AllMerchantPGTransactions = React.lazy(()=> import('../MerchantPGTransactions/AllTransactions'))
 const MerchantPGTransactionUpdate = React.lazy(()=> import('../MerchantPGTransactions/TransactionUpdate'))
 const MainNavbar = React.lazy(()=> import('../Navbar'))
@@ -112,6 +111,8 @@ const UpdateMerchantWithdrawals = React.lazy(()=> import('../Withdrawals/UpdateW
 const MerchantRefunds = React.lazy(()=> import('../Refunds/AllRefunds'));
 const UpdateMerchantRefund = React.lazy(()=> import('../Refunds/updateRefunds'));
 const MerchantBusinessTable = React.lazy(()=> import('../Business/BusinessTable'));
+const AllPipeTable = React.lazy(()=> import('../Pipe/PipeTable'));
+
 
 
 
@@ -249,7 +250,7 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/activitylogs/" element={<ActivityLogData open={open} />} ></Route>
 
                           {/* Pipe Paths */}
-                          <Route exact path="/admin/pipes/" element={<Allpipe open={open} />} ></Route>
+                          <Route exact path="/admin/pipes/" element={<AllPipeTable open={open} />} ></Route>
                           <Route exact path="/admin/add/pipe/" element={<AddNewPipe open={open} />} ></Route>
                           <Route exact path="/admin/update/pipe/" element={<UpdatePipe open={open} />} ></Route>
 

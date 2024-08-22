@@ -3,7 +3,6 @@ import { Table, TableBody, TableCell, TableContainer,
     TableHead, TableRow, Paper, Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import axiosInstance from "../Authentication/axios";
-import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
 import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
 import Pagination from '@mui/material/Pagination';
@@ -13,27 +12,33 @@ import Button from "../MUIBaseButton/button";
 import { useNavigate } from "react-router-dom";
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PipeDeleteModal from './PipeDeleteModal';
 
 
 
 
 
 // All Merchant Withdrawal transactions of PG
-export default function AllMerchantPGWithdrawals({open}) {
+export default function AllPipeTable({open}) {
     const navigate = useNavigate();
-    const [merchantWithdrawals, updateMerchantWithdrawals] = useState([]);  // All merchant withdrawals
-    const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
-    const [exportData, updateExportData] = useState([]); // Excel Data
-    const [totalRows, updateTotalRows]   = useState(0);
+
+    const [pipeData, updatePipeData]          = useState([]);  // All merchant withdrawals
+    const [searchQuery, updateSearchQuery]    = useState('');  // Search Query state
+    const [exportData, updateExportData]      = useState([]); // Excel Data
+    const [totalRows, updateTotalRows]        = useState(0);  // Total Pipe rows
+    const [pipeDeleteOpen, setPipeDeleteOpne] = useState(false);   // States to open pipe delete modal
+    const [pipeID, updatePipeID]              = useState(0);  
 
     const counPagination = Math.ceil(totalRows);   // Total pagination count
 
-    // Fetch all the merchant withdrawals
+    // Fetch all the pipes
     useEffect(() => {
-      axiosInstance.get(`/api/v4/admin/merchant/pg/withdrawals/`).then((res)=> {
+      axiosInstance.get(`api/v5/admin/pipes/`).then((res)=> {
         // console.log(res)
-        if (res.status === 200 && res.data.success === true) {
-            updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
+        if (res.status === 200 && res.data.all_pipes_data) {
+            updatePipeData(res.data.all_pipes_data)
             updateTotalRows(res.data.total_row_count)
         };
 
@@ -42,12 +47,6 @@ export default function AllMerchantPGWithdrawals({open}) {
 
       })
     }, []);
-
-
-    // Method to redirect the user to Edit page
-    const handleEditClicked = (withdrawalRequests)=> {
-        navigate('/admin/merchant/update/withdrawals/', {state: {withdrawal: withdrawalRequests}})
-    };
 
 
     // Change status color according to the transaction status
@@ -69,11 +68,11 @@ export default function AllMerchantPGWithdrawals({open}) {
 
     // Search Withdrawal Transactions
     const handleSearch = ()=> {
-        axiosInstance.get(`api/v4/admin/merchant/withdrawal/search/?query=${searchQuery}`).then((res)=> {
+        axiosInstance.get(`api/v5/admin/search/pipe/?query=${searchQuery}`).then((res)=> {
             // console.log(res)
 
-            if (res.status === 200 && res.data.success === true) {
-                updateMerchantWithdrawals(res.data.merchant_withdrawal_search)
+            if (res.status === 200 && res.data.all_searched_pipes_) {
+                updatePipeData(res.data.all_searched_pipes_)
             };
 
         }).catch((error)=> {
@@ -105,7 +104,7 @@ export default function AllMerchantPGWithdrawals({open}) {
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            saveAs(blob, 'withdrawals.xlsx');
+            saveAs(blob, 'pipeData.xlsx');
         } else {
             console.log('No Data available to Download')
         }
@@ -113,12 +112,12 @@ export default function AllMerchantPGWithdrawals({open}) {
 
 
     // Download all withdrawal requests
-    const handleDownloadWithdrawals = ()=> {
-        axiosInstance.get(`/api/v4/admin/merchant/pg/export/withdrawals/`).then((res)=> {
+    const handleDownloadPipes = ()=> {
+        axiosInstance.get(`/api/v5/admin/export/pipe/`).then((res)=> {
             // console.log(res)
     
             if (res.status === 200 && res.data.success === true) {
-                updateExportData(res.data.AdminMerchantExportWithdrawalRequests);
+                updateExportData(res.data.export_pipe_data);
                 
                 setTimeout(() => {
                     exportToExcel();
@@ -134,14 +133,14 @@ export default function AllMerchantPGWithdrawals({open}) {
  
     // Get the paginated data
     const handleDownloadPaginatedData = (e, value)=> {
-        let limit = 10;
+        let limit = 15;
         let offset = (value - 1) * limit;
 
-        axiosInstance.get(`api/v4/admin/merchant/pg/withdrawals/?limit=${limit}&offset=${offset}`).then((res)=> {
+        axiosInstance.get(`api/v5/admin/pipes/?limit=${limit}&offset=${offset}`).then((res)=> {
             // console.log(res)
-            if (res.status === 200 && res.data.success === true) {
-                updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
-            };
+            if (res.status === 200 && res.data.all_pipes_data) {
+                updatePipeData(res.data.all_pipes_data)
+            }
 
         }).catch((error)=> {
             console.log(error);
@@ -149,13 +148,25 @@ export default function AllMerchantPGWithdrawals({open}) {
         })
     };
 
+    // Edit Button Clicked
+    const handleEditButtonClicked = (pipe_data)=> {
+        navigate('/admin/update/pipe/', {state: {pipe_data: pipe_data}})
+    };
+
+    // Method to open Delete modal
+  const handleDeleteButtonClicked = (pipe_id)=> {
+        setPipeDeleteOpne(true);
+        updatePipeID(pipe_id)
+    };
+
     
     return (
+        <>
         <Main open={open}>
             <DrawerHeader />
 
             <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}> 
-                <h5 style={{margin:9}}><b>All Merchant Withdrawals</b></h5>
+                <h5 style={{margin:9}}><b>All Available PIPE</b></h5>
             <Box 
                 sx={{ 
                     display: 'flex', 
@@ -167,7 +178,7 @@ export default function AllMerchantPGWithdrawals({open}) {
                 <IconButton aria-label="Example" onClick={handleSearch}>
                     <SearchIcon color='primary' />
                 </IconButton>
-                <Button sx={{mx:1}} onClick={handleDownloadWithdrawals}>Export</Button>
+                <Button sx={{mx:1}} onClick={handleDownloadPipes}>Export</Button>
             </Box>
 
             <TableContainer>
@@ -175,64 +186,62 @@ export default function AllMerchantPGWithdrawals({open}) {
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead sx={{position:'sticky', zIndex: 1, top: 0, backgroundColor: '#e2f4fb'}}>
                         <TableRow>
-                            <TableCell><b>Sl No.</b></TableCell>
-                            <TableCell align="center"><b>Merchant</b></TableCell>
-                            <TableCell align="center"><b>Merchant Email</b></TableCell>
-                            <TableCell align="center"><b>Withdrawal Amount</b></TableCell>
-                            <TableCell align="center"><b>Date</b></TableCell>
-                            <TableCell align="center"><b>Time</b></TableCell>
+                            <TableCell align="center"><b>Gateway ID</b></TableCell>
+                            <TableCell align="center"><b>Pipe Name</b></TableCell>
+                            <TableCell align="center"><b>Date Created</b></TableCell>
+                            <TableCell align="center"><b>Process Mode</b></TableCell>
+                            <TableCell align="center"><b>Currency</b></TableCell>
                             <TableCell align="center"><b>Status</b></TableCell>
-                            <TableCell align="center"><b>Edit</b></TableCell>
-                            
+                            <TableCell align="center"><b>Action</b></TableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody>
-                        {merchantWithdrawals.map((transaction, index) => (
+                        {pipeData.map((row, index) => (
                             <TableRow
                             key={index}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                {/* Sl No. Column */}
-                                <TableCell scope="row">
-                                    {transaction?.id}
+                                {/* Gateway ID Column */}
+                                <TableCell scope="row" align="center">
+                                    {row?.id}
                                 </TableCell>
 
-                                {/* Merchant Name Column */}
-                                <TableCell scope="row" align='left'>
-                                    {transaction?.merchant_name}
+                                {/* Pipe Name Column */}
+                                <TableCell scope="row" align='center'>
+                                    {row.name}
                                 </TableCell>
 
-                                {/* Merchant Email Column */}
+                                {/* Created Date Column */}
                                 <TableCell  scope="row" align='center'>
-                                    {transaction?.merchant_email}
+                                    {row.created_at}
                                 </TableCell>
 
-                                {/* Withdrawal Amount */}
+                                {/* Processing Mode Column */}
                                 <TableCell component="th" scope="row" align="center">
-                                    {transaction?.withdrawalAmount} {transaction?.withdrawalCurrency}
+                                    {row.process_mode}
                                 </TableCell>
 
-                                {/* Date Column */}
+                                {/* Currency Column */}
                                 <TableCell component="th" scope="row" align="center">
-                                    {transaction?.createdAt.split('T')[0]}
-                                </TableCell>
-
-                                {/* Time Column */}
-                                <TableCell component="th" scope="row" align="center">
-                                    {transaction?.createdAt.split('T')[1]}
+                                    {row.process_curr?.name}
                                 </TableCell>
 
                                 {/* Status Column */}
                                 <TableCell component="th" scope="row" align="center">
-                                    <Chip label={transaction?.status} variant="outlined" color={getStatusColor(transaction?.status)} />
+                                    <Chip label={row?.status} variant="outlined" color={getStatusColor(row?.status)} />
                                 </TableCell>
 
-                                <TableCell component="th" scope="row" align="center">
-                                    <IconButton aria-label="Example" onClick={()=> {handleEditClicked(transaction)}}>
-                                        <ModeEditSharpIcon color='secondary'/>
+                                <TableCell align="left">
+                                    <IconButton aria-label="Example" onClick={()=> {handleEditButtonClicked(row);}} >
+                                        <EditIcon color="" style={{color:'#0e3080'}}  />
+                                    </IconButton>
+
+                                    <IconButton aria-label="Example" onClick={()=> {handleDeleteButtonClicked(row.id)}}>
+                                        <DeleteIcon style={{color:'#b23344'}} />
                                     </IconButton>
                                 </TableCell>
+
                             </TableRow>
                         ))}
                     </TableBody>
@@ -251,6 +260,9 @@ export default function AllMerchantPGWithdrawals({open}) {
             </TableContainer>
 
             </Paper>
-        </Main>
+    </Main>
+
+        <PipeDeleteModal open={pipeDeleteOpen} setOpen={setPipeDeleteOpne} pipe_id={pipeID} />
+        </>
     );
 }
