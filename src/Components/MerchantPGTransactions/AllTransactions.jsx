@@ -28,8 +28,10 @@ export default function AllMerchantPGTransactions({open}) {
     const [transactionData, updateTransactionData] = useState([]); // All Transaction data state
     const [modeName, setModeName] = useState('Production Mode');   // Mode Name
     const [exportData, updateExportData] = useState([]);  // Excel data
-    const [searchedText, updateSearchedText] = useState('');
+    const [searchedText, updateSearchedText] = useState('');  // Searched text
+    const [totalRows, updateTotalRows] = useState(0);
 
+    const countPagination = Math.ceil(totalRows);
 
     // Method to get Search input value
      const handleUpdateSearchedText = (e)=> {
@@ -73,6 +75,7 @@ export default function AllMerchantPGTransactions({open}) {
 
             if (res.status === 200 && res.data.message === 'Transaction fetched successfuly') {
                 updateTransactionData(res.data.AdminmerchantPGTransactions)
+                updateTotalRows(res.data.total_row_count)
             };
 
         }).catch((error)=> {
@@ -81,6 +84,8 @@ export default function AllMerchantPGTransactions({open}) {
         })
     }, []);
 
+
+   
     // Method for Test/Production checkbox
     const handleCheckBoxChange = (e)=> {
          const value = e.target.checked
@@ -94,6 +99,7 @@ export default function AllMerchantPGTransactions({open}) {
                 if (res.status === 200 && res.data.message === 'Transaction fetched successfuly') {
                     updateTransactionData(res.data.AdminmerchantPGSandboxTransactions)
                     setModeName('Test Mode')
+                    updateTotalRows(res.data.total_row_count)
                 };
     
             }).catch((error)=> {
@@ -199,6 +205,38 @@ export default function AllMerchantPGTransactions({open}) {
     };
 
 
+    // Fetch all paginated data
+    const handlePaginatedData = (e, value)=> {
+        let limit = 15;
+        let offset = (value - 1) * limit;
+
+        // Download Production Transaction Data
+        if (modeName === 'Production Mode') {
+            axiosInstance.get(`api/v2/admin/merchant/pg/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
+                // console.log(res)
+                if (res.status === 200 && res.data.success === true) {
+                    updateTransactionData(res.data.AdminmerchantPGTransactions)
+                };
+
+            }).catch((error)=> {
+                console.log(error);
+
+            })
+        } else if (modeName === 'Test Mode') {
+            axiosInstance.get(`api/v2/admin/merchant/pg/sandbox/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
+                // console.log(res)
+                if (res.status === 200 && res.data.success === true) {
+                    updateTransactionData(res.data.AdminmerchantPGSandboxTransactions)
+                };
+
+            }).catch((error)=> {
+                console.log(error);
+
+            })
+        }
+    };
+
+
 
     return (
         <Main open={open}>
@@ -277,7 +315,12 @@ export default function AllMerchantPGTransactions({open}) {
             </Box>
 
             <Box sx={{display:'flex', justifyContent:'space-between'}}>
-                <Pagination count={10} color="primary" sx={{mb:2, mt:2}} />
+                <Pagination 
+                    count={countPagination}
+                    onChange={(e, value)=> {handlePaginatedData(e, value);}}
+                    color="primary"
+                    sx={{mb:2, mt:2}}
+                    />
 
                 <FormControlLabel 
                     control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}

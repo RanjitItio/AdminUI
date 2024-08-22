@@ -111,6 +111,8 @@ const AllMerchantPGWithdrawals = React.lazy(()=> import('../Withdrawals/AllWithd
 const UpdateMerchantWithdrawals = React.lazy(()=> import('../Withdrawals/UpdateWithdrawal'));
 const MerchantRefunds = React.lazy(()=> import('../Refunds/AllRefunds'));
 const UpdateMerchantRefund = React.lazy(()=> import('../Refunds/updateRefunds'));
+const MerchantBusinessTable = React.lazy(()=> import('../Business/BusinessTable'));
+
 
 
 
@@ -259,6 +261,9 @@ const AuthRoutes = () => {
                           {/* Refunds */}
                           <Route exact path="/admin/merchant/refunds/" element={<MerchantRefunds open={open} />} ></Route>
                           <Route exact path="/admin/merchant/update/refunds/" element={<UpdateMerchantRefund open={open} />} ></Route>
+
+                          {/* Business */}
+                          <Route exact path="/admin/merchant/businesses/" element={<MerchantBusinessTable open={open} />} ></Route>
                       </Routes>
                     
                     </Box>

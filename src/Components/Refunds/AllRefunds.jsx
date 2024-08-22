@@ -165,6 +165,7 @@ export default function MerchantRefunds({open}) {
                 <IconButton aria-label="Example" onClick={handleSearch}>
                     <SearchIcon color='primary' />
                 </IconButton>
+                
                 <Button sx={{mx:1}} onClick={()=> handleDownloadRefunds()}>Export</Button>
             </Box>
 
@@ -180,7 +181,6 @@ export default function MerchantRefunds({open}) {
                             <TableCell align="center"><b>Time</b></TableCell>
                             <TableCell align="center"><b>Refund Amount</b></TableCell>
                             <TableCell align="center"><b>Transaction Amount</b></TableCell>
-                            <TableCell align="center"><b>Instant Refund</b></TableCell>
                             <TableCell align="center"><b>Status</b></TableCell>
                             <TableCell align="center"><b>Edit</b></TableCell>
                             
@@ -226,11 +226,6 @@ export default function MerchantRefunds({open}) {
                                 {/* Refund Amount */}
                                 <TableCell component="th" scope="row" align="center">
                                     {refunds?.amount} {refunds?.currency}
-                                </TableCell>
-
-                                {/* Instant Refund */}
-                                <TableCell component="th" scope="row" align="center">
-                                    {refunds?.instant_refund ? 'Yes' : 'No'}
                                 </TableCell>
 
                                 {/* Status Column */}

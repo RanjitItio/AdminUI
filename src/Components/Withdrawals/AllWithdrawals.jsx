@@ -24,7 +24,9 @@ export default function AllMerchantPGWithdrawals({open}) {
     const [merchantWithdrawals, updateMerchantWithdrawals] = useState([]);  // All merchant withdrawals
     const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
     const [exportData, updateExportData] = useState([]); // Excel Data
+    const [totalRows, updateTotalRows]   = useState(0);
 
+    const counPagination = Math.ceil(totalRows);   // Total pagination count
 
     // Fetch all the merchant withdrawals
     useEffect(() => {
@@ -32,6 +34,7 @@ export default function AllMerchantPGWithdrawals({open}) {
         // console.log(res)
         if (res.status === 200 && res.data.success === true) {
             updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
+            updateTotalRows(res.data.total_row_count)
         };
 
       }).catch((error)=> {
@@ -40,10 +43,12 @@ export default function AllMerchantPGWithdrawals({open}) {
       })
     }, []);
 
+
     // Method to redirect the user to Edit page
     const handleEditClicked = (withdrawalRequests)=> {
         navigate('/admin/merchant/update/withdrawals/', {state: {withdrawal: withdrawalRequests}})
     };
+
 
     // Change status color according to the transaction status
     const getStatusColor = (status)=> {
@@ -61,6 +66,7 @@ export default function AllMerchantPGWithdrawals({open}) {
         }
     };
 
+
     // Search Withdrawal Transactions
     const handleSearch = ()=> {
         axiosInstance.get(`api/v4/admin/merchant/withdrawal/search/?query=${searchQuery}`).then((res)=> {
@@ -76,10 +82,12 @@ export default function AllMerchantPGWithdrawals({open}) {
         })
     };
 
+
     // Input Search values
     const handleSearchInputChange = (e)=> {
         updateSearchQuery(e.target.value);
     };
+
 
     // Export to Excel
     const exportToExcel = async ()=> {
@@ -115,13 +123,30 @@ export default function AllMerchantPGWithdrawals({open}) {
                 setTimeout(() => {
                     exportToExcel();
                 }, 1000);
-                
             };
     
           }).catch((error)=> {
             console.log(error)
     
           })
+    };
+
+ 
+    // Get the paginated data
+    const handleDownloadPaginatedData = (e, value)=> {
+        let limit = 10;
+        let offset = (value - 1) * limit;
+
+        axiosInstance.get(`api/v4/admin/merchant/pg/withdrawals/?limit=${limit}&offset=${offset}`).then((res)=> {
+            // console.log(res)
+            if (res.status === 200 && res.data.success === true) {
+                updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
+            };
+
+        }).catch((error)=> {
+            console.log(error);
+
+        })
     };
 
     
@@ -215,7 +240,12 @@ export default function AllMerchantPGWithdrawals({open}) {
             </Box>
 
             <Box sx={{display:'flex', justifyContent:'space-between'}}>
-                <Pagination count={10} color="primary" sx={{mb:2, mt:2}} />
+                <Pagination 
+                    count={counPagination} 
+                    onChange={(e, value)=> {handleDownloadPaginatedData(e, value)}}
+                    color="primary" 
+                    sx={{mb:2, mt:2}} 
+                    />
             </Box>
 
             </TableContainer>

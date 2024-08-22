@@ -29,6 +29,7 @@ export default function UpdateMerchantWithdrawals({open}) {
         updateStatus(newValue)
     };
 
+    
     // Update Status method
     const handleUpdateWithdrawal = ()=> {
 
@@ -54,6 +55,8 @@ export default function UpdateMerchantWithdrawals({open}) {
                 setError('Insuficient funds in Account')
             } else if (error.response.data.error === 'Server Error') {
                 setError('Unknow error occured, Please retry after sometime')
+            } else if (error.response.data.message == 'Already updated, Can not perform this action') {
+                setError('ALready updated, Can not perform this action')
             };
 
         })

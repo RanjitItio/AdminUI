@@ -106,7 +106,7 @@ const MerchantNavContent = [
   icon: <AccountCircleOutlinedIcon />},
 
   { text: 'Business', subItems: [
-    {text: 'Businesses', icon: <StorefrontOutlinedIcon />, url: '/admin/merchant/'},   
+    {text: 'Businesses', icon: <StorefrontOutlinedIcon />, url: '/admin/merchant/businesses/'},   
   ],
   icon: <StorefrontOutlinedIcon />},
 
@@ -187,10 +187,8 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
   return(
     <Drawer
         sx={{
-          height: '100vh',
           width: drawerWidth,
           flexShrink: 0,
-          height: '100vh',
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',

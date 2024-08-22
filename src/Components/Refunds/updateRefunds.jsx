@@ -15,7 +15,7 @@ import TextField from '@mui/material/TextField';
 
 
 // Update Merchant Refund transaction by Admin
-export default function UpdateMerchantRefund() {
+export default function UpdateMerchantRefund({open}) {
     const navigate = useNavigate();
     const location = useLocation();
     const states = location?.state || ''
@@ -148,7 +148,7 @@ export default function UpdateMerchantRefund() {
                             />
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                    {/* <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='text' 
                             id="instantRefund" 
@@ -158,9 +158,9 @@ export default function UpdateMerchantRefund() {
                             name='instantRefund'
                             value={states.merchantRefunds.instant_refund ? 'Yes' : 'No'}
                             />
-                    </Grid>
+                    </Grid> */}
                     
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                    {/* <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='text' 
                             id="instantRefundAmount" 
@@ -170,7 +170,7 @@ export default function UpdateMerchantRefund() {
                             name='instantRefundAmount'
                             value={`${states.merchantRefunds?.instant_refund_amount || ''} ${states.merchantRefunds?.transaction_currency || ''}`}
                             />
-                    </Grid>
+                    </Grid> */}
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField  

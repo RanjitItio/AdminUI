@@ -2,7 +2,7 @@ import TextField from '@mui/material/TextField';
 import { Paper, Typography, Grid } from '@mui/material';
 import { Main, DrawerHeader } from '../Content';
 import { useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import BackupIcon from '@mui/icons-material/Backup';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -82,9 +82,7 @@ export default function MerchantPGTransactionUpdate({open}) {
     const merchantID = transactionData.merchant.merchant_id
     const modeState  = states?.mode || ''
 
-
     const navigate = useNavigate();
-
 
     const initialFormData = {
         transactionID:        transactionData?.transaction_id || '',
@@ -99,7 +97,8 @@ export default function MerchantPGTransactionUpdate({open}) {
         merchantMobileNumber: transactionData?.merchantMobileNumber || '',
         merchantPaymentType:  transactionData?.merchantPaymentType   || '',
         status:               transactionData?.status || '',
-        gatewayLog:           transactionData?.gatewayRes || ''
+        gatewayLog:           transactionData?.gatewayRes || '',
+        transaction_fee:      transactionData?.transaction_fee || ''
     };
 
     const [formData, updateFormData]           = useState(initialFormData); // All form data
@@ -108,6 +107,8 @@ export default function MerchantPGTransactionUpdate({open}) {
     const [paymentStatus, updatePaymentStatus] = useState(formData?.status || '');       // Payment Status
     const [paymemtMode, updatePaymentMode]     = useState(formData?.paymentMode || '');   // Payment Mode
     const [currency, setCurrency]              = useState(formData.currency || '');      // Currency State
+    const [payoutError, setPayoutError]        = useState('');
+    const [payout, updatePayout]               = useState(0);
 
 
 
@@ -183,7 +184,8 @@ export default function MerchantPGTransactionUpdate({open}) {
                 webhook_url:    formData.merchantCallbackURL,
                 mobile_number:  formData.merchantMobileNumber,
                 payment_type:   formData.merchantPaymentType,
-                status:         paymentStatus
+                status:         paymentStatus,
+                transaction_fee: parseFloat(formData.transaction_fee)
 
             }).then((res)=> {
                 // console.log(res)
@@ -200,10 +202,24 @@ export default function MerchantPGTransactionUpdate({open}) {
 
                 if (error.response.data.message === 'Transaction already updated') {
                     setError('Transaction has been updated, Can not perform this action')
-                }
+                };
             })
         }
     };
+    
+    // Calculate Payout Balance
+    const CalculatePayoutBalance = (transactionAmount, transactionFee)=> {
+           const chargedFee = (transactionAmount / 100) * transactionFee
+           const payoutBalance = transactionAmount - chargedFee
+           return payoutBalance
+    };
+
+
+    // Change Payout Balance according to transaction fee
+    const handlePayoutBalance = ()=> {
+        CalculatePayoutBalance(formData.amount, formData.transaction_fee)
+    };
+    
 
 
     return (
@@ -252,29 +268,32 @@ export default function MerchantPGTransactionUpdate({open}) {
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
-                            type='number' 
+                            type='text' 
+                            disabled
                             id="amount" 
-                            label="Amount" 
+                            label="Transaction Amount" 
                             variant="outlined" 
                             fullWidth 
                             name='amount'
-                            value={formData.amount}
+                            value={`${formData.amount} ${formData?.currency || ''}`}
                             onChange={handleChange}
                             />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
-                        {/* <TextField 
-                            id="currency" 
-                            label="Currency" 
-                            variant="outlined" 
-                            fullWidth 
-                            name='currency'
-                            value={formData.currency}
-                            onChange={handleChange}
-                            /> */}
-                        <Select
+                        <TextField 
+                                type='text' 
+                                id="transaction_fee" 
+                                label="Transaction Fee" 
+                                variant="outlined" 
+                                fullWidth 
+                                name='transaction_fee'
+                                onChange={(e)=> {handleChange(e); handlePayoutBalance(); }}
+                                defaultValue={`${formData.transaction_fee}%`}
+                                />
+                        {/* <Select
                                 placeholder="Select Currency"
+                                disabled
                                 id="currency" 
                                 name="currency"
                                 defaultValue={formData?.currency || ''}
@@ -286,7 +305,21 @@ export default function MerchantPGTransactionUpdate({open}) {
                                 <Option value="INR">INR</Option>
                                 <Option value="GBP">GBP</Option>
                                 <Option value="EUR">EUR</Option>
-                        </Select>
+                        </Select> */}
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <TextField 
+                                type='text' 
+                                id="payoutBalance" 
+                                label="Payout Balance" 
+                                variant="outlined" 
+                                fullWidth 
+                                name='payoutBalance'
+                                error={Boolean(payoutError)}
+                                helperText={payoutError}
+                                value={CalculatePayoutBalance(formData.amount, formData.transaction_fee)}
+                            />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>

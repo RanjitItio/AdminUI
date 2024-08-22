@@ -255,7 +255,7 @@ EnhancedTableToolbar.propTypes = {
 
 
 
-
+// Business Table
 export default function MerchantTable({headCells, TableName,rows, updateMerchantData, rerender, setRerender}) {
 
   const navigate = useNavigate();
@@ -357,6 +357,7 @@ export default function MerchantTable({headCells, TableName,rows, updateMerchant
     }
   };
 
+  // Redirect to Business edit page
   const handleMerchantEdit = (merchant, user, group, currency)=> {
     const merchant_detail  = merchant
     const user_details     = user
@@ -364,7 +365,8 @@ export default function MerchantTable({headCells, TableName,rows, updateMerchant
     const currency_details = currency
 
     navigate('/admin/merchant/details/', {state: {merchant: merchant_detail, user: user_details, group: group_details, currency: currency_details}})
-  }
+  };
+
 
   // TO change the pagination of Table after page load
   useEffect(()=> {
@@ -376,6 +378,9 @@ export default function MerchantTable({headCells, TableName,rows, updateMerchant
     }, 1000);
 
   }, [])
+
+
+  
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -471,7 +476,7 @@ export default function MerchantTable({headCells, TableName,rows, updateMerchant
                         <img src={row.merchant.logo} alt="Merchant Logo" style={{maxWidth: '50px', maxHeight: '50px'}}/>
                     </TableCell>
 
-                    {/* Merchant Status */}
+                    
                     <TableCell align="left" style={{color: getStatusColor(row.merchant.status)}}>
                         {row.merchant.status === 'Cancelled' ? 'Rejected': row.merchant.status}
                     </TableCell>
@@ -482,7 +487,7 @@ export default function MerchantTable({headCells, TableName,rows, updateMerchant
                                 style={{color:'#0e3080'}} 
                                 onClick={(event)=> {handleMerchantEdit(row.merchant, row.user, row.group, row.currency)}} 
                                 />
-                            {/* <DeleteIcon style={{color:'#b23344'}} /> */}
+                          
                         </Badge>
                     </TableCell>
                   </TableRow>
@@ -510,12 +515,7 @@ export default function MerchantTable({headCells, TableName,rows, updateMerchant
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-        {/* <Pagination 
-             count={10} 
-             color="primary" 
-             style={{marginTop: '20px', float:'right'}}
-             onChange={handleChangePage}
-             /> */}
+        
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}

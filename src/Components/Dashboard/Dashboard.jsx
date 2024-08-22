@@ -1,12 +1,8 @@
 import React from 'react';
 import {Main, DrawerHeader} from '../Content';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import ArrowCircleRightRoundedIcon from '@mui/icons-material/ArrowCircleRightRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded';
 import ConfirmationNumberRoundedIcon from '@mui/icons-material/ConfirmationNumberRounded';
@@ -35,34 +31,25 @@ const DashboardAcquirer = React.lazy(()=> import('./DashboardAcquirer'))
 
 // Admin dashboard section
 function Dashboard({open}) {
-    const [countUsers, setCountUsers] = useState(0)   // All users
-    const [countMerchants, setCountMerchants] = useState(0) // All Merchant use
-    const [allTransactions, setAllTransactions] = useState(0);
+    const [countMerchants, setCountMerchants] = useState(0)   // All Merchants
+    const [countprodTransactions, setCountProdTransactions] = useState(0) // All Prod Transactions use
+    const [countRefund, setCountRefund] = useState(0) // Refund Transaction
+    const [countWithdrawals, setCountWithdrawals] = useState(0) // Withdrawal Transaction
+
     const navigate = useNavigate();
 
     // Call API to Get all the available users
     useEffect(() => {
-      axiosInstance.get(`api/v1/user/count/`).then((res)=> {
-        // console.log(res.data.total_users)w   
-
-        if (res.data.total_users) {
-            setCountUsers(res.data.total_users)
-        };
-
-        if (res.data.total_merchants) {
-            setCountMerchants(res.data.total_merchants)
-        };
-
-        if (res.data.total_merchants) {
-            setAllTransactions(res.data.total_transactions)
-        };
-
+      axiosInstance.get(`api/v2/admin/dashboard/counts/`).then((res)=> {
+        // console.log(res.data.total_users)
+        if (res.status === 200 && res.data.success === true) {
+            setCountMerchants(res.data.merchant_users)
+            setCountProdTransactions(res.data.prod_transactions)
+            setCountRefund(res.data.refunds)
+            setCountWithdrawals(res.data.withdrawals)
+        }
       }).catch((error)=> {
         console.log(error)
-
-        if (error.response.statusText === 'Unauthorized') {
-            window.location.href = '/signin/'
-        };
 
       })
     }, [])
@@ -89,7 +76,7 @@ function Dashboard({open}) {
                         <PersonRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '63%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}}/>
                         <CardContent>
                             <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
-                                <b>{countUsers}</b>
+                                <b>{countMerchants}</b>
                             </Typography>
                             
                             <Typography variant="p" component="div" >
@@ -112,7 +99,7 @@ function Dashboard({open}) {
                         <StorefrontRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
                         <CardContent>
                             <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
-                                <b>{countMerchants}</b>
+                                <b>{countprodTransactions}</b>
                             </Typography>
                             
                             <Typography variant="p" component="div" >
@@ -131,15 +118,15 @@ function Dashboard({open}) {
 
                 <Grid item xs={12} sm={6} md={3}>
                     <Paper elevation={8}  style={{backgroundColor: '#0a8aa9', color: 'white', position: 'relative', borderRadius:'10px'}} >
-                    <ButtonBase sx={{ display: 'block', width: '100%', height: '100%', textAlign: 'inherit'}}>
+                    <ButtonBase onClick={()=> {navigate('/admin/merchant/withdrawals/')}} sx={{ display: 'block', width: '100%', height: '100%', textAlign: 'inherit'}}>
                         <ConfirmationNumberRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
                         <CardContent>
                             <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
-                                <b>{allTransactions}</b>
+                                <b>{countWithdrawals}</b>
                             </Typography>
                             
                             <Typography variant="p" component="div" >
-                            Total Withdrawl
+                                Total Withdrawls
                             </Typography>
                         </CardContent>
 
@@ -154,15 +141,15 @@ function Dashboard({open}) {
 
                 <Grid item xs={12} sm={6} md={3}>
                     <Paper elevation={8} style={{backgroundColor: '#a90a4a', color: 'white', position: 'relative', borderRadius:'10px'}}>
-                    <ButtonBase onClick={()=> {navigate('/admin/all-transaction/')}} sx={{ display: 'block', width: '100%', height: '100%', textAlign: 'inherit'}}>
+                    <ButtonBase  onClick={()=> {navigate('/admin/merchant/refunds/')}} sx={{ display: 'block', width: '100%', height: '100%', textAlign: 'inherit'}}>
                         <DisabledByDefaultRoundedIcon style={{top: 0, left: 0, zIndex: '1', position: 'absolute', color: 'white', width: '100%', height: '73%', backgroundColor: 'rgba(255, 255, 255, 0.5)', backgroundSize: 'cover', opacity: '0.3'}} />
                         <CardContent>
                             <Typography sx={{ fontSize: 25 }} color="" gutterBottom>
-                                <b>0</b>
+                                <b>{countRefund}</b>
                             </Typography>
                             
                             <Typography variant="p" component="div" >
-                                Total Withdrawls
+                                Total Refunds
                             </Typography>
                         </CardContent>
 

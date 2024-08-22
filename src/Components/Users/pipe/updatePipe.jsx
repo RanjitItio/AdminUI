@@ -49,7 +49,7 @@ export default function UpdateMerchantPipe({open, setOpen, merchantpipeUpdateDat
 
         updateFormData({
           pipe_name: merchantpipeUpdateData.pipe_name || '',
-          fee: (merchantpipeUpdateData.fee) * 100 || 0.00,
+          fee: (merchantpipeUpdateData.fee) || 0.00,
           status: merchantpipeUpdateData.status || false
         });
       
@@ -116,7 +116,7 @@ export default function UpdateMerchantPipe({open, setOpen, merchantpipeUpdateDat
 
   // Update Merchant pipe data
   const handleUpdateMerchantPipe = ()=> {
-        const pipe_fee = parseInt(formData.fee) / 100
+        const pipe_fee = parseInt(formData.fee)
         
         axiosInstance.put(`api/admin/merchant/pipe/update/`, {
           merchant_pipe_id: MerchantPipeID,

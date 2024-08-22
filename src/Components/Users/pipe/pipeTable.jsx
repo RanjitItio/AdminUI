@@ -450,7 +450,7 @@ return (
                     <TableCell align="left">{row.currency}</TableCell>
 
                     {/* Fee Column */}
-                    <TableCell align="left">{row.fee * 100}</TableCell>
+                    <TableCell align="left">{row.fee}%</TableCell>
 
                     {/* Status Column */}
                     <TableCell align="left">
@@ -485,6 +485,7 @@ return (
             </TableBody>
           </Table>
         </TableContainer>
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
