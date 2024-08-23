@@ -62,7 +62,7 @@ export default function AssignMerchantPipe({open, setOpen, userID}) {
        console.log(error.response)
 
     })
-  }, [])
+  }, []);
 
 
   // Method to capture value from form
@@ -73,10 +73,10 @@ export default function AssignMerchantPipe({open, setOpen, userID}) {
        })
   };
 
-
+   console.log('fee',formData.fee)
   // Call API to assign pipe to merchant
   const handleAssignPipeMerchant = ()=> {
-    const percentile_fee = ((formData.fee) / 100)
+    // const percentile_fee = (formData.fee)
     
     if (formData.fee === 0) {
       setError('Please assign fee')
@@ -84,13 +84,16 @@ export default function AssignMerchantPipe({open, setOpen, userID}) {
     } else if (pipes === '') {
       setError('Please select Pipe')
 
+    }else if (!formData.fee) {
+      setError('Please type Fee')
+      
     } else {
       setError('')
 
           axiosInstance.post(`api/admin/merchant/pipe/assign/`, {
             merchant_id: userID,
             pipe_id:     parseInt(pipes),
-            fee:         percentile_fee,
+            fee:         parseInt(formData.fee),
             status:      formData.status
     
         }).then((res)=> {

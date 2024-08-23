@@ -88,18 +88,19 @@ export default function UpdateMerchantPipe({open, setOpen, merchantpipeUpdateDat
   
     // Call API to fetch all available Pipes
   useEffect(() => {
-    axiosInstance.get(`api/v5/admin/pipe/data/`).then((res)=> {
+    axiosInstance.get(`/api/v5/admin/pipe/data/`).then((res)=> {
       //  console.log(res.data.all_pipes_)
 
        if (res.status === 200 && res.data.all_pipes_) {
           updateAllPipes(res.data.all_pipes_)
        }
+  
 
     }).catch((error)=> {
        console.log(error.response)
 
     })
-  }, [])
+  }, []);
 
  // Remove error value after sometime
  useEffect(() => {

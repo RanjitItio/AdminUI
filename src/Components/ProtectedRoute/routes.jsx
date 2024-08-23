@@ -8,54 +8,6 @@ import { ProtectedRoute } from "./protectedroutes";
 import { AdditionalAuthenticatedRoutes } from "../../UserComponents/ProtectedRoute/routes";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-// import Signup from '../Authentication/Signup';
-// import Signin from '../Authentication/Signin';
-// import UpperNavbar from '../UpNavbar';
-// import LeftNavbar from  '../LeftNavbar';
-// import Dashboard from "../Dashboard";
-// import UsersData from '../Users/users';
-// import MerchantDetails from '../Merchant/merchant';
-// import AdminDetails from '../Users/Admin';
-// import UserCreateForm from '../Users/userCreateForm';
-// import MerchantCreateForm from '../Merchant/MerchantCreateForm';
-// import AdminCreateForm from '../Users/AdminCreateForm';
-// import AllTransactionData from '../Transaction/AllTransaction';
-// import AllDepositDetail from '../Transaction/Deposit';
-// import Withdrawls from '../Transaction/Withdrawl';
-// import TransferDetails from '../Transaction/Transfer';
-// import CurrencyExchange from '../Transaction/CurrencyExchange';
-// import RequestPaymentDetails from '../Transaction/RequestPayment';
-// import MerchantPaymentDetails from '../MerchantTransactions/merchantPayment.jsx';
-// import CryptoSentDetails from  '../Transaction/CryptoSent';
-// import CryptoReceivedDetails from '../Transaction/CryptoReceived';
-// import Logout from '../Authentication/Logout';
-// import DepositUpdate from "../Transaction/DepositUpdate";
-// import WithdrawUpdate from "../Transaction/WithdrawUpdate";
-// import CurrencyTable from "../Currency/Currency";
-// import AddCurrency from "../Currency/AddCurrency";
-// import TicketTable from "../Ticket/Ticket";
-// import Crypto from "../Crypto/Crypto";
-// import AddBlockio from "../Crypto/AddFormBlockio";
-// import AddTatumio from "../Crypto/AddFormTatumio";
-// import Profile from "../Users/profileedit.jsx";
-// import UserTransactionDetail from '../Users/UserTransactionDetails.jsx';
-// import AdminUpdateForm from '../Users/AdminUpdateForm.jsx';
-// import Revenues from '../Revenues/Revenues.jsx';
-// import Dispute from '../Dispute/Dispute.jsx';
-// import DisputeDiscussion from '../Dispute/DisputeDiscussion.jsx';
-// import AllTransactionDetail from '../Transaction/AllTransactionDetails.jsx';
-// import TicketAddForm from '../Ticket/TicketAdd.jsx';
-// import TicketUpdateForm from '../Ticket/TicketUpdate.jsx';
-// import ActivityLogData from '../ActivityLog/ActivityLog.jsx';
-// import TransferTransactionDetail from '../Transaction/TransferDetails.jsx';
-// import MerchantProfile from '../Merchant/MerchantProfile.jsx';
-// import MerchantPaymentUpdate from '../MerchantTransactions/paymentUpdate.jsx';
-// import MerchantBankDetail from '../Users/Bank/BankDetails.jsx';
-// import Allpipe from '../Pipe/Allpipe.jsx';
-// import AddNewPipe from '../Pipe/AddPipe.jsx';
-// import UpdatePipe from '../Pipe/updatePipe.jsx';
-// import AllMerchantPGTransactions from '../MerchantPGTransactions/AllTransactions.jsx';
-// import MerchantPGTransactionUpdate from '../MerchantPGTransactions/TransactionUpdate.jsx';
 
 
 
@@ -65,7 +17,7 @@ const Signin = React.lazy(()=> import('../Authentication/Signin'))
 const Dashboard = React.lazy(()=> import('../Dashboard/Dashboard'));
 const UsersData = React.lazy(()=> import('../Users/users'))
 const MerchantDetails = React.lazy(()=> import('../Merchant/merchant'))
-const AdminDetails = React.lazy(()=> import('../Users/Admin'))
+const AllAdminUsers = React.lazy(()=> import('../Users/AdminTable'))
 const UserCreateForm = React.lazy(()=> import('../Users/userCreateForm'))
 const MerchantCreateForm = React.lazy(()=> import('../Merchant/MerchantCreateForm'))
 const AdminCreateForm = React.lazy(()=> import('../Users/AdminCreateForm'))
@@ -105,8 +57,8 @@ const AddNewPipe = React.lazy(()=> import('../Pipe/AddPipe'));
 const UpdatePipe = React.lazy(()=> import('../Pipe/updatePipe'));
 const AllMerchantPGTransactions = React.lazy(()=> import('../MerchantPGTransactions/AllTransactions'))
 const MerchantPGTransactionUpdate = React.lazy(()=> import('../MerchantPGTransactions/TransactionUpdate'))
-const MainNavbar = React.lazy(()=> import('../Navbar'))
-const AllMerchantPGWithdrawals = React.lazy(()=> import('../Withdrawals/AllWithdrawals'))
+const MainNavbar = React.lazy(()=> import('../Navbar'));
+const AllMerchantPGWithdrawals = React.lazy(()=> import('../Withdrawals/AllWithdrawals'));
 const UpdateMerchantWithdrawals = React.lazy(()=> import('../Withdrawals/UpdateWithdrawal'));
 const MerchantRefunds = React.lazy(()=> import('../Refunds/AllRefunds'));
 const UpdateMerchantRefund = React.lazy(()=> import('../Refunds/updateRefunds'));
@@ -211,7 +163,7 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/merchant/payment/detail/" element={<MerchantBankDetail open={open} />} ></Route>
                           {/* <Route exact path="/admin/merchant/bank/account/" element={<MerchantBankAccounts open={open} />} ></Route> */}
                           <Route exact path="/admin/merchant-payments/" element={<MerchantPaymentDetails open={open} />} ></Route>
-                          <Route exact path="/admin/admin-user/" element={<AdminDetails open={open} />} ></Route>
+                          <Route exact path="/admin/admin-user/" element={<AllAdminUsers open={open} />} ></Route>
                           <Route exact path="/admin/create-user/" element={<UserCreateForm open={open} />} ></Route>
                           <Route exact path="/admin/create-admin/" element={<AdminCreateForm open={open} />} ></Route>
 

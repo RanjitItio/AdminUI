@@ -132,9 +132,11 @@ function EnhancedTableToolbar(props) {
   const { numSelected } = props;
   const [openAssignPipe, setOpenAssignPipe] = React.useState(false);
 
+  // Open Add pipe popup
   const handleOpenAssignPipe = ()=> {
     setOpenAssignPipe(true)
-  }
+  };
+  
 
   return (
     <>
