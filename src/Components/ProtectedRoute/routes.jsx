@@ -12,21 +12,21 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 
 import CircularProgress from '@mui/joy/CircularProgress';
-const Signup = React.lazy(()=> import('../Authentication/Signup'))
-const Signin = React.lazy(()=> import('../Authentication/Signin'))
+const Signup = React.lazy(()=> import('../Authentication/Signup'));
+const Signin = React.lazy(()=> import('../Authentication/Signin'));
 const Dashboard = React.lazy(()=> import('../Dashboard/Dashboard'));
-const UsersData = React.lazy(()=> import('../Users/users'))
-const MerchantDetails = React.lazy(()=> import('../Merchant/merchant'))
-const AllAdminUsers = React.lazy(()=> import('../Users/AdminTable'))
-const UserCreateForm = React.lazy(()=> import('../Users/userCreateForm'))
-const MerchantCreateForm = React.lazy(()=> import('../Merchant/MerchantCreateForm'))
-const AdminCreateForm = React.lazy(()=> import('../Users/AdminCreateForm'))
-const AllTransactionData = React.lazy(()=> import('../Transaction/AllTransaction'))
-const AllDepositDetail = React.lazy(()=> import('../Transaction/Deposit'))
-const Withdrawls = React.lazy(()=> import('../Transaction/Withdrawl'))
-const TransferDetails = React.lazy(()=> import('../Transaction/Transfer'))
-const CurrencyExchange = React.lazy(()=> import('../Transaction/CurrencyExchange'))
-const RequestPaymentDetails = React.lazy(()=> import('../Transaction/RequestPayment'))
+const UsersData = React.lazy(()=> import('../Users/users'));
+const MerchantDetails = React.lazy(()=> import('../Merchant/merchant'));
+const AllAdminUsers = React.lazy(()=> import('../Users/AdminTable'));
+const UserCreateForm = React.lazy(()=> import('../Users/userCreateForm'));
+const MerchantCreateForm = React.lazy(()=> import('../Merchant/MerchantCreateForm'));
+const AdminCreateForm = React.lazy(()=> import('../Users/AdminCreateForm'));
+const AllTransactionData = React.lazy(()=> import('../Transaction/AllTransaction'));
+const AllDepositDetail = React.lazy(()=> import('../Transaction/Deposit'));
+const Withdrawls = React.lazy(()=> import('../Transaction/Withdrawl'));
+const TransferDetails = React.lazy(()=> import('../Transaction/Transfer'));
+const CurrencyExchange = React.lazy(()=> import('../Transaction/CurrencyExchange'));
+const RequestPaymentDetails = React.lazy(()=> import('../Transaction/RequestPayment'));
 const MerchantPaymentDetails = React.lazy(()=> import('../MerchantTransactions/merchantPayment'))
 const CryptoSentDetails = React.lazy(()=> import('../Transaction/CryptoSent'))
 const CryptoReceivedDetails = React.lazy(()=> import('../Transaction/CryptoReceived'))
@@ -46,11 +46,11 @@ const Revenues = React.lazy(()=> import('../Revenues/Revenues'))
 const Dispute = React.lazy(()=> import('../Dispute/Dispute'))
 const DisputeDiscussion = React.lazy(()=> import('../Dispute/DisputeDiscussion'))
 const AllTransactionDetail = React.lazy(()=> import('../Transaction/AllTransactionDetails'))
-const TicketAddForm = React.lazy(()=> import('../Ticket/TicketAdd'))
-const TicketUpdateForm = React.lazy(()=> import('../Ticket/TicketUpdate'))
-const ActivityLogData = React.lazy(()=> import('../ActivityLog/ActivityLog'))
-const TransferTransactionDetail = React.lazy(()=> import('../Transaction/TransferDetails'))
-const MerchantProfile = React.lazy(()=> import('../Merchant/MerchantProfile'))
+const TicketAddForm = React.lazy(()=> import('../Ticket/TicketAdd'));
+const TicketUpdateForm = React.lazy(()=> import('../Ticket/TicketUpdate'));
+const ActivityLogData = React.lazy(()=> import('../ActivityLog/ActivityLog'));
+const TransferTransactionDetail = React.lazy(()=> import('../Transaction/TransferDetails'));
+const MerchantProfile = React.lazy(()=> import('../Merchant/MerchantProfile'));
 const MerchantPaymentUpdate = React.lazy(()=> import('../MerchantTransactions/paymentUpdate'))
 const MerchantBankDetail = React.lazy(()=> import('../Users/Bank/BankDetails'));
 const AddNewPipe = React.lazy(()=> import('../Pipe/AddPipe'));
