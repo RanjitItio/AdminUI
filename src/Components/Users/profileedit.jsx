@@ -14,7 +14,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../Authentication/axios';
 import { Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
-import TicketTable from "./UsersTecketTable"
 import WalletTable from './UserWalletsTable';
 import MerchantBankAccountsTable from './Bank/MerchantBankTable';
 import MerchantBankColumn from './Bank/Column';
@@ -24,6 +23,7 @@ import { TicketTableName, TicketTableColumns, WalletTableColumns,
     TransactionTableName, DisputeTableName, PipetableName, PipeTableColumns
  } from './Columns';
  import UserPipeTable from './pipe/pipeTable';
+ import MerchantKeys from './Keys/APIKeys';
 
 
 
@@ -408,13 +408,13 @@ if (userDetails === undefined) {
 
                             {/* Tickets */}
                             <Nav.Item>
-                                <Nav.Link eventKey="tickets">Tickets</Nav.Link>
+                                <Nav.Link eventKey="tickets">Keys</Nav.Link>
                             </Nav.Item>
 
                             {/* Disputes */}
-                            <Nav.Item>
+                            {/* <Nav.Item>
                                 <Nav.Link eventKey="disputes">Disputes</Nav.Link>
-                            </Nav.Item>
+                            </Nav.Item> */}
 
                         </Nav>
                     </Col>
@@ -676,11 +676,8 @@ if (userDetails === undefined) {
 
                 )}
                 {activeTab === 'tickets' && (
-                    <>
-
-                    <TicketTable headCells={TicketTableColumns} TableName={TicketTableName} rows={ticketData} />
-                    </>
-
+                    <MerchantKeys />
+                   
                 )}
                 {activeTab === 'transactions' && (
                     <TransactionTable headCells={TransactionTableColumns} TableName={TransactionTableName} rows={userTransactions}  userID={Kycdetails.user_id} updateUserTransactions={updateUserTransactions} />
