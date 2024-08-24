@@ -73,7 +73,7 @@ export default function AssignMerchantPipe({open, setOpen, userID}) {
        })
   };
 
-   console.log('fee',formData.fee)
+  
   // Call API to assign pipe to merchant
   const handleAssignPipeMerchant = ()=> {
     // const percentile_fee = (formData.fee)

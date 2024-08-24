@@ -35,6 +35,8 @@ const Profile = ({ open }) => {
     const Kycdetails  = location.state?.kycID;
     const userDetails = location.state?.userID;
 
+// console.log('Kycdetails', Kycdetails.user_id)
+
     const initialProfileData = {
         first_name:     Kycdetails?.firstname || '',
         last_name:      Kycdetails?.lastname || '',
@@ -69,7 +71,7 @@ const Profile = ({ open }) => {
 
     const [groupValue, setGroupValue]   = useState(userDetails?.group_name || 'NA');
     const [statusValue, setStatusValue] = useState(userDetails?.status || 'NA');
-    const [groupID, setGroupID]         = useState(userDetails?.group || 1)
+    const [groupID, setGroupID]         = useState(userDetails?.group || 1);
 
 
     const handleClose = () => setShow(false);
@@ -676,7 +678,9 @@ if (userDetails === undefined) {
 
                 )}
                 {activeTab === 'tickets' && (
-                    <MerchantKeys />
+                    <MerchantKeys
+                      merchantID={Kycdetails.user_id}
+                    />
                    
                 )}
                 {activeTab === 'transactions' && (

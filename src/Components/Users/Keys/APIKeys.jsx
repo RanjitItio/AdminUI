@@ -64,13 +64,12 @@ const columns = [
 
 
 // Merchant Keys
-export default function MerchantKeys() {
+export default function MerchantKeys({merchantID}) {
     const [merchantKeysData, updateMerchantKeysData] = useState([]);
 
-    
     // Fetch API Keys of the merchant
     useEffect(() => {
-        axiosInstance.get(`api/v4/admin/merchant/keys/?merchant_id=161`).then((res)=> {
+        axiosInstance.get(`api/v4/admin/merchant/keys/?merchant_id=${merchantID}`).then((res)=> {
             // console.log(res)
             if (res.status === 200 && res.data.success === true) {
                 const adminMerchantKeys = Array.isArray(res.data.admin_merchant_keys) ? res.data.admin_merchant_keys : [res.data.admin_merchant_keys];
