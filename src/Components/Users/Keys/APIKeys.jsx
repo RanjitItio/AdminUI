@@ -27,6 +27,10 @@ const columns = [
     dataIndex: 'created_at',
     key: 'date',
     render: (date) => {
+        if (!date) {
+            return '';
+        }
+        
         const dateTime = new Date(date);
 
         const getMonthName = (month)=> {
