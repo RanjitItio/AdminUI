@@ -34,7 +34,6 @@ export default function TransactionTable({userID}) {
 
       if (res.status === 200 && res.data.success === true) {
         updateMerchantTransaction(res.data.distinct_merchant_transaction)
-        updateEmptyData(false);
       }
       
       if (res.data.distinct_merchant_transaction.length === 0) {
