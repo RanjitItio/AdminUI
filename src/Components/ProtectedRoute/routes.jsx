@@ -43,9 +43,9 @@ const Profile = React.lazy(()=> import('../Users/profileedit'));
 const UserTransactionDetail = React.lazy(()=> import('../Users/UserTransactionDetails'))
 const AdminUpdateForm = React.lazy(()=> import('../Users/AdminUpdateForm'));
 const Revenues = React.lazy(()=> import('../Revenues/RevenuesTable'));
-const Dispute = React.lazy(()=> import('../Dispute/Dispute'))
-const DisputeDiscussion = React.lazy(()=> import('../Dispute/DisputeDiscussion'))
-const AllTransactionDetail = React.lazy(()=> import('../Transaction/AllTransactionDetails'))
+const Dispute = React.lazy(()=> import('../Dispute/Dispute'));
+const DisputeDiscussion = React.lazy(()=> import('../Dispute/DisputeDiscussion'));
+const AllTransactionDetail = React.lazy(()=> import('../Transaction/AllTransactionDetails'));
 const TicketAddForm = React.lazy(()=> import('../Ticket/TicketAdd'));
 const TicketUpdateForm = React.lazy(()=> import('../Ticket/TicketUpdate'));
 const ActivityLogData = React.lazy(()=> import('../ActivityLog/ActivityLog'));

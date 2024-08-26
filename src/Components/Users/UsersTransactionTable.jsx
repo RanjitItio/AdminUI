@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import Pagination from '@mui/material/Pagination';
 
 
 
@@ -25,7 +26,9 @@ export default function TransactionTable({userID}) {
   const navigate = useNavigate();
   const [merchantTransaction, updateMerchantTransaction] = useState([]);
   const [emptyData, updateEmptyData] = useState(false);
+  const [totalRows, setTotalRows] = useState(0);
 
+  const countPagination = Math.ceil(totalRows ? totalRows : 0);
 
   // Fetch all the merchant Transactions
   useEffect(() => {
@@ -33,7 +36,8 @@ export default function TransactionTable({userID}) {
       // console.log(res)
 
       if (res.status === 200 && res.data.success === true) {
-        updateMerchantTransaction(res.data.distinct_merchant_transaction)
+        updateMerchantTransaction(res.data.distinct_merchant_transaction);
+        setTotalRows(res.data.total_row_count)
       }
       
       if (res.data.distinct_merchant_transaction.length === 0) {
@@ -42,16 +46,50 @@ export default function TransactionTable({userID}) {
 
     }).catch((error)=> {
       console.log(error)
-
       
     })
   }, []);
+
+  
+  // Get all the paginated data
+  const handlePaginationData = (e, value)=> {
+    let limit = 15;
+    let offset = (value - 1) * limit;
+
+    axiosInstance.get(`/api/v2/admin/merchant/pg/distinct/transactions/?query=${userID}&limit=${limit}&offset=${offset}`).then((res)=> {
+      // console.log(res)
+
+      if (res.status === 200 && res.data.success === true) {
+        updateMerchantTransaction(res.data.distinct_merchant_transaction);
+        setTotalRows(res.data.total_row_count)
+      }
+
+    }).catch((error)=> {
+      console.log(error)
+      
+    })
+  };
 
 
   // Method to handle Edit Button Clicked
   const handleEditButtonClicked = (event, transaction)=> {
     const transactionData = transaction
-    navigate('/admin/update/merchant/pg/transactions/', {state: {tranaction: transactionData, mode: modeName}})
+    navigate('/admin/update/merchant/pg/transactions/', {state: {tranaction: transactionData, mode: 'Production Mode'}})
+  };
+
+
+  // Transaction Status
+  const getTransactionStatus = (status)=> {
+      switch (status) {
+        case 'PAYMENT_SUCCESS':
+          return '#008f7a'
+        case 'PAYMENT_INITIATED':
+          return '#0089ba'
+        case 'PAYMENT_FAILED':
+          return '#c34a36'
+        default:
+          return '#0089ba';
+      }
   };
 
 
@@ -86,6 +124,7 @@ export default function TransactionTable({userID}) {
           >
             <TableHead sx={{position:'sticky', zIndex: 1, top: 0, backgroundColor: '#e2f4fb'}}>
                 <TableRow>
+                    <TableCell align="center"><b>Sl No</b></TableCell>
                     <TableCell align="center"><b>Date</b></TableCell>
                     <TableCell align="center"><b>Merchant</b></TableCell>
                     <TableCell align="center"><b>Merchant Email</b></TableCell>
@@ -97,50 +136,61 @@ export default function TransactionTable({userID}) {
             </TableHead>
 
             <TableBody>
-                  <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    {merchantTransaction.map((transaction, index)=> {
-                      <>
-                        <TableCell component="th"  scope="row" align="left" padding="none">
-                            {transaction?.createdAt}
+            {merchantTransaction.map((transaction, index)=> {
+              return (
+                  <TableRow sx={{padding:5 }} key={index}>
+                        <TableCell component="th"  scope="row" align="right">
+                            {transaction.id}
                         </TableCell>
 
-                        <TableCell component="th"  scope="row" align="left" padding="none">
+                        <TableCell component="th"  scope="row" align="center">
+                            {transaction?.createdAt.split('T')[0]} <br />
+                            <small><i>{transaction?.createdAt.split('T')[1]}</i></small>
+                        </TableCell>
+
+                        <TableCell  align="center" padding="none">
                             {transaction?.merchant.merchant_name}
                         </TableCell>
 
-                        <TableCell component="th"  scope="row" align="left" padding="none">
+                        <TableCell  align="center" padding="none">
                             {transaction?.merchant.merchant_email}
                         </TableCell>
                         
-                        <TableCell component="th"  scope="row" align="left" padding="none">
+                        <TableCell align="left" padding="none">
                               {transaction?.transaction_id}
                         </TableCell>
 
-                        <TableCell component="th"  scope="row" align="left" padding="none">
-                            {transaction?.amount}
+                        <TableCell align="center" padding="none">
+                            {transaction?.amount} {transaction?.currency}
                         </TableCell>
 
-                        <TableCell component="th"  scope="row" align="left" padding="none">
-                            {transaction?.status}
+                        <TableCell align="center" padding="none">
+                            <p style={{color:getTransactionStatus(transaction?.status)}}>{transaction?.status}</p>
                         </TableCell>
-
-                        <TableCell component="th"  scope="row" align="left" padding="none">
-                              <IconButton aria-label="Example" onClick={(event)=> {handleEditButtonClicked(event, transaction)}}>
-                                  <ModeEditSharpIcon color='secondary'/>
-                              </IconButton>
+                        
+                        <TableCell align="center" padding="none">
+                            <IconButton aria-label="Example" onClick={(event)=> {handleEditButtonClicked(event, transaction)}}>
+                                <ModeEditSharpIcon color='secondary'/>
+                            </IconButton>
                         </TableCell>
-
-                      </>
-                    })}
                   </TableRow>
+                    )})}
               
             </TableBody>
           </Table>
+
           </Box>
         </TableContainer>
+
+          <Pagination 
+              count={countPagination} 
+              onChange={(e, value) => handlePaginationData(e, value)}
+              color="primary" 
+              style={{padding:10}}
+              />
+
       </Paper>
     </Box>
-
   );
 };
 
