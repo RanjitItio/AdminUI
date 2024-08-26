@@ -39,10 +39,10 @@ const TicketTable = React.lazy(()=> import('../Ticket/Ticket'))
 const Crypto = React.lazy(()=> import('../Crypto/Crypto'))
 const AddBlockio = React.lazy(()=> import('../Crypto/AddFormBlockio'))
 const AddTatumio = React.lazy(()=> import('../Crypto/AddFormTatumio'))
-const Profile = React.lazy(()=> import('../Users/profileedit'))
+const Profile = React.lazy(()=> import('../Users/profileedit'));
 const UserTransactionDetail = React.lazy(()=> import('../Users/UserTransactionDetails'))
-const AdminUpdateForm = React.lazy(()=> import('../Users/AdminUpdateForm'))
-const Revenues = React.lazy(()=> import('../Revenues/Revenues'))
+const AdminUpdateForm = React.lazy(()=> import('../Users/AdminUpdateForm'));
+const Revenues = React.lazy(()=> import('../Revenues/RevenuesTable'));
 const Dispute = React.lazy(()=> import('../Dispute/Dispute'))
 const DisputeDiscussion = React.lazy(()=> import('../Dispute/DisputeDiscussion'))
 const AllTransactionDetail = React.lazy(()=> import('../Transaction/AllTransactionDetails'))

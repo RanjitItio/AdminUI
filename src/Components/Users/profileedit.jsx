@@ -7,8 +7,7 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import { Main, DrawerHeader } from "../Content"
 import TransactionTable from './UsersTransactionTable';
-import DisputeTable from './UserDisputesTable'
-import Modal from 'react-bootstrap/Modal';
+import DisputeTable from './UserDisputesTable';
 import UserDeposit from './UserDeposit';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../Authentication/axios';
@@ -18,8 +17,7 @@ import WalletTable from './UserWalletsTable';
 import MerchantBankAccountsTable from './Bank/MerchantBankTable';
 import MerchantBankColumn from './Bank/Column';
 import { MerchantBankAccountTableName } from './Bank/Column';
-import { TicketTableName, TicketTableColumns, WalletTableColumns, 
-    TransactionTableColumns, DisputeTableColumn, WalletsTableName,
+import { WalletTableColumns, TransactionTableColumns, DisputeTableColumn, WalletsTableName,
     TransactionTableName, DisputeTableName, PipetableName, PipeTableColumns
  } from './Columns';
  import UserPipeTable from './pipe/pipeTable';
@@ -64,8 +62,7 @@ const Profile = ({ open }) => {
     const [allGroup, updateAllGroup]    = useState([])
     const [error, setError]             = useState('')
     const [successMessage, setSuccessMessage] = useState('')
-    const [statusMessage, updateStatusMessage] = useState('')
-    const [userTransactions, updateUserTransactions] = useState([])
+    const [statusMessage, updateStatusMessage] = useState('');
     const [userWallet, updateUserWallet] = useState([])
     const [kycDetail, updateKycDetails] = useState(initialProfileData)
 
@@ -281,23 +278,6 @@ useEffect(() => {
 }, [error, successMessage]);
 
 
-// Get all the Transactions related to the user
-const handleUserTransactions = () => {
-    axiosInstance.post(`api/v2/admin/user/transactions/`, {
-        user_id: Kycdetails.user_id,
-        limit: 25,
-        offset: 0
-      }).then((res) => {
-        // console.log(res.data.user_transactions)
-        // const sortedTransactions = res.data.user_transactions.reverse()
-        updateUserTransactions(res.data.user_transactions)
-
-      }).catch((error)=> {
-
-        console.log(error)
-
-      })
-}
 
 // Get all the Wallets related to the user
 const handleUserWallets = () => {
@@ -350,7 +330,7 @@ if (userDetails === undefined) {
         <Main open={open}>
             <DrawerHeader />
 
-            <Modal show={showDeposit} style={{margin:'10rem'}} onHide={handleCloseDeposit} backdrop="static" keyboard={false} >
+            {/* <Modal show={showDeposit} style={{margin:'10rem'}} onHide={handleCloseDeposit} backdrop="static" keyboard={false} >
                 <Modal.Header closeButton>
                     <Modal.Title>Deposit</Modal.Title>
                 </Modal.Header>
@@ -362,9 +342,9 @@ if (userDetails === undefined) {
                     </Card.Body>
 
                 </Card>
-            </Modal>
+            </Modal> */}
 
-            <Modal show={show} style={{margin:'10rem'}} onHide={handleClose} backdrop="static" keyboard={false} >
+            {/* <Modal show={show} style={{margin:'10rem'}} onHide={handleClose} backdrop="static" keyboard={false} >
                 <Modal.Header closeButton>
                     <Modal.Title>Withdraw</Modal.Title>
                 </Modal.Header>
@@ -376,7 +356,7 @@ if (userDetails === undefined) {
                     </Card.Body>
 
                 </Card>
-            </Modal>
+            </Modal> */}
 
             <Container fluid>
                 <Row className="my-3">
@@ -390,7 +370,7 @@ if (userDetails === undefined) {
 
                             {/* Transactions */}
                             <Nav.Item>
-                                <Nav.Link eventKey="transactions" onClick={handleUserTransactions}>Transactions</Nav.Link>
+                                <Nav.Link eventKey="transactions">Transactions</Nav.Link>
                             </Nav.Item>
 
                             {/* Wallets */}
@@ -422,17 +402,16 @@ if (userDetails === undefined) {
                     </Col>
                 </Row>
                 {activeTab === 'profile' && (
-                    <Card className='shadow'>
+                    // <></>
+                    <Card className='shadow' style={{width: '100%'}}>
                         <Card.Body>
-                            <Row className="">
-                                <Col className="d-flex align-items-center justify-content-between mb-3">
-                                    <h3>{kycDetail ? Kycdetails.firstname : 'NA'} {kycDetail ? Kycdetails.lastname : 'NA'} 
-                                    
-                                    </h3>
-                                    <div>
+                            <Row>
+                                <Col >
+                                    <h3>{kycDetail ? Kycdetails.firstname : 'NA'} {kycDetail ? Kycdetails.lastname : 'NA'}</h3>
+                                    {/* <div>
                                         <Button variant="primary" className="me-2" onClick={handleShowDeposit}>Deposit</Button>
                                         <Button variant="secondary" onClick={handleShow} >Withdraw</Button>
-                                    </div>
+                                    </div> */}
                                 </Col>
                             </Row>
                         </Card.Body>
@@ -442,7 +421,7 @@ if (userDetails === undefined) {
                 {/* Profile Tab */}
                 {activeTab === 'profile' && (
                     <Row>
-                        <Col md={6} lg={10} className="mb-3">
+                        <Col xs={12} className="mb-3">
                             <Card className='shadow'>
                                 <Card.Body>
                                     <Form>
@@ -674,7 +653,11 @@ if (userDetails === undefined) {
                 )}
 
                 {activeTab === 'wallets' && (
-                    <WalletTable headCells={WalletTableColumns} TableName={WalletsTableName} rows={userWallet} />
+                    <WalletTable 
+                        headCells={WalletTableColumns} 
+                        TableName={WalletsTableName} 
+                        rows={userWallet} 
+                        />
 
                 )}
                 {activeTab === 'tickets' && (
@@ -684,7 +667,10 @@ if (userDetails === undefined) {
                    
                 )}
                 {activeTab === 'transactions' && (
-                    <TransactionTable headCells={TransactionTableColumns} TableName={TransactionTableName} rows={userTransactions}  userID={Kycdetails.user_id} updateUserTransactions={updateUserTransactions} />
+                    
+                    <TransactionTable  
+                        userID={Kycdetails.user_id} 
+                    />
                 )}
                 {activeTab === 'disputes' && (
                     <DisputeTable headCells={DisputeTableColumn} TableName={DisputeTableName} rows={DisputeData} />

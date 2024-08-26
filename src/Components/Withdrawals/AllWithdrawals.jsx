@@ -28,6 +28,7 @@ export default function AllMerchantPGWithdrawals({open}) {
 
     const counPagination = Math.ceil(totalRows);   // Total pagination count
 
+
     // Fetch all the merchant withdrawals
     useEffect(() => {
       axiosInstance.get(`/api/v4/admin/merchant/pg/withdrawals/`).then((res)=> {

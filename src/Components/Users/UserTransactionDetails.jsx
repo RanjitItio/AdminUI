@@ -63,7 +63,7 @@ export default function UserTransactionDetail({ open }) {
         })
     };
 
-console.log()
+
     return (
         <Main open={open}>
             <DrawerHeader />
