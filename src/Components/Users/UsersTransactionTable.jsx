@@ -144,8 +144,8 @@ export default function TransactionTable({userID}) {
                         </TableCell>
 
                         <TableCell component="th"  scope="row" align="center">
-                            {transaction?.createdAt.split('T')[0]} <br />
-                            <small><i>{transaction?.createdAt.split('T')[1]}</i></small>
+                            {transaction.createdAt ? transaction.createdAt.split('T')[0] : ''} <br />
+                            <small><i>{transaction.createdAt ? transaction.createdAt.split('T')[1] : ''}</i></small>
                         </TableCell>
 
                         <TableCell  align="center" padding="none">
