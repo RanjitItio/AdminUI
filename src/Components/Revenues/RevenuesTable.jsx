@@ -74,7 +74,7 @@ export default function Revenues({open}) {
                                     {data.total_transaction_amount?.map((amountData, amountIndex)=> {
                                         return (
                                         <Typography sx={{ mt: 1, color: '#1a73e8', fontWeight: 'medium', fontSize: 20 }} color="primary" key={amountIndex}>
-                                            {bull}{amountData?.total_amount} {amountData?.currency}
+                                            {bull} {amountData.total_amount ? parseFloat(amountData?.total_amount).toFixed(2) : 0.00} {amountData?.currency}
                                         </Typography>
                                         )
                                     })}

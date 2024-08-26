@@ -128,8 +128,8 @@ const MerchantNavContent = [
    
   ],
   icon: <ReceiptLongOutlinedIcon />},
-    { text: '-Revenues', subItems: [
-      {text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: '/admin/revenues/'},],
+    { text: 'Revenues', subItems: [
+      {text: 'Revenues', icon: <AccountBalanceOutlinedIcon />, url: '/admin/revenues/'},],
       icon: <AccountBalanceOutlinedIcon />
     },
     { text: '-Disputes', subItems: [
