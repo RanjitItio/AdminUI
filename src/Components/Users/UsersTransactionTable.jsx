@@ -153,11 +153,15 @@ export default function TransactionTable({userID}) {
                         </TableCell>
 
                         <TableCell  align="center" padding="none">
-                            {transaction?.merchant.merchant_email}
+                          <p style={{marginLeft:20}}>
+                              {transaction?.merchant.merchant_email}
+                          </p>
                         </TableCell>
                         
                         <TableCell align="left" padding="none">
+                            <p style={{marginLeft:30}}>
                               {transaction?.transaction_id}
+                            </p>
                         </TableCell>
 
                         <TableCell align="center" padding="none">
