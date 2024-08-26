@@ -1,37 +1,35 @@
 import { Main, DrawerHeader } from "../Content";
-import { Table, TableBody, TableCell, TableContainer, 
-    TableHead, TableRow, Paper, Box } from '@mui/material';
+import { Paper, Box, Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
 import axiosInstance from "../Authentication/axios";
-import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
-import IconButton from '@mui/material/IconButton';
-import Chip from '@mui/material/Chip';
-import Pagination from '@mui/material/Pagination';
-import Input from '@mui/joy/Input';
-import SearchIcon from '@mui/icons-material/Search';
-import Button from "../MUIBaseButton/button";
-import { useNavigate } from "react-router-dom";
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 
 
 
+
+
+const bull = (
+    <Box
+      component="span"
+      sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
+    >
+      •
+    </Box>
+  );
 
 
 // All Merchant Withdrawal transactions of PG
 export default function Revenues({open}) {
     const [revenueData, updateRevenuesData] = useState([]);  // All merchant withdrawals
 
-
-    
-    const pipeNames  = revenueData.flatMap(obj => Object.keys(obj))
-
     // Fetch all Revenues
     useEffect(() => {
       axiosInstance.get(`/api/v6/admin/revenues/`).then((res)=> {
         // console.log(res)
         if (res.status === 200 && res.data.success === true) {
-          const RevenueData = Array.isArray(res.data.pipe_wise_transactions) ? res.data.pipe_wise_transactions : [res.data.pipe_wise_transactions]
+          const RevenueData = Array.isArray(res.data.pipe_wise_transaction) ? res.data.pipe_wise_transaction : [res.data.pipe_wise_transaction]
           updateRevenuesData(RevenueData)
         };
 
@@ -41,75 +39,53 @@ export default function Revenues({open}) {
       })
     }, []);
 
-
     
     return (
         <Main open={open}>
             <DrawerHeader />
 
-            <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}> 
-                <h5 style={{margin:9}}><b>All Revenues</b></h5>
-            <Box 
-                sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'start',
-                    alignItems: 'center',
-                    p:2
-                    }}>
-                <Input placeholder="Type in here…" />
-                <IconButton aria-label="Example" >
-                    <SearchIcon color='primary' />
-                </IconButton>
-            </Box>
+            <h5 style={{margin:9, marginBottom:20}}><b>All Revenues</b></h5>
 
-            <TableContainer>
-            <Box sx={{ height: 450, overflowY: 'auto' }}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead sx={{position:'sticky', zIndex: 1, top: 0, backgroundColor: '#e2f4fb'}}>
-                        <TableRow>
-                            <TableCell align="center"><b>Gateway ID</b></TableCell>
-                            <TableCell align="center"><b>PIPE</b></TableCell>
-                            <TableCell align="center"><b>Fee</b></TableCell>
-                        </TableRow>
-                    </TableHead>
+            <Grid container spacing={2}>
+                {revenueData.map((data, index)=> {
+                    return (
+                        <Grid item xs={12} sm={6} md={4} key={index}>
+                            <Paper elevation={12} sx={{boxShadow: 3, border:'2px solid #845ec2', background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)'}} >
+                            <Card sx={{ 
+                                    minWidth: 275, 
+                                    height:'10rem',
+                                    borderRadius: 3,
+                                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.12)',
+                                    transition: 'transform 0.3s ease-in-out',
+                                    '&:hover': {
+                                        transform: 'scale(1.05)',
+                                        boxShadow: '0 6px 30px rgba(0, 0, 0, 0.15)',
+                                        } 
+                                    }}>
+                                <CardContent>
+                                    <Typography sx={{ fontSize: 16, fontWeight: 'bold', color: '#424242' }} gutterBottom>
+                                        {data?.pipe_name} Revenue
+                                    </Typography>
 
-                    <TableBody>
-                        {revenueData.map((row, index) => (
-                          
-                            <TableRow
-                            key={index}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                              
-                                <TableCell scope="row" >
-                                   
-                                </TableCell>
-                             
-                                
-                                <TableCell scope="row">
-                                    Name
-                                </TableCell>
+                                    <Typography variant="h5" component="div" sx={{ color: '#424242' }}>
+                                        Fees Collected
+                                    </Typography>
 
-                                <TableCell scope="row">
-                                    Fee
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </Box>
-
-            <Box sx={{display:'flex', justifyContent:'space-between'}}>
-                <Pagination 
-                    count={1}
-                    color="primary" 
-                    sx={{mb:2, mt:2}} 
-                    />
-            </Box>
-
-            </TableContainer>
-
-            </Paper>
+                                    {data.total_transaction_amount?.map((amountData, amountIndex)=> {
+                                        return (
+                                        <Typography sx={{ mt: 1, color: '#1a73e8', fontWeight: 'medium', fontSize: 20 }} color="primary" key={amountIndex}>
+                                            {bull}{amountData?.total_amount} {amountData?.currency}
+                                        </Typography>
+                                        )
+                                    })}
+                                    
+                                </CardContent>
+                            </Card>
+                            </Paper>
+                        </Grid>
+                );
+                })}
+                </Grid>
         </Main>
     );
 }
