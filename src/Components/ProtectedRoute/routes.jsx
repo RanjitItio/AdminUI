@@ -15,7 +15,6 @@ import CircularProgress from '@mui/joy/CircularProgress';
 const Signup = React.lazy(()=> import('../Authentication/Signup'));
 const Signin = React.lazy(()=> import('../Authentication/Signin'));
 const Dashboard = React.lazy(()=> import('../Dashboard/Dashboard'));
-const UsersData = React.lazy(()=> import('../Users/users'));
 const MerchantDetails = React.lazy(()=> import('../Merchant/merchant'));
 const AllAdminUsers = React.lazy(()=> import('../Users/AdminTable'));
 const UserCreateForm = React.lazy(()=> import('../Users/userCreateForm'));
@@ -64,6 +63,8 @@ const MerchantRefunds = React.lazy(()=> import('../Refunds/AllRefunds'));
 const UpdateMerchantRefund = React.lazy(()=> import('../Refunds/updateRefunds'));
 const MerchantBusinessTable = React.lazy(()=> import('../Business/BusinessTable'));
 const AllPipeTable = React.lazy(()=> import('../Pipe/PipeTable'));
+const AllMerchantTable = React.lazy(()=> import('../Merchants/merchantsTable'));
+
 
 
 
@@ -155,16 +156,8 @@ const AuthRoutes = () => {
                                 />
                           ))}
                           <Route exact path='/' element={<Dashboard open={open} />}></Route>
-                          <Route exact path="/admin/users/" element={<UsersData open={open} />} ></Route>
                           <Route exact path="/admin/create-merchant/" element={<MerchantCreateForm open={open} />} ></Route>
-                          <Route exact path="/admin/merchant/" element={<MerchantDetails open={open} />} ></Route>
-                          <Route exact path="/admin/merchant/details/" element={<MerchantProfile open={open} />} ></Route>
-                          <Route exact path="/admin/merchant/payment/update/" element={<MerchantPaymentUpdate open={open} />} ></Route>
-                          <Route exact path="/admin/merchant/payment/detail/" element={<MerchantBankDetail open={open} />} ></Route>
-                          {/* <Route exact path="/admin/merchant/bank/account/" element={<MerchantBankAccounts open={open} />} ></Route> */}
-                          <Route exact path="/admin/merchant-payments/" element={<MerchantPaymentDetails open={open} />} ></Route>
-                          <Route exact path="/admin/admin-user/" element={<AllAdminUsers open={open} />} ></Route>
-                          <Route exact path="/admin/create-user/" element={<UserCreateForm open={open} />} ></Route>
+                          
                           <Route exact path="/admin/create-admin/" element={<AdminCreateForm open={open} />} ></Route>
 
                           {/* Transactions */}
@@ -192,7 +185,21 @@ const AuthRoutes = () => {
                           <Route exact path="/crypto/" element={<Crypto open={open} />} ></Route>
                           <Route exact path="/crypto/blockio/add/" element={<AddBlockio open={open} />} ></Route>
                           <Route exact path="/crypto/tatumio/add/" element={<AddTatumio open={open} />} ></Route>
+
                           <Route exact path="/admin/users/details/" element={<Profile open={open} />} ></Route>
+                          <Route exact path="/admin/admin-user/" element={<AllAdminUsers open={open} />} ></Route>
+                          <Route exact path="/admin/create-user/" element={<UserCreateForm open={open} />} ></Route>
+
+                          {/* Merchant */}
+                          <Route exact path="/admin/merchants/" element={<AllMerchantTable open={open} />} ></Route>
+
+                          <Route exact path="/admin/merchant/" element={<MerchantDetails open={open} />} ></Route>
+                          <Route exact path="/admin/merchant/details/" element={<MerchantProfile open={open} />} ></Route>
+                          <Route exact path="/admin/merchant/payment/update/" element={<MerchantPaymentUpdate open={open} />} ></Route>
+                          <Route exact path="/admin/merchant/payment/detail/" element={<MerchantBankDetail open={open} />} ></Route>
+                          <Route exact path="/admin/merchant-payments/" element={<MerchantPaymentDetails open={open} />} ></Route>
+
+
                           <Route exact path="/admin/users/transaction/details/" element={<UserTransactionDetail open={open} />} ></Route>
                           {/* <Route exact path="/admin/users/add/" element={<Profile open={open} />} ></Route> */}
                           <Route exact path="/admin/update/" element={<AdminUpdateForm open={open} />} ></Route>

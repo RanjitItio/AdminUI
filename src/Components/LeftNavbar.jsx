@@ -100,7 +100,7 @@ const MerchantNavContent = [
 },
 
   { text: 'Merchants', subItems: [
-    {text:'Merchants', icon: <Person2OutlinedIcon />, url: '/admin/users/'}, 
+    {text:'Merchants', icon: <Person2OutlinedIcon />, url: '/admin/merchants/'}, 
     {text: 'Admins', icon: <SupervisorAccountOutlinedIcon />, url: '/admin/admin-user/'}, 
   ],
   icon: <AccountCircleOutlinedIcon />},
