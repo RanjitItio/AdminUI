@@ -102,7 +102,7 @@ export default function AllMerchantTable({open}) {
     const [deleteUserID, updateDeleteUserID] = useState(0)  // Delete user ID
 
 
-    const counPagination = Math.ceil(totalRows);   // Total pagination count
+    const counPagination = Math.floor(totalRows);   // Total pagination count
 
     // Fetch all the merchant Available merchants
     useEffect(() => {
@@ -184,7 +184,7 @@ export default function AllMerchantTable({open}) {
         let offset = (value - 1) * limit;
 
         axiosInstance.get(`api/v1/user/kyc/?limit=${limit}&offset=${offset}`).then((res)=> {
-            // console.log(res)
+            console.log(res)
             if (res.status === 200 && res.data.all_Kyc) {
                 updateKycData(res.data.all_Kyc)
             };
