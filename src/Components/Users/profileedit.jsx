@@ -26,7 +26,7 @@ import { WalletTableColumns, TransactionTableColumns, DisputeTableColumn, Wallet
 
 
 
-
+// Edit Merchant Profile
 const Profile = ({ open }) => {
     const navigate    = useNavigate();
     const location    = useLocation();
@@ -99,7 +99,7 @@ const Profile = ({ open }) => {
 
     const handleStatusValueUpdate = (event) => {
         setStatusValue(event.target.value)
-    }
+    };
 
     const handleProfileStatusMessage = (event) => {
         const status_value = event.target.value
@@ -218,7 +218,7 @@ const handleKYCStatusUpdate = ()=> {
                 setSuccessMessage('User Data updated Successfully')
 
                 setTimeout(() => {
-                    navigate('/admin/users/')
+                    navigate('/admin/merchants/')
                 }, 1000);
             }
 
