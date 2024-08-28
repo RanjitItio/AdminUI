@@ -2,7 +2,7 @@ import TextField from '@mui/material/TextField';
 import { Paper, Typography, Grid } from '@mui/material';
 import { Main, DrawerHeader } from '../Content';
 import { useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Button from '@mui/material/Button';
 import BackupIcon from '@mui/icons-material/Backup';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -15,7 +15,6 @@ import axiosInstance from '../Authentication/axios';
 import { useNavigate } from 'react-router-dom';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
-// import MenuItem from '@mui/material';
 
 
 
@@ -77,12 +76,13 @@ const blue = {
 export default function MerchantPGTransactionUpdate({open}) {
     // Fetch the data from previous page
     const location = useLocation();
+    const navigate = useNavigate();
+
     const states = location?.state || ''
     const transactionData = states?.tranaction || ''
     const merchantID = transactionData.merchant.merchant_id
     const modeState  = states?.mode || ''
 
-    const navigate = useNavigate();
 
     const initialFormData = {
         transactionID:        transactionData?.transaction_id || '',
@@ -108,7 +108,6 @@ export default function MerchantPGTransactionUpdate({open}) {
     const [paymemtMode, updatePaymentMode]     = useState(formData?.paymentMode || '');   // Payment Mode
     const [currency, setCurrency]              = useState(formData.currency || '');      // Currency State
     const [payoutError, setPayoutError]        = useState('');
-    const [payout, updatePayout]               = useState(0);
 
 
 
@@ -131,10 +130,6 @@ export default function MerchantPGTransactionUpdate({open}) {
         updatePaymentMode(newValue)
     };
 
-    // Method to handle Payment Mode value
-    const handleCurrencyChange = (e, newValue)=> {
-        setCurrency(newValue)
-    };
 
 
     // Method to handle Cancel Button click
@@ -202,7 +197,11 @@ export default function MerchantPGTransactionUpdate({open}) {
 
                 if (error.response.data.message === 'Transaction already updated') {
                     setError('Transaction has been updated, Can not perform this action')
-                };
+                } else if (error.response.data.message == 'Provide transaction Fee') {
+                    setError('Please assign transaction fee')
+                } else {
+                    setError('')
+                }
             })
         }
     };

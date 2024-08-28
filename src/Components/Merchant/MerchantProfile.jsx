@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Nav, Form, } from 'react-bootstrap';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
@@ -7,25 +7,28 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import { Main, DrawerHeader } from "../Content"
 import MerchantPaymentTable from './MerchantPayment';
-import Modal from 'react-bootstrap/Modal';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../Authentication/axios';
-import { Grid, colors } from '@mui/material';
+import { Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 import MerchantPaymentTableColumn from './ColumName';
 import { styled } from '@mui/material/styles';
+import Textarea from '@mui/joy/Textarea';
+
 
 const MerchantPaymentTableHead = MerchantPaymentTableColumn;
 const TransactionTableName = "Payments";
 const DemoMerchantPaymentData = []
 
+
 const BoldTextField = styled(TextField) ({
     '& .MuiInputBase-input': {
     fontWeight: 'bold',
   },
-})
+});
 
 
+// Edit Business Profile
 const MerchantProfile = ({ open }) => {
     const navigate    = useNavigate();
     
@@ -43,9 +46,10 @@ const MerchantProfile = ({ open }) => {
         group:         aboutGroup?.name || '',
         merchant_id:   aboutMerchant?.id || '',
         status:        aboutMerchant?.status || '',
+        business_msg:  aboutMerchant?.bsn_msg || '',
         fee:           '',
         merchant_img:  null
-    }
+    };
 
     const [allGroup, updateAllGroup]              = useState([])
     const [groupValue, setGroupValue]             = useState('');
@@ -66,14 +70,16 @@ const MerchantProfile = ({ open }) => {
         setTimeout(() => {
             setGroupValue(aboutGroup?.name || '')
         }, 1000);
-    }, [])
+    }, []);
+
 
     //Update the Currency value after page load for blank group value warning
     useEffect(() => {
         setTimeout(() => {
             setSelectedCurrency(aboutCurrency?.name || '')
         }, 1000);
-    }, [])
+    }, []);
+
 
     // //Update the Status value after page load for blank group value warning
     useEffect(() => {
@@ -100,6 +106,7 @@ const MerchantProfile = ({ open }) => {
         
     };
 
+    /// Group value data
     const handleGroupValueChange = (event) => {
 
         const selectedGroupName   = event.target.value;
@@ -108,15 +115,18 @@ const MerchantProfile = ({ open }) => {
         setGroupValue(selectedGroup ? selectedGroup.name : 1)
         setGroupID(selectedGroup ? selectedGroup.id : 1)
 
-    }
+    };
 
+    // Selected currency data
     const handleSelctedCurrencyChange = (event) => {
         setSelectedCurrency(event.target.value)
-    }
+    };
 
+    // Status value
     const handleStatusValueUpdate = (event) => {
         setStatusValue(event.target.value)
-    }
+    };
+
 
     const handleMerchantFee = (event)=> {
         const value = event.target.value;
@@ -151,6 +161,7 @@ const MerchantProfile = ({ open }) => {
         console.log(error)
     })
     }, []);
+    
 
 // Fetch all Currencies from API
     useEffect(() => {
@@ -164,7 +175,7 @@ const MerchantProfile = ({ open }) => {
     })
     }, []);
 
-// console.log(kycDetail.status)
+
 
 useEffect(() => {
     if (error || successMessage) {
@@ -178,10 +189,14 @@ useEffect(() => {
 }, [error, successMessage]);
 
 
+
+// Cancel button clicked event
 const handleCancelButtonClicked = ()=> {
     navigate('/admin/merchant/')
 };
 
+
+// Method to handel form Submit
 const handleFormSubmit = ()=> {
 
     if (formData.business_name === '') {
@@ -241,6 +256,7 @@ const handleFormSubmit = ()=> {
 };
 
 
+// Status message
 const getStatus = (status) => {
     switch (status) {
       case 'Moderation':
@@ -254,7 +270,8 @@ const getStatus = (status) => {
     }
   };
 
-
+   
+  // Abscence of State value
   if (location.state === null) {
     return (
         <Main open={open}>
@@ -263,6 +280,7 @@ const getStatus = (status) => {
         </Main>
     )
   };
+
 
     return (
         <Main open={open}>
@@ -295,6 +313,7 @@ const getStatus = (status) => {
                     </Card>
                 )}
 
+                
                 {/* Profile Tab */}
                 {activeTab === 'profile' && (
                     <Row>
@@ -312,7 +331,7 @@ const getStatus = (status) => {
                                                     variant="outlined"
                                                     disabled
                                                     fullWidth 
-                                                    value={aboutMerchant?.merchant_id || 'NA'}
+                                                    value={aboutMerchant?.id || 'NA'}
                                                     onChange={handleMerchantDetailChange}
                                                     />
                                             </Form.Group>
@@ -391,20 +410,6 @@ const getStatus = (status) => {
 
                                         <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
-                                                <TextField
-                                                    variant="outlined"
-                                                    type='text'
-                                                    label="Fee (%)"
-                                                    name='fee'
-                                                    value={merchantFee}
-                                                    onChange={handleMerchantDetailChange}
-                                                    fullWidth
-                                                />
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
                                                 <FormControl fullWidth variant="outlined">
                                                     <InputLabel>Status</InputLabel>
                                                     <Select
@@ -422,6 +427,18 @@ const getStatus = (status) => {
                                             </Form.Group>
                                         </Grid>
 
+                                        <Grid item xs={12} md={4}>
+                                            <Form.Group className="mb-3">
+                                                <Textarea
+                                                    placeholder="Type anything…" 
+                                                    onChange={handleMerchantDetailChange}
+                                                    name='business_msg'
+                                                    value={formData.business_msg}
+                                                    minRows={3}
+                                                    />
+                                            </Form.Group>
+                                        </Grid>
+
                                         <Grid item xs={12} md={12} sx={{ maxWidth: '100%', marginBottom: '10px' }}>
                                             <TextField
                                                 type="file"
@@ -431,7 +448,7 @@ const getStatus = (status) => {
                                                 onChange={handleMerchantDetailChange}
                                                 InputProps={{
                                                 style: {
-                                                    paddingTop: '10px', // Adjust as needed for vertical alignment
+                                                    paddingTop: '10px', 
                                                 },
                                                 }}
                                             />
