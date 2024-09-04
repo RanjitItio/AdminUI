@@ -20,6 +20,16 @@ import { useNavigate } from 'react-router-dom';
 
 
 
+const IS_DEVELOPMENT = import.meta.env.VITE_IS_DEVELOPMENT;
+let redirectUrl = '';
+
+if (IS_DEVELOPMENT === 'True') {
+    redirectUrl = 'http://localhost:5173'
+ } else {
+    redirectUrl = 'https://react-payment.oyefin.com'
+ };
+
+
 
 const blue = {
     200: '#99CCFF',
@@ -100,6 +110,12 @@ export default function AllMerchantTable({open}) {
     const [error, setError]              = useState('');
     const [deleteOpen, setDeleteOpen]        = useState(false);  // Delete popup state
     const [deleteUserID, updateDeleteUserID] = useState(0)  // Delete user ID
+    const [accessToken, setAccessToken]      = useState(null);
+    const [refreshToken, setRefreshToken]    = useState(null);
+    const [loginError, setLoginError]        = useState('');
+    const [merchantFullName, setMerchantFullName] = useState(''); // To redirect to merchant page
+    const [isMerchant, setIsMerchant]             = useState('') // To redirect to merchant page
+
 
 
     const counPagination = Math.floor(totalRows);   // Total pagination count
@@ -204,8 +220,38 @@ export default function AllMerchantTable({open}) {
         } else if (text === 'Delete') {
             updateDeleteUserID(userID);
             setDeleteOpen(true);    
-        };
+        } else if (text === 'Login') {
+            // Call api for token
+            axiosInstance.get(`/api/v6/admin/merchant/login/${userID}`).then((res)=> {
+                console.log(res)
+
+                if (res.status === 200 && res.data.success === true) {
+                    setAccessToken(res.data.access)
+                    setRefreshToken(res.data.refresh)
+                    setMerchantFullName(res.data.user_name)
+                    setIsMerchant(res.data.is_merchant)
+                };
+            }).catch((error)=> {
+                
+                if (error.response.data.message === 'Inactiv user') {
+                    setLoginError('User is not active');
+
+                    setTimeout(() => {
+                        setLoginError('')
+                    }, 2000);
+                }
+            })
+        }
     };
+
+
+    // Redirect to merchat page
+    useEffect(() => {
+        if (accessToken && refreshToken) {
+            window.location.replace(`${redirectUrl}/admin/merchant/login/?access=${accessToken}&refresh=${refreshToken}&name=${merchantFullName}&ismerchant=${isMerchant}`);
+        };
+    }, [accessToken, refreshToken])
+    
 
 
     return (
@@ -213,6 +259,7 @@ export default function AllMerchantTable({open}) {
         <Main open={open}>
             <DrawerHeader />
 
+            <p style={{color:'red'}}>{loginError && loginError}</p>
             <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}>
             <Box 
             sx={{ 
@@ -322,7 +369,7 @@ export default function AllMerchantTable({open}) {
                                         </MenuButton>
                                         <Menu>
                                             <MenuItem onClick={() => handleActionClicked('Edit', row.user_kyc_details, row.user)}>Edit</MenuItem>
-                                            <MenuItem onClick={() => handleActionClicked('Login')}>Login</MenuItem>
+                                            <MenuItem onClick={() => handleActionClicked('Login', row.user_kyc_details, row.user, row.user_kyc_details.user_id)}>Login</MenuItem>
                                             <MenuItem variant="soft" color="danger" onClick={() => handleActionClicked('Delete', row.user_kyc_details, row.user, row.user_kyc_details.user_id)}>
                                                 Delete
                                             </MenuItem>
