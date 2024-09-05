@@ -8,7 +8,6 @@ import FormControl from '@mui/material/FormControl';
 import { Main, DrawerHeader } from "../Content"
 import TransactionTable from './UsersTransactionTable';
 import DisputeTable from './UserDisputesTable';
-import UserDeposit from './UserDeposit';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../Authentication/axios';
 import { Grid } from '@mui/material';
@@ -17,8 +16,8 @@ import WalletTable from './UserWalletsTable';
 import MerchantBankAccountsTable from './Bank/MerchantBankTable';
 import MerchantBankColumn from './Bank/Column';
 import { MerchantBankAccountTableName } from './Bank/Column';
-import { WalletTableColumns, TransactionTableColumns, DisputeTableColumn, WalletsTableName,
-    TransactionTableName, DisputeTableName, PipetableName, PipeTableColumns
+import { WalletTableColumns, DisputeTableColumn, WalletsTableName,
+      DisputeTableName, PipetableName, PipeTableColumns
  } from './Columns';
  import UserPipeTable from './pipe/pipeTable';
  import MerchantKeys from './Keys/APIKeys';
@@ -30,10 +29,8 @@ import { WalletTableColumns, TransactionTableColumns, DisputeTableColumn, Wallet
 const Profile = ({ open }) => {
     const navigate    = useNavigate();
     const location    = useLocation();
-    const Kycdetails  = location.state?.kycID;
-    const userDetails = location.state?.userID;
-
-// console.log('Kycdetails', Kycdetails.user_id)
+    const Kycdetails  = location.state?.kycID || '';
+    const userDetails = location.state?.userID || '';
 
     const initialProfileData = {
         first_name:     Kycdetails?.firstname || '',
@@ -152,12 +149,10 @@ const handleKYCStatusUpdate = ()=> {
     } else if (kycDetail.mobile_number === '') {
         setError("Please fill up the Mobile Number")
 
-    } 
-    else if (kycDetail.email === '') {
+    } else if (kycDetail.email === '') {
         setError("Please fill up the Email ID")
 
-    } 
-    else if (kycDetail.dob === '') {
+    } else if (kycDetail.dob === '') {
         setError("Please fill up User DOB")
 
     } else if (kycDetail.gender === '') {
@@ -261,7 +256,6 @@ const handleKYCStatusUpdate = ()=> {
     };
 
 // Sample data for the table
-const ticketData = [];
 const DisputeData = [];
 
 // console.log(kycDetail.status)
@@ -296,28 +290,28 @@ const handleUserWallets = () => {
 
 
 
-if (Kycdetails === undefined) {
+if (Kycdetails === '') {
     
     return (
         <>
             <Main open={open}>
             <DrawerHeader />
                 <h2>Please reverse the page and re edit again</h2>
-                <p>OR <Link to={'/admin/users/'}>Click</Link> on the Link </p>
+                <p>OR <Link to={'/admin/merchants/'}>Click</Link> on the Link </p>
            </Main>
 
         </>
     )
 };
 
-if (userDetails === undefined) {
+if (userDetails === '') {
     
     return (
         <>
             <Main open={open}>
             <DrawerHeader />
                 <h2>Please reverse the page and re edit again</h2>
-                <p>OR <Link to={'/admin/users/'}>Click</Link> on the Link </p>
+                <p>OR <Link to={'/admin/merchants/'}>Click</Link> on the Link </p>
            </Main>
 
         </>

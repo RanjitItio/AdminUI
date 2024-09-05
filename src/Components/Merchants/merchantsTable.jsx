@@ -173,7 +173,7 @@ export default function AllMerchantTable({open}) {
       };
 
 
-    // Search Withdrawal Transactions
+    // Search Merchant users
     const handleSearch = ()=> {
         axiosInstance.get(`api/v1/admin/user/search/?query=${searchQuery}`).then((res)=> {
             // console.log(res)
