@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import axiosInstance from './axios';
-import './tailwind.css';
-// import { RiUser3Line } from "react-icons/ri";
-import { Card } from 'react-bootstrap';
-import Form from 'react-bootstrap/Form';
-import { Row, Col, Button } from 'react-bootstrap';
-
+// import './tailwind.css';
+// // import { RiUser3Line } from "react-icons/ri";
+// import { Card } from 'react-bootstrap';
+// import Form from 'react-bootstrap/Form';
+// import { Row, Col, Button } from 'react-bootstrap';
+import { Box, Typography, TextField, Button, IconButton } from "@mui/material";
+import { Facebook, Twitter, Instagram } from "@mui/icons-material";
 
 
 function Signin(){
@@ -19,6 +20,7 @@ function Signin(){
     const [formData, updateFormData] = useState(initialFormData);
     const [error, setError] = useState('')
     const [successMessage, setSuccessMessage] = useState('');
+    const [disableButton, setDisableButton]   = useState(false);
 
 
     const handleChange = (e) => {
@@ -54,7 +56,9 @@ function Signin(){
 			})
 			.then((res) => {
                 if(res.status == 200) {
+                    setDisableButton(true);
                     setSuccessMessage(`Login Successfull`)
+
                     setTimeout(() => {
                         window.location.href = '/'
                     }, 1000);
@@ -64,8 +68,6 @@ function Signin(){
 
                     axiosInstance.defaults.headers['Authorization'] =
                       'Bearer ' + localStorage.getItem('access_token');
-                    // console.log(res);
-                    // console.log(res.data);
                 }
 
             //  localStorage.clear();
@@ -85,12 +87,96 @@ function Signin(){
                 };
 
             })
-    }
+        };
+
 
    return(
     <>
+        <Box sx={{
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            background: "linear-gradient(135deg, #7b67d2, #8f44e8)",
+        }}>
+        <Box sx={{
+            width: 300,
+            padding: "40px",
+            borderRadius: "12px",
+            backgroundColor: "#fff",
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+            position: "relative",
+            textAlign: "center",
+            }}>
 
-<Card className=" mt-5 shadow" style={{maxWidth: '20rem', margin: '0 auto'}}>
+            {/* Main Form */}
+            <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", color: "#4B0082", mb: 3 }}
+            >
+                Login Form
+            </Typography>
+
+            {/* Input Fields */}
+            <TextField
+                label="Email"
+                variant="outlined"
+                fullWidth
+                sx={{ mb: 2 }}
+                name="email"
+                onChange={handleChange}
+                />
+            <TextField
+                label="Password"
+                type="password"
+                variant="outlined"
+                fullWidth
+                sx={{ mb: 2 }}
+                name='password'
+                onChange={handleChange}
+                />
+
+            {/* Login Button */}
+            <Button
+            variant="contained"
+            disabled={disableButton}
+            fullWidth
+            onClick={handleOnSubmit}
+            sx={{
+                backgroundColor: "#4B0082",
+                padding: "10px",
+                borderRadius: "20px",
+                "&:hover": { backgroundColor: "#6A0DAD" },
+            }}>
+                LOG IN NOW
+            </Button>
+
+            {error &&  <p className="text-danger">{error}</p>}
+            {successMessage && <p className="text-success">{successMessage}</p>}
+
+            {/* Social Login */}
+            <Typography
+            variant="body2"
+            sx={{ color: "#808080", marginTop: "20px" }}>
+                Log in via
+            </Typography>
+
+            <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+                <IconButton color="primary">
+                    <Facebook />
+                </IconButton>
+
+                <IconButton color="primary">
+                    <Twitter />
+                </IconButton>
+
+                <IconButton color="primary">
+                    <Instagram />
+                </IconButton>
+            </Box>
+        </Box>
+        </Box>
+        {/* <Card className=" mt-5 shadow" style={{maxWidth: '20rem', margin: '0 auto'}}>
             <Card.Body>
                 <h2 className="text-center m-4">SignIn </h2>
                 <Form>
@@ -106,12 +192,12 @@ function Signin(){
                         <Form.Control type="password" placeholder="Password"  name='password' onChange={handleChange} />
                     </Form.Group>
                     <Button variant="primary" type="submit" className="w-100"  onClick={handleOnSubmit}>Submit</Button>
-                     {/* Message */}
+                    
                 {error &&  <p className="text-danger">{error}</p>}
                 {successMessage && <p className="text-success">{successMessage}</p>}
                 </Form>
             </Card.Body>
-        </Card>
+        </Card> */}
         
     </>
    );

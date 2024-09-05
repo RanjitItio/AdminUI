@@ -64,7 +64,6 @@ const UpdateMerchantRefund = React.lazy(()=> import('../Refunds/updateRefunds'))
 const MerchantBusinessTable = React.lazy(()=> import('../Business/BusinessTable'));
 const AllPipeTable = React.lazy(()=> import('../Pipe/PipeTable'));
 const AllMerchantTable = React.lazy(()=> import('../Merchants/merchantsTable'));
-import TestSignupForm from "../Authentication/testSignup";
 
 
 
@@ -121,11 +120,7 @@ const AuthRoutes = () => {
       {
         path: "/about-us",
         element: <div>About Us</div>,
-      },
-      {
-        path: "/test/signup/",
-        element: <TestSignupForm />,
-      },
+      }
     ];
   
 
