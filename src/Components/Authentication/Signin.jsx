@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
 import axiosInstance from './axios';
-// import './tailwind.css';
-// // import { RiUser3Line } from "react-icons/ri";
-// import { Card } from 'react-bootstrap';
-// import Form from 'react-bootstrap/Form';
-// import { Row, Col, Button } from 'react-bootstrap';
 import { Box, Typography, TextField, Button, IconButton } from "@mui/material";
 import { Facebook, Twitter, Instagram } from "@mui/icons-material";
 

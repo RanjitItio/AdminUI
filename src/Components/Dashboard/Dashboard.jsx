@@ -55,12 +55,13 @@ function Dashboard({open}) {
     }, [])
 
 
-    // Method to redirect to all users page
+    // Method to redirect to all merchant page
     const handleUserInfo = ()=> {
-        navigate('/admin/users/')
+        navigate('/admin/merchants/')
     };
     
 
+    
     return(
        
         <Main open={open}>
@@ -168,7 +169,7 @@ function Dashboard({open}) {
             {/* Dash Board Line Chart Starts */}
                 {/* <DashboardLineChart /> */}
             {/* Dash Borad Line Chart Ends */}
-
+            
             {/* Transaction Chart */}
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={12} md={7}>
