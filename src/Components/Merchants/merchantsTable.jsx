@@ -105,6 +105,7 @@ const Button = styled(BaseButton)(
 export default function AllMerchantTable({open}) {
     const navigate = useNavigate();
     const [kycData, updateKycData] = useState([]);  // All merchant withdrawals
+    const [userData, updateUserData] = useState([]);
     const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
     const [totalRows, updateTotalRows]   = useState(0);    // paginated rows
     const [error, setError]              = useState('');
@@ -120,12 +121,17 @@ export default function AllMerchantTable({open}) {
 
     const counPagination = Math.floor(totalRows);   // Total pagination count
 
+    // console.log('kycData', kycData)
+    // console.log('userData', userData)
+
+
     // Fetch all the merchant Available merchants
     useEffect(() => {
       axiosInstance.get(`api/v1/user/kyc/`).then((res)=> {
         // console.log(res.data)
         if (res.status === 200 && res.data.all_Kyc) {
             updateKycData(res.data.all_Kyc)
+            updateUserData(res.data.all_users)
             updateTotalRows(res.data.total_row_count)
         };
 
@@ -177,10 +183,10 @@ export default function AllMerchantTable({open}) {
     const handleSearch = ()=> {
         axiosInstance.get(`api/v1/admin/user/search/?query=${searchQuery}`).then((res)=> {
             // console.log(res)
-
-            if (res.status === 200 && res.data.all_Kyc) {
+            if (res.status === 200) {
                 updateKycData(res.data.all_Kyc)
-            }
+                updateUserData(res.data.all_users)
+            };
 
         }).catch((error)=> {
             console.log(error)
@@ -200,9 +206,11 @@ export default function AllMerchantTable({open}) {
         let offset = (value - 1) * limit;
 
         axiosInstance.get(`api/v1/user/kyc/?limit=${limit}&offset=${offset}`).then((res)=> {
-            console.log(res)
-            if (res.status === 200 && res.data.all_Kyc) {
+            console.log(res);
+
+            if (res.status === 200) {
                 updateKycData(res.data.all_Kyc)
+                updateUserData(res.data.all_users)
             };
 
         }).catch((error)=> {
@@ -212,17 +220,20 @@ export default function AllMerchantTable({open}) {
     };
 
     // Update user details
-    const handleActionClicked = (text, kyc, user, userID) => {
+    const handleActionClicked = (text, user) => {
+
+        let kycDetail =  kycData.find((kyc)=> kyc.user_id === user.user_id);
 
         if (text === 'Edit') {
-            navigate('/admin/users/details/', {state: {kycID: kyc, userID: user}})
+            navigate('/admin/users/details/', {state: {kycID: kycDetail || null, userID: user}})
 
         } else if (text === 'Delete') {
-            updateDeleteUserID(userID);
-            setDeleteOpen(true);    
+            updateDeleteUserID(user.user_id);
+            setDeleteOpen(true);   
+
         } else if (text === 'Login') {
             // Call api for token
-            axiosInstance.get(`/api/v6/admin/merchant/login/${userID}`).then((res)=> {
+            axiosInstance.get(`/api/v6/admin/merchant/login/${user.user_id}`).then((res)=> {
                 console.log(res)
 
                 if (res.status === 200 && res.data.success === true) {
@@ -245,7 +256,7 @@ export default function AllMerchantTable({open}) {
     };
 
 
-    // Redirect to merchat page
+    // Redirect to merchat home page
     useEffect(() => {
         if (accessToken && refreshToken) {
             window.location.replace(`${redirectUrl}/admin/merchant/login/?access=${accessToken}&refresh=${refreshToken}&name=${merchantFullName}&ismerchant=${isMerchant}`);
@@ -306,58 +317,58 @@ export default function AllMerchantTable({open}) {
                     </TableHead>
 
                     <TableBody>
-                        {kycData.map((row, index) => (
+                        {userData.map((row, index) => (
                             <TableRow
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                 {/* ID Column */}
                                <TableCell component="th" scope="row">
-                                    <b>{row.user_kyc_details ? row.user_kyc_details.id : row.user.id}</b>
+                                    <b>{row?.user_id || 0}</b>
                                 </TableCell>
 
                                 {/* First Name Column */}
                                 <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}>
-                                    <b>{row.user_kyc_details ? row.user_kyc_details.firstname: 'NA'}</b>
+                                    <b>{row?.firstname || 'NA'}</b>
                                 </TableCell>
 
                                 {/* Last Name Column */}
                                 <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}>
-                                    <b>{row.user_kyc_details ? row.user_kyc_details.lastname : 'NA'}</b>
+                                    <b>{row?.lastname || 'NA'}</b>
                                 </TableCell>
 
                                 {/* Phone Number Column */}
                                 <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
-                                    <b>{row.user_kyc_details ? row.user_kyc_details.phoneno : 'NA'}</b>
+                                    <b>{row?.phoneno || 'NA'}</b>
                                 </TableCell>
 
                                 {/* Email Column */}
                                 <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
-                                    <b>{row.user_kyc_details ? row.user_kyc_details.email : 'NA'}</b>
+                                    <b>{row?.email || 'NA'}</b>
                                 </TableCell>
 
                                 {/* Group Column */}
                                 <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
                                 <b>{
-                                    row.user.group_name ? row.user.group_name : 'NA'
+                                    row?.group_name || 'NA'
                                     }
                                 </b>
                                 </TableCell>
 
                                 {/* Last Login Column */}
                                 <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
-                                <b>{row.user.lastlogin ? new Date(row.user.lastlogin).toLocaleTimeString() : '0:00:00'}</b>
+                                    <b>{row.lastlogin ? new Date(row.lastlogin).toLocaleTimeString() : '0:00:00'}</b>
                                 </TableCell>
 
                                 {/* IP Address Column */}
                                 <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
-                                    <b>{row.user.ip_address ? row.user.ip_address : '0.0.0.0'}</b>
+                                    <b>{row?.ip_address || '0.0.0.0'}</b>
                                 </TableCell>
 
                                 {/* Status Column */}
                                 <TableCell align="left">
-                                <button type="button" className={`btn btn-outline-${getStatusColor(row.user.verified ? 'Active' : "Inactive")} my-2`}>
-                                    <b>{row.user.verified ? 'Active' : 'Inactive'}</b>
+                                <button type="button" className={`btn btn-outline-${getStatusColor(row.active ? 'Active' : "Inactive")} my-2`}>
+                                    <b>{row.active ? 'Active' : 'Inactive'}</b>
                                 </button>
                                 </TableCell>
 
@@ -368,9 +379,9 @@ export default function AllMerchantTable({open}) {
                                             <FontAwesomeIcon icon={faEllipsisV} />
                                         </MenuButton>
                                         <Menu>
-                                            <MenuItem onClick={() => handleActionClicked('Edit', row.user_kyc_details, row.user)}>Edit</MenuItem>
-                                            <MenuItem onClick={() => handleActionClicked('Login', row.user_kyc_details, row.user, row.user_kyc_details.user_id)}>Login</MenuItem>
-                                            <MenuItem variant="soft" color="danger" onClick={() => handleActionClicked('Delete', row.user_kyc_details, row.user, row.user_kyc_details.user_id)}>
+                                            <MenuItem onClick={() => handleActionClicked('Edit', row)}>Edit</MenuItem>
+                                            <MenuItem onClick={() => handleActionClicked('Login', row)}>Login</MenuItem>
+                                            <MenuItem variant="soft" color="danger" onClick={() => handleActionClicked('Delete', row)}>
                                                 Delete
                                             </MenuItem>
                                         </Menu>

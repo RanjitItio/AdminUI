@@ -1,16 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Nav, Form, } from 'react-bootstrap';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
 import { Main, DrawerHeader } from "../Content"
 import TransactionTable from './UsersTransactionTable';
 import DisputeTable from './UserDisputesTable';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../Authentication/axios';
-import { Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 import WalletTable from './UserWalletsTable';
 import MerchantBankAccountsTable from './Bank/MerchantBankTable';
@@ -21,6 +15,9 @@ import { WalletTableColumns, DisputeTableColumn, WalletsTableName,
  } from './Columns';
  import UserPipeTable from './pipe/pipeTable';
  import MerchantKeys from './Keys/APIKeys';
+ import UpdateMerchantKyc from '../Merchants/editMerchantKyc';
+ import UpdateMerchantProfile from '../Merchants/editMerchantProfile';
+ import Alert from '@mui/material/Alert';
 
 
 
@@ -56,34 +53,27 @@ const Profile = ({ open }) => {
     const [activeTab, setActiveTab]     = useState('profile');
     const [showDeposit, setShowDeposit] = useState(false);
     const [show, setShow]               = useState(false);
-    const [allGroup, updateAllGroup]    = useState([])
-    const [error, setError]             = useState('')
-    const [successMessage, setSuccessMessage] = useState('')
-    const [statusMessage, updateStatusMessage] = useState('');
-    const [userWallet, updateUserWallet] = useState([])
-    const [kycDetail, updateKycDetails] = useState(initialProfileData)
+    const [allGroup, updateAllGroup]    = useState([]);  // Group data 
+    const [error, setError]             = useState('')   // Error message
+    const [successMessage, setSuccessMessage] = useState(''); // Success Message
+    const [statusMessage, updateStatusMessage] = useState('');  // Status Message
+    const [userWallet, updateUserWallet] = useState([]);        // Wallet 
+    const [kycDetail, updateKycDetails] = useState(initialProfileData); // Kyc data
 
     const [groupValue, setGroupValue]   = useState(userDetails?.group_name || 'NA');
     const [statusValue, setStatusValue] = useState(userDetails?.status || 'NA');
     const [groupID, setGroupID]         = useState(userDetails?.group || 1);
-
-
-    const handleClose = () => setShow(false);
-    const handleShow  = () => setShow(true);
-
-    const handleCloseDeposit = () => setShowDeposit(false);
-    const handleShowDeposit  = () => setShowDeposit(true);
+    const [disableKycUpdateButton, setDisableKycUpdateButton] = useState(false); 
 
     
+    // Update Profile data
     const handleProfileChange = (event) => {
-        
         updateKycDetails({...kycDetail,
             [event.target.name]: event.target.value,
         })
     };
 
-    // console.log(groupID)
-
+    // Selected Group value
     const handleGroupValueChange = (event) => {
 
         const selectedGroupName   = event.target.value;
@@ -92,12 +82,14 @@ const Profile = ({ open }) => {
         setGroupValue(selectedGroup ? selectedGroup.name : 1)
         setGroupID(selectedGroup ? selectedGroup.id : 1)
 
-    }
+    };
 
+    // Selecetd Status
     const handleStatusValueUpdate = (event) => {
         setStatusValue(event.target.value)
     };
 
+     // Show message according to the status
     const handleProfileStatusMessage = (event) => {
         const status_value = event.target.value
 
@@ -135,7 +127,8 @@ const Profile = ({ open }) => {
 
 // Method to update user Kyc details
 const handleKYCStatusUpdate = ()=> {
-    // value = event.target.value;
+
+    setDisableKycUpdateButton(true);
 
     if (kycDetail.status === '') {
         setError('Please Select the status of the user')
@@ -185,13 +178,9 @@ const handleKYCStatusUpdate = ()=> {
     } else if (kycDetail.group === 0) {
         setError("Please Select user Group")
 
-    } 
-    // else if (kycDetail.password !== kycDetail.confirm_password) {
-    //     setError("Password and Confirm password did not match")
-    //  } 
-     else {
-        // setError('')
-        // console.log(kycDetail.status)
+    } else {
+        setError('')
+        
         axiosInstance.put(`api/v1/admin/update/user/`, {
             user_id:          Kycdetails.user_id,
             first_name:       kycDetail.first_name,
@@ -211,6 +200,7 @@ const handleKYCStatusUpdate = ()=> {
             // console.log(res)
             if (res.status == 200) {
                 setSuccessMessage('User Data updated Successfully')
+                setDisableKycUpdateButton(false);
 
                 setTimeout(() => {
                     navigate('/admin/merchants/')
@@ -237,21 +227,15 @@ const handleKYCStatusUpdate = ()=> {
       
           } else if (error.response.data.msg == 'Kyc not found'){
               setError("Kyc detail not found")
+              setDisableKycUpdateButton(false);
       
           } else if (error.response.data.msg == 'Error while updating the user'){
               setError("Unknown user error")
       
-          } else if (error.response.data.msg == 'Server error'){
-              setError("Server error")
-              
-          } else if (error.response.status == 401) {
-              setError('Unauthorized Access')
-          }
-          else {
+          } else {
             setError("")
-          }
 
-          })
+          }})
       };
     };
 
@@ -290,30 +274,14 @@ const handleUserWallets = () => {
 
 
 
-if (Kycdetails === '') {
-    
-    return (
-        <>
-            <Main open={open}>
-            <DrawerHeader />
-                <h2>Please reverse the page and re edit again</h2>
-                <p>OR <Link to={'/admin/merchants/'}>Click</Link> on the Link </p>
-           </Main>
-
-        </>
-    )
-};
-
 if (userDetails === '') {
     
     return (
         <>
             <Main open={open}>
             <DrawerHeader />
-                <h2>Please reverse the page and re edit again</h2>
-                <p>OR <Link to={'/admin/merchants/'}>Click</Link> on the Link </p>
+                <h2>User details not found</h2>
            </Main>
-
         </>
     )
 };
@@ -324,34 +292,6 @@ if (userDetails === '') {
         <Main open={open}>
             <DrawerHeader />
 
-            {/* <Modal show={showDeposit} style={{margin:'10rem'}} onHide={handleCloseDeposit} backdrop="static" keyboard={false} >
-                <Modal.Header closeButton>
-                    <Modal.Title>Deposit</Modal.Title>
-                </Modal.Header>
-                <Card>
-                   
-                    <Card.Body>
-
-                    <UserDeposit/>
-                    </Card.Body>
-
-                </Card>
-            </Modal> */}
-
-            {/* <Modal show={show} style={{margin:'10rem'}} onHide={handleClose} backdrop="static" keyboard={false} >
-                <Modal.Header closeButton>
-                    <Modal.Title>Withdraw</Modal.Title>
-                </Modal.Header>
-                <Card>
-                   
-                    <Card.Body>
-
-                    <UserDeposit/>
-                    </Card.Body>
-
-                </Card>
-            </Modal> */}
-
             <Container fluid>
                 <Row className="my-3">
                     <Col>
@@ -360,6 +300,11 @@ if (userDetails === '') {
                             {/* Profile */}
                             <Nav.Item>
                                 <Nav.Link eventKey="profile">Profile</Nav.Link>
+                            </Nav.Item>
+
+                            {/* Profile */}
+                            <Nav.Item>
+                                <Nav.Link eventKey="kyc">KYC Data</Nav.Link>
                             </Nav.Item>
 
                             {/* Transactions */}
@@ -395,255 +340,41 @@ if (userDetails === '') {
                         </Nav>
                     </Col>
                 </Row>
+
+                {/* User Profile tab */}
                 {activeTab === 'profile' && (
-                    // <></>
-                    <Card className='shadow' style={{width: '100%'}}>
-                        <Card.Body>
-                            <Row>
-                                <Col >
-                                    <h3>{kycDetail ? Kycdetails.firstname : 'NA'} {kycDetail ? Kycdetails.lastname : 'NA'}</h3>
-                                    {/* <div>
-                                        <Button variant="primary" className="me-2" onClick={handleShowDeposit}>Deposit</Button>
-                                        <Button variant="secondary" onClick={handleShow} >Withdraw</Button>
-                                    </div> */}
-                                </Col>
-                            </Row>
-                        </Card.Body>
-                    </Card>
+                    <UpdateMerchantProfile 
+                        allGroup={allGroup}
+                        groupValue={groupValue}
+                        handleGroupValueChange={handleGroupValueChange}
+                        userDetails={userDetails}
+                    />
                 )}
 
-                {/* Profile Tab */}
-                {activeTab === 'profile' && (
-                    <Row>
-                        <Col xs={12} className="mb-3">
-                            <Card className='shadow'>
-                                <Card.Body>
-                                    <Form>
-                                    <Grid container spacing={2} sx={{marginBottom: '10px'}}>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField 
-                                                    label="First Name" 
-                                                    name='first_name' 
-                                                    value={kycDetail ? kycDetail.first_name : 'NA'} 
-                                                    variant="outlined" 
-                                                    fullWidth 
-                                                    onChange={handleProfileChange} 
-                                                    />
-                                            </Form.Group>
-                                        </Grid>
-                                        
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField label="Last Name" name='last_name' value={kycDetail ? kycDetail.last_name : 'NA'} variant="outlined"  fullWidth onChange={handleProfileChange} />
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField
-                                                    // country={'us'}
-                                                    variant="outlined"
-                                                    value={kycDetail.mobile_number}
-                                                    label="Phone Number"
-                                                    name='mobile_number'
-                                                    onChange={handleProfileChange}
-                                                    fullWidth
-                                                />
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField 
-                                                     label="Email" 
-                                                     variant="outlined" 
-                                                     fullWidth 
-                                                     type="email" 
-                                                     name='email' 
-                                                     value={kycDetail.email}
-                                                     />
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField 
-                                                      label="DOB" 
-                                                      name='dob' 
-                                                      value={kycDetail ? kycDetail.dob : 'NA'} 
-                                                      variant="outlined" 
-                                                      fullWidth 
-                                                      onChange={handleProfileChange} 
-                                                      />
-                                            </Form.Group>
-                                        </Grid>
-                                        
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField 
-                                                     label="Gender" 
-                                                     name='gender' 
-                                                     value={Kycdetails ? Kycdetails.gander : 'NA'} 
-                                                     variant="outlined"  fullWidth onChange={handleProfileChange} 
-                                                     />
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField 
-                                                      label="state" 
-                                                      name='state' 
-                                                      value={Kycdetails ? kycDetail.state : 'NA'} 
-                                                      variant="outlined"  
-                                                      fullWidth 
-                                                      onChange={handleProfileChange} 
-                                                      />
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField 
-                                                    label="city" 
-                                                    name='city' 
-                                                    value={Kycdetails ? kycDetail.city : 'NA'} 
-                                                    variant="outlined"  
-                                                    fullWidth 
-                                                    onChange={handleProfileChange} 
-                                                     />
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField 
-                                                    label="landmark" 
-                                                    name='landmark' 
-                                                    value={Kycdetails ? kycDetail.landmark : 'NA'} 
-                                                    variant="outlined"  
-                                                    fullWidth 
-                                                    onChange={handleProfileChange} 
-                                                    />
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField 
-                                                    label="address" 
-                                                    name='address' 
-                                                    value={Kycdetails ? kycDetail.address : 'NA'} 
-                                                    variant="outlined"  
-                                                    fullWidth 
-                                                    onChange={handleProfileChange} 
-                                                    />
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField 
-                                                    label="ID Type" 
-                                                    name='id_type' 
-                                                    value={Kycdetails ? Kycdetails.id_type : 'NA'} 
-                                                    variant="outlined"  
-                                                    fullWidth 
-                                                    onChange={handleProfileChange} 
-                                                    />
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField 
-                                                    label="ID Number" 
-                                                    name='id_number' 
-                                                    value={Kycdetails ? Kycdetails.id_number : 'NA'} 
-                                                    variant="outlined"  
-                                                    fullWidth 
-                                                    onChange={handleProfileChange} 
-                                                    />
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <TextField 
-                                                     label="ID Expiry Date" 
-                                                     name='id_expiry_date' 
-                                                     value={Kycdetails ? Kycdetails.id_expiry_date : 'NA'} 
-                                                     variant="outlined"  
-                                                     fullWidth 
-                                                     onChange={handleProfileChange} 
-                                                />
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <FormControl fullWidth variant="outlined">
-                                                    <InputLabel>Group</InputLabel>
-                        
-                                                    <Select
-                                                        value={groupValue}
-                                                        onChange={(event)=> {handleProfileChange(event), handleGroupValueChange(event)}}
-                                                        label="Group"
-                                                        // name='group'
-                                                        >
-                                                            {allGroup.map((group) => (
-                                                                <MenuItem key={group.id} value={group.name}>
-                                                                    {group.name}
-                                                                </MenuItem>
-                                                            ))}
-                                                    </Select>
-                                            
-                                                </FormControl>
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <Form.Group className="mb-3">
-                                                <FormControl fullWidth variant="outlined">
-                                                    <InputLabel>Status</InputLabel>
-                                                    <Select
-                                                        value={statusValue}
-                                                        onChange={(event) => {handleProfileChange(event); handleProfileStatusMessage(event); handleStatusValueUpdate(event);}}
-                                                        label="Status"
-                                                        name='status'
-                                                        // onClick={handleProfileStatusMessage}
-                                                    >
-                                                        <MenuItem value="Active">Active</MenuItem>
-                                                        <MenuItem value="Inactive">Inactive</MenuItem>
-                                                        <MenuItem value="Suspended">Suspended</MenuItem>
-                                                    </Select>
-                                                </FormControl>
-                                                {statusMessage && <p className="text-danger">{statusMessage}</p>}
-                                            </Form.Group>
-                                        </Grid>
-
-                                        <Grid item xs={12} md={4}>
-                                            <div style={{maxWidth: '150px', maxHeight: '200px', overflow: 'hidden'}}>
-                                                <img src={userDetails ? userDetails.document : 'NA'} alt="Document" style={{maxWidth: '100%', height: 'auto'}}/>
-                                            </div>
-                                                <a href={userDetails ? userDetails.document : 'NA'}> Click to view</a>
-                                        </Grid>
-                                    </Grid>
-
-                                        <div className="d-flex justify-content-between">
-                                            <Button variant="danger">Cancel</Button>
-                                            <Button variant="primary" onClick={handleKYCStatusUpdate}>Update</Button>
-                                        </div>
-                                        {error &&  <p className="text-danger">{error}</p>}
-                                        {successMessage && <p className="text-success">{successMessage}</p>}
-
-                                    </Form>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
+                {/* KYC Tab */}
+                {activeTab === 'kyc' && (
+                    Kycdetails ? 
+                        <UpdateMerchantKyc 
+                            kycDetail={kycDetail}
+                            Kycdetails={Kycdetails}
+                            handleProfileChange={handleProfileChange}
+                            allGroup={allGroup}
+                            groupValue={groupValue}
+                            handleProfileStatusMessage={handleProfileStatusMessage}
+                            handleStatusValueUpdate={handleStatusValueUpdate}
+                            statusMessage={statusMessage}
+                            error={error}
+                            successMessage={successMessage}
+                            handleKYCStatusUpdate={handleKYCStatusUpdate}
+                            statusValue={statusValue}
+                            userDetails={userDetails}
+                            handleGroupValueChange={handleGroupValueChange}
+                            disableKycUpdateButton={disableKycUpdateButton}
+                        />  
+                        :
+                        <Alert variant="filled" severity="info">
+                            KYC has not filled by the user.
+                        </Alert>
                 )}
 
                 {activeTab === 'wallets' && (
