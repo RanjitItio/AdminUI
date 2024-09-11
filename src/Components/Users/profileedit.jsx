@@ -51,14 +51,12 @@ const Profile = ({ open }) => {
     }
 
     const [activeTab, setActiveTab]     = useState('profile');
-    const [showDeposit, setShowDeposit] = useState(false);
-    const [show, setShow]               = useState(false);
     const [allGroup, updateAllGroup]    = useState([]);  // Group data 
     const [error, setError]             = useState('')   // Error message
     const [successMessage, setSuccessMessage] = useState(''); // Success Message
     const [statusMessage, updateStatusMessage] = useState('');  // Status Message
     const [userWallet, updateUserWallet] = useState([]);        // Wallet 
-    const [kycDetail, updateKycDetails] = useState(initialProfileData); // Kyc data
+    const [kycDetail, updateKycDetail] = useState(initialProfileData); // Kyc data
 
     const [groupValue, setGroupValue]   = useState(userDetails?.group_name || 'NA');
     const [statusValue, setStatusValue] = useState(userDetails?.status || 'NA');
@@ -66,12 +64,14 @@ const Profile = ({ open }) => {
     const [disableKycUpdateButton, setDisableKycUpdateButton] = useState(false); 
 
     
+
     // Update Profile data
     const handleProfileChange = (event) => {
-        updateKycDetails({...kycDetail,
+        updateKycDetail({...kycDetail,
             [event.target.name]: event.target.value,
         })
     };
+
 
     // Selected Group value
     const handleGroupValueChange = (event) => {
@@ -128,8 +128,6 @@ const Profile = ({ open }) => {
 // Method to update user Kyc details
 const handleKYCStatusUpdate = ()=> {
 
-    setDisableKycUpdateButton(true);
-
     if (kycDetail.status === '') {
         setError('Please Select the status of the user')
 
@@ -180,7 +178,8 @@ const handleKYCStatusUpdate = ()=> {
 
     } else {
         setError('')
-        
+        setDisableKycUpdateButton(true);
+
         axiosInstance.put(`api/v1/admin/update/user/`, {
             user_id:          Kycdetails.user_id,
             first_name:       kycDetail.first_name,
@@ -210,13 +209,7 @@ const handleKYCStatusUpdate = ()=> {
           }).catch((error)=> {
             console.log(error.response)
       
-          if (error.response.data.msg == 'Only Admin can update the Kyc'){
-            setError("Only admin can view the Users kyc")
-      
-          } else if (error.response.data.msg == 'Unable to get Admin detail'){
-              setError("Admin details not found")
-      
-          } else if (error.response.data.msg == 'Unable to locate kyc'){
+          if (error.response.data.msg == 'Unable to locate kyc'){
               setError("Unknowc kyc error")
       
           } else if (error.response.data.msg == 'Error while fetching user detail'){
@@ -242,8 +235,8 @@ const handleKYCStatusUpdate = ()=> {
 // Sample data for the table
 const DisputeData = [];
 
-// console.log(kycDetail.status)
 
+// Clear success and error message after some time
 useEffect(() => {
     if (error || successMessage) {
         const timer = setTimeout(() => {

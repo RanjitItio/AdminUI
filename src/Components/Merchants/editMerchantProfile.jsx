@@ -39,7 +39,6 @@ export default function UpdateMerchantProfile({allGroup, groupValue, handleGroup
         })
     };
 
-    
 
     // Method to update user profile
     const handleUserProfileUpdate = ()=>  {

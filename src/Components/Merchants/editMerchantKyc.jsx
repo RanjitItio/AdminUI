@@ -78,6 +78,7 @@ export default function UpdateMerchantKyc({kycDetail, Kycdetails, userDetails, g
                                       variant="outlined" 
                                       fullWidth 
                                       onChange={handleProfileChange} 
+                                      disabled
                                       />
                             </Form.Group>
                         </Grid>
@@ -228,9 +229,9 @@ export default function UpdateMerchantKyc({kycDetail, Kycdetails, userDetails, g
 
                         <Grid item xs={12} md={4}>
                             <div style={{maxWidth: '150px', maxHeight: '200px', overflow: 'hidden'}}>
-                                <img src={userDetails ? userDetails.document : 'NA'} alt="Document" style={{maxWidth: '100%', height: 'auto'}}/>
+                                <img src={Kycdetails ? Kycdetails.uploaddocument : 'NA'} alt="Document" style={{maxWidth: '100%', height: 'auto'}}/>
                             </div>
-                                <a href={userDetails ? userDetails.document : 'NA'}> Click to view</a>
+                                <a href={Kycdetails ? Kycdetails.uploaddocument : 'NA'}> Click to view</a>
                         </Grid>
                     </Grid>
 

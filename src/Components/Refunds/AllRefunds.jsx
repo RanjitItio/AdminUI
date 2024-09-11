@@ -125,14 +125,14 @@ export default function MerchantRefunds({open}) {
           })
     };
 
-    // Search Withdrawal Transactions
+    // Search Refund Transactions
     const handleSearch = ()=> {
         axiosInstance.get(`api/v6/admin/merchant/refund/search/?query=${searchQuery}`).then((res)=> {
             // console.log(res)
 
             if (res.status === 200 && res.data.success === true) {
                 updateMerchantRefunds(res.data.searched_merchant_refund)
-            };
+            }
 
         }).catch((error)=> {
             console.log(error)

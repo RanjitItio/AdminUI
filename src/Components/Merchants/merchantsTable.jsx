@@ -117,13 +117,8 @@ export default function AllMerchantTable({open}) {
     const [merchantFullName, setMerchantFullName] = useState(''); // To redirect to merchant page
     const [isMerchant, setIsMerchant]             = useState('') // To redirect to merchant page
 
-
-
     const counPagination = Math.floor(totalRows);   // Total pagination count
-
-    // console.log('kycData', kycData)
-    // console.log('userData', userData)
-
+    
 
     // Fetch all the merchant Available merchants
     useEffect(() => {
