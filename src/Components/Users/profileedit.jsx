@@ -405,10 +405,7 @@ if (userDetails === '') {
 
                 {activeTab === 'accounts' && (
                     <MerchantBankAccountsTable 
-                              headCells={MerchantBankColumn} 
-                              TableName={MerchantBankAccountTableName} 
-                              rows={DisputeData} 
-                              userID={Kycdetails.user_id}
+                              userID={Kycdetails?.user_id}
                               />
                 )}
 

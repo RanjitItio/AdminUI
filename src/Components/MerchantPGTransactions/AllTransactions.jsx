@@ -296,7 +296,8 @@ export default function AllMerchantPGTransactions({open}) {
                                 </TableCell>
 
                                 <TableCell component="th" scope="row">
-                                    {transactions?.createdAt}
+                                    {transactions?.createdAt?.split('T')[0] || ''} <br />
+                                    <small>{transactions?.createdAt?.split('T')[1] || ''}</small>
                                 </TableCell>
 
                                 <TableCell component="th" scope="row">

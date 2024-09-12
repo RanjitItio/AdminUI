@@ -33,7 +33,7 @@ export default function RecentTransactions() {
 
   // Get all the transactions
   useEffect(() => {
-      axiosInstance.get(`api/v2/admin/merchant/pg/transactions/`).then((res)=> {
+      axiosInstance.get(`api/v2/admin/merchant/pg/transactions/?limit=6&offset=0`).then((res)=> {
         // console.log(res)
 
         if (res.status === 200 && res.data.message === 'Transaction fetched successfuly') {
@@ -102,9 +102,11 @@ return (
         <Grid item xs={12} md={6}>
           <Paper elevation={8} sx={{borderRadius:'20px'}}>
             <CardContent>
-              <Typography variant="h6">Recent Transactions</Typography>
+              <Typography sx={{backgroundColor:'#fcf8ff', borderRadius:'5px'}} variant="h6">
+                <b style={{marginLeft:'6px'}}>Recent Transactions</b>
+              </Typography>
 
-              <TableContainer component={Paper} sx={{maxHeight:300, overflow:'auto'}}>
+              <TableContainer component={Paper} sx={{maxHeight:'50rem', overflow:'auto'}}>
                   <Table>
                     <TableHead>
                       <TableRow>
