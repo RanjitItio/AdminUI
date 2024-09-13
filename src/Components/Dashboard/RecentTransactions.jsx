@@ -14,15 +14,6 @@ import { useState } from 'react';
 
 
 
-const transactions = [
-  { id: 1, name: 'XYZ Store ID', type: 'Cashback', date: 'June 4, 2020', time: '05:34:45 AM', amount: '+$5,553', status: 'Completed' },
-  { id: 2, name: 'Chef Renata', type: 'Transfer', date: 'June 5, 2020', time: '05:34:45 AM', amount: '-$167', status: 'Pending' },
-  { id: 4, name: 'Cindy Alexandro', type: 'Transfer', date: 'June 5, 2020', time: '05:34:45 AM', amount: '+$5,553', status: 'Canceled' },
-  { id: 5, name: 'Cindy Alexandro', type: 'Transfer', date: 'June 5, 2020', time: '05:34:45 AM', amount: '+$5,553', status: 'Canceled' },
-  { id: 6, name: 'Cindy Alexandro', type: 'Transfer', date: 'June 5, 2020', time: '05:34:45 AM', amount: '+$5,553', status: 'Canceled' },
-  { id: 7, name: 'Cindy Alexandro', type: 'Transfer', date: 'June 5, 2020', time: '05:34:45 AM', amount: '+$5,553', status: 'Canceled' },
-];
-
 
 
 // Total Profit
@@ -110,8 +101,9 @@ return (
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell>Business Name</TableCell>
+                        <TableCell>Merchant</TableCell>
                         <TableCell>Date/Time</TableCell>
+                        <TableCell>Business</TableCell>
                         <TableCell>Amount</TableCell>
                         <TableCell>Status</TableCell>
                       </TableRow>
@@ -135,6 +127,10 @@ return (
 
                           <TableCell>
                             <i>{ConvertDateTime(transaction.createdAt)}</i>
+                          </TableCell>
+
+                          <TableCell>
+                            <i>{transaction?.business_name || 'None'}</i>
                           </TableCell>
 
                           <TableCell>

@@ -15,6 +15,9 @@ import axiosInstance from '../Authentication/axios';
 import { useNavigate } from 'react-router-dom';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import TransactionGatewayLog from './GatewayLog';
+import IconButton from '@mui/material/IconButton';
 
 
 
@@ -39,8 +42,9 @@ const blue = {
     800: '#303740',
     900: '#1C2025',
   };
+  
 
-  const Textarea = styled(BaseTextareaAutosize)(
+export const Textarea = styled(BaseTextareaAutosize)(
     ({ theme }) => `
     box-sizing: border-box;
     width: 320px;
@@ -78,9 +82,10 @@ export default function MerchantPGTransactionUpdate({open}) {
     const location = useLocation();
     const navigate = useNavigate();
 
+    // States data
     const states = location?.state || ''
     const transactionData = states?.tranaction || ''
-    const merchantID = transactionData.merchant.merchant_id
+    const merchantID = transactionData.merchant?.merchant_id || ''
     const modeState  = states?.mode || ''
 
 
@@ -108,7 +113,10 @@ export default function MerchantPGTransactionUpdate({open}) {
     const [paymemtMode, updatePaymentMode]     = useState(formData?.paymentMode || '');   // Payment Mode
     const [currency, setCurrency]              = useState(formData.currency || '');      // Currency State
     const [payoutError, setPayoutError]        = useState('');
+    const [gatewayLogOpen, setGatewayLogOpen]  = useState(false);  // Gateway log popup open close state
 
+    // Method to open gateway log popup
+    const handleGateWayLogOpen = () => setGatewayLogOpen(true);
 
 
     // Method to capture form values
@@ -218,10 +226,40 @@ export default function MerchantPGTransactionUpdate({open}) {
     const handlePayoutBalance = ()=> {
         CalculatePayoutBalance(formData.amount, formData.transaction_fee)
     };
-    
+
+    // Empty State values
+    if (merchantID === '') {
+        return (
+            <Main open={open}>
+            <DrawerHeader />
+                <Button variant="contained" onClick={()=> {navigate('/admin/all-transaction/')}}>Refresh</Button>
+            </Main>
+        )
+    };
+
+    // Empty State values
+    if (transactionData === '') {
+        return (
+            <Main open={open}>
+            <DrawerHeader />
+                <Button variant="contained" onClick={()=> {navigate('/admin/all-transaction/')}}>Refresh</Button>
+            </Main>
+        )
+    };
+
+    // Empty State values
+    if (modeState === '') {
+        return (
+            <Main open={open}>
+            <DrawerHeader />
+                <Button variant="contained" onClick={()=> {navigate('/admin/all-transaction/')}}>Refresh</Button>
+            </Main>
+        )
+    };
 
 
     return (
+        <>
         <Main open={open}>
             <DrawerHeader />
 
@@ -430,8 +468,15 @@ export default function MerchantPGTransactionUpdate({open}) {
                     </Grid>
 
                     <Grid item xs={12} sm={12}>
+                        
                         <FormControl>
-                            <FormLabel>Gateway Logs</FormLabel>
+                            <FormLabel>
+                                Gateway Logs 
+                                <IconButton onClick={handleGateWayLogOpen}>
+                                    <VisibilityIcon color='primary' />
+                                </IconButton>
+                            </FormLabel>
+
                             <Textarea 
                                 aria-label="empty textarea" 
                                 placeholder="Empty" 
@@ -481,6 +526,15 @@ export default function MerchantPGTransactionUpdate({open}) {
                 </Grid>
                 </Paper>
         </Main>
+
+        {/* Gateway Log Popup */}
+        <TransactionGatewayLog 
+          open={gatewayLogOpen}
+          setOpen={setGatewayLogOpen}
+          gatewayLog={formData?.gatewayLog ? JSON.stringify(formData.gatewayLog, null, 2) : ''}
+        />
+
+        </>
 
     );
 };

@@ -146,6 +146,7 @@ export default function AllMerchantPGTransactions({open}) {
         navigate('/admin/update/merchant/pg/transactions/', {state: {tranaction: transactionData, mode: modeName}})
     };
 
+    
     // Method to Convert the data into Excel file
     const handleExportClicked = ()=> {
 
@@ -259,13 +260,14 @@ export default function AllMerchantPGTransactions({open}) {
             </Box>
 
             <TableContainer>
-            <Box sx={{ height: 450, overflowY: 'auto' }}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Box sx={{ maxHeight: '75rem', overflowY: 'auto' }}>
+                <Table aria-label="simple table">
                     <TableHead sx={{position:'sticky', zIndex: 1, top: 0, backgroundColor: '#e2f4fb'}}>
                         <TableRow>
                             <TableCell><b>Sl No.</b></TableCell>
                             <TableCell align="center"><b>Transaction ID</b></TableCell>
                             <TableCell align="left"><b>Merchant</b></TableCell>
+                            <TableCell align="left"><b>Business</b></TableCell>
                             <TableCell align="left"><b>Amount</b></TableCell>
                             <TableCell align="center"><b>Date</b></TableCell>
                             <TableCell align="center"><b>Status</b></TableCell>
@@ -289,6 +291,10 @@ export default function AllMerchantPGTransactions({open}) {
 
                                 <TableCell  scope="row" align='left'>
                                     {transactions?.merchant?.merchant_name}
+                                </TableCell>
+
+                                <TableCell  scope="row" align='left'>
+                                    {transactions?.business_name || 'None'}
                                 </TableCell>
 
                                 <TableCell component="th" scope="row">
