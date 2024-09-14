@@ -7,14 +7,11 @@ import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
 import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
 import Pagination from '@mui/material/Pagination';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import { IOSSwitch } from '../Switch/TestProductionSwitch';
 import { useNavigate } from 'react-router-dom';
 import Button from '../MUIBaseButton/button';
 import Input from '@mui/joy/Input';
 import SearchIcon from '@mui/icons-material/Search';
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
+
 
 
 
@@ -32,7 +29,6 @@ const [adminUsers, updateAdminUsers] = useState([]); // All Admin users
 useEffect(()=> {
     axiosInstance.get(`api/v2/admin/users/`).then((res)=> {
         // console.log(res)
-
         if (res.status === 200 && res.data.all_admin_users) {
             updateAdminUsers(res.data.all_admin_users)
         }

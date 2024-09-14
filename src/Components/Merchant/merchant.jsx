@@ -8,6 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 
 
+// UAT LIst
 function MerchantDetails({open}) {
 
     const [merchantData, updateMerchantData] = useState([]);

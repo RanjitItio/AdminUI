@@ -391,7 +391,11 @@ if (userDetails === '') {
                     />
                 )}
                 {activeTab === 'disputes' && (
-                    <DisputeTable headCells={DisputeTableColumn} TableName={DisputeTableName} rows={DisputeData} />
+                    <DisputeTable 
+                        headCells={DisputeTableColumn} 
+                        TableName={DisputeTableName} 
+                        rows={DisputeData} 
+                        />
                 )}
 
                 {activeTab === 'pipes' && (

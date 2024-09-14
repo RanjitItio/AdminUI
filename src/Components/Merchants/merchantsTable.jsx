@@ -257,7 +257,7 @@ export default function AllMerchantTable({open}) {
             window.location.replace(`${redirectUrl}/admin/merchant/login/?access=${accessToken}&refresh=${refreshToken}&name=${merchantFullName}&ismerchant=${isMerchant}`);
         };
     }, [accessToken, refreshToken])
-    
+
 
 
     return (
@@ -294,7 +294,7 @@ export default function AllMerchantTable({open}) {
             </Box>
 
             <TableContainer>
-            <Box sx={{ height: 450, overflowY: 'auto' }}>
+            <Box sx={{ maxHeight: '95rem', overflowY: 'auto' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead sx={{position:'sticky', zIndex: 1, top: 0, backgroundColor: '#e2f4fb'}}>
                         <TableRow>

@@ -14,6 +14,7 @@ import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Pagination from '@mui/material/Pagination';
+import Chip from '@mui/material/Chip';
 
 
 
@@ -82,13 +83,31 @@ export default function TransactionTable({userID}) {
   const getTransactionStatus = (status)=> {
       switch (status) {
         case 'PAYMENT_SUCCESS':
-          return '#008f7a'
+          return 'success'
         case 'PAYMENT_INITIATED':
-          return '#0089ba'
+          return 'primary'
         case 'PAYMENT_FAILED':
-          return '#c34a36'
+          return 'error'
+        case 'PAYMENT_PENDING':
+          return 'warning'
         default:
-          return '#0089ba';
+          return 'primary';
+      }
+  };
+
+  // Transaction Label
+  const getTransactionLabel = (status)=> {
+      switch (status) {
+        case 'PAYMENT_SUCCESS':
+          return 'Success'
+        case 'PAYMENT_INITIATED':
+          return 'Initiated'
+        case 'PAYMENT_FAILED':
+          return 'Failed'
+        case 'PAYMENT_PENDING':
+          return 'Pending'
+        default:
+          return 'Unknown';
       }
   };
 
@@ -169,7 +188,7 @@ export default function TransactionTable({userID}) {
                         </TableCell>
 
                         <TableCell align="center" padding="none">
-                            <p style={{color:getTransactionStatus(transaction?.status)}}>{transaction?.status}</p>
+                            <Chip label={getTransactionLabel(transaction?.status)} color={getTransactionStatus(transaction?.status)} />
                         </TableCell>
                         
                         <TableCell align="center" padding="none">

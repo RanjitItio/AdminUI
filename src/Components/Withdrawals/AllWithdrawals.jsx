@@ -26,7 +26,7 @@ export default function AllMerchantPGWithdrawals({open}) {
     const [exportData, updateExportData] = useState([]); // Excel Data
     const [totalRows, updateTotalRows]   = useState(0);
 
-    const counPagination = Math.ceil(totalRows);   // Total pagination count
+    const counPagination = Math.floor(totalRows);   // Total pagination count
 
 
     // Fetch all the merchant withdrawals
@@ -172,7 +172,7 @@ export default function AllMerchantPGWithdrawals({open}) {
             </Box>
 
             <TableContainer>
-            <Box sx={{ height: 450, overflowY: 'auto' }}>
+            <Box sx={{ maxHeight: '90rem', overflowY: 'auto' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead sx={{position:'sticky', zIndex: 1, top: 0, backgroundColor: '#e2f4fb'}}>
                         <TableRow>
