@@ -32,7 +32,7 @@ export default function UpdateMerchantWithdrawals({open}) {
     
     // Update Status method
     const handleUpdateWithdrawal = ()=> {
-
+        
         axiosInstance.put(`api/v4/admin/merchant/withdrawal/update/`, {
             status: status,
             withdrawal_id: states.withdrawal.id

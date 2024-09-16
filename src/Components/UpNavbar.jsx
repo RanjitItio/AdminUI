@@ -39,13 +39,13 @@ const AppBar = styled(MuiAppBar, {
 
 
 const settings = [
-           {text: '-Profile', url: '/'},
-           {text: '-Account', url: '/'},
-           {text: 'Dashboard', url: '/'},
-           {text: 'Logout', url: '/signout/' }
+            //  {text: '-Profile', url: '/'},
+            //  {text: '-Account', url: '/'},
+            {text: 'Dashboard', url: '/'},
+            {text: 'Logout', url: '/signout/' }
           ];
 
-
+// Up Navbar
 function UpperNavbar({handleDrawerOpen, open, handleMerchantUserSwitch, merchantContent}){
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
