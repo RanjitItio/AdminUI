@@ -184,7 +184,6 @@ export default function AllMerchantPGWithdrawals({open}) {
                             <TableCell align="center"><b>Time</b></TableCell>
                             <TableCell align="center"><b>Status</b></TableCell>
                             <TableCell align="center"><b>Edit</b></TableCell>
-                            
                         </TableRow>
                     </TableHead>
 

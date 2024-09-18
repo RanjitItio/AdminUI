@@ -21,8 +21,8 @@ export default function MerchantBusinessTable({open}) {
     const navigate = useNavigate();
     const [merchantBusinessData, updateMerchantBusinessData] = useState([]);  // Busienss Data
     const [totalRows, updateTotalRows] = useState(0); // Total business rows
-    const [searchedText, updateSearchedText] = useState('');
-
+    const [searchedText, updateSearchedText] = useState('');  // Searched Data
+    const [exportData, updateExportData] = useState([]); // Excel Data
 
     const countPagination = Math.ceil(totalRows);
 
@@ -44,6 +44,7 @@ export default function MerchantBusinessTable({open}) {
     }, []);
 
 
+    // Status Color
     function getStatusColor(status) {
         switch (status) {
             case 'Moderation':
@@ -55,6 +56,7 @@ export default function MerchantBusinessTable({open}) {
         }
       };
 
+    /// Method to handle Edit button click event
     const handleMerchantEdit = (merchant, user, group, currency)=> {
         const merchant_detail  = merchant
         const user_details     = user
@@ -101,6 +103,47 @@ export default function MerchantBusinessTable({open}) {
         })
     };
 
+    // Export to Excel
+    const exportToExcel = async ()=> {
+        if (exportData && exportData.length > 0) {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('sheet1')
+
+            const headers = Object.keys(exportData[0])
+
+            worksheet.addRow(headers)
+
+            exportData.forEach((item)=> {
+                worksheet.addRow(Object.values(item))
+            })
+
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            saveAs(blob, 'business.xlsx');
+        } else {
+            console.log('No Data available to Download')
+        }
+    };
+
+    // Download all withdrawal requests
+    const handleDownloadBusiness = ()=> {
+        axiosInstance.get(`/api/v2/admin/export/business/`).then((res)=> {
+            // console.log(res)
+    
+            if (res.status === 200 && res.data.success === true) {
+                updateExportData(res.data.merchant_business_export);
+                
+                setTimeout(() => {
+                    exportToExcel();
+                }, 1000);
+            };
+    
+          }).catch((error)=> {
+            console.log(error)
+
+          })
+    };
+
 
     return (
         <Main open={open}>
@@ -121,7 +164,7 @@ export default function MerchantBusinessTable({open}) {
                     <SearchIcon color='primary' />
                 </IconButton>
 
-                <Button sx={{mx:1}}>Export</Button>
+                <Button sx={{mx:1}} onClick={()=> {handleDownloadBusiness(); }}>Export</Button>
             </Box>
 
             <TableContainer>
@@ -188,10 +231,13 @@ export default function MerchantBusinessTable({open}) {
                                 </TableCell>
 
                                 <TableCell align="right">
-                                    <IconButton color="success" style={{float: 'left'}} >
+                                    <IconButton 
+                                        color="success" 
+                                        style={{float: 'left'}} 
+                                        onClick={(event)=> {handleMerchantEdit(row.merchant, row.user, row.group, row.currency)}} 
+                                        >
                                         <EditIcon 
                                             style={{color:'#0e3080'}} 
-                                            onClick={(event)=> {handleMerchantEdit(row.merchant, row.user, row.group, row.currency)}} 
                                             />
                                     
                                     </IconButton>

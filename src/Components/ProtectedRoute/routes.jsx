@@ -64,7 +64,7 @@ const UpdateMerchantRefund = React.lazy(()=> import('../Refunds/updateRefunds'))
 const MerchantBusinessTable = React.lazy(()=> import('../Business/BusinessTable'));
 const AllPipeTable = React.lazy(()=> import('../Pipe/PipeTable'));
 const AllMerchantTable = React.lazy(()=> import('../Merchants/merchantsTable'));
-
+const PageNotFound = React.lazy(()=> import('../404Page'));
 
 
 
@@ -224,7 +224,10 @@ const AuthRoutes = () => {
 
                           {/* Business */}
                           <Route exact path="/admin/merchant/businesses/" element={<MerchantBusinessTable open={open} />} ></Route>
-                      </Routes>
+
+                          {/* Page Not found */}
+                          <Route exact path="*" element={<PageNotFound open={open} />} ></Route>
+                      </Routes> 
                     
                     </Box>
 

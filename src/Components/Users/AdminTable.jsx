@@ -11,6 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../MUIBaseButton/button';
 import Input from '@mui/joy/Input';
 import SearchIcon from '@mui/icons-material/Search';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 
 
@@ -21,40 +23,102 @@ import SearchIcon from '@mui/icons-material/Search';
 
 // All Admin users
 export default function AllAdminUsers({open}) {
-const navigate = useNavigate();
-const [adminUsers, updateAdminUsers] = useState([]); // All Admin users
+    const navigate = useNavigate();
+    const [adminUsers, updateAdminUsers] = useState([]); // All Admin users
+    const [exportData, updateExportData] = useState([]); // Excel Data
+    const [searchedText, updateSearchedText] = useState('');  // Searched Text
 
 
-// Call API to fetch all the Transactions
-useEffect(()=> {
-    axiosInstance.get(`api/v2/admin/users/`).then((res)=> {
-        // console.log(res)
-        if (res.status === 200 && res.data.all_admin_users) {
-            updateAdminUsers(res.data.all_admin_users)
+    // Update Searched text value
+    const handleChangeSearchedText = (e)=> {
+        updateSearchedText(e.target.value)
+    };
+
+
+    // Search Admin users
+    const handleSearch = ()=> {
+        axiosInstance.get(`api/v2/search/admin/users/?query=${searchedText}`).then((res)=> {
+            // console.log(res)
+            if (res.status === 200 && res.data.success === true) {
+                updateAdminUsers(res.data.searched_admin_users)
+            }
+
+        }).catch((error)=> {
+            console.log(error)
+        })
+    };
+
+
+    // Call API to fetch all Admin users
+    useEffect(()=> {
+        axiosInstance.get(`api/v2/admin/users/`).then((res)=> {
+            // console.log(res)
+            if (res.status === 200 && res.data.all_admin_users) {
+                updateAdminUsers(res.data.all_admin_users)
+            }
+
+        }).catch((error)=> {
+            console.log(error)
+    
+        })
+    }, []);
+
+
+    // Change status color according to the transaction status
+    const getStatusColor = (status)=> {
+    switch (status) {
+        case true:
+            return 'success'
+        case false:
+            return 'error'
+        case null:
+            return 'warning'
+        default:
+            return 'primary'
         }
-
-    }).catch((error)=> {
-        console.log(error)
- 
-    })
-}, []);
+    };
 
 
-// Change status color according to the transaction status
-const getStatusColor = (status)=> {
- switch (status) {
-     case true:
-          return 'success'
-     case false:
-         return 'error'
-     case null:
-         return 'warning'
-     default:
-         return 'primary'
- }
-};
+    // Export to Excel
+    const exportToExcel = async ()=> {
+        if (exportData && exportData.length > 0) {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('sheet1')
 
+            const headers = Object.keys(exportData[0])
 
+            worksheet.addRow(headers)
+
+            exportData.forEach((item)=> {
+                worksheet.addRow(Object.values(item))
+            })
+
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            saveAs(blob, 'admin.xlsx');
+        } else {
+            console.log('No Data available to Download')
+        }
+    };
+
+    
+    // Download all withdrawal requests
+    const handleDownloadAdminData = ()=> {
+        axiosInstance.get(`/api/v2/export/admin/users/`).then((res)=> {
+            // console.log(res)
+    
+            if (res.status === 200 && res.data.success === true) {
+                updateExportData(res.data.export_admin_data);
+                
+                setTimeout(() => {
+                    exportToExcel();
+                }, 1000);
+            };
+    
+          }).catch((error)=> {
+            console.log(error)
+          })
+    };
 
 
 
@@ -63,7 +127,7 @@ return (
      <DrawerHeader />
 
      <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}> 
-         <h5 style={{margin:9}}><b>All Merchant Transactions</b></h5>
+         <h5 style={{margin:9}}><b>All Admin Users</b></h5>
      <Box 
          sx={{ 
              display: 'flex', 
@@ -71,11 +135,13 @@ return (
              alignItems: 'center',
              p:2
              }}>
-         <Input placeholder="Type in here…"/>
-         <IconButton aria-label="Example">
+         <Input placeholder="Type in here…" onChange={handleChangeSearchedText}/>
+         
+         <IconButton aria-label="Example" onClick={handleSearch}>
              <SearchIcon color='primary' />
          </IconButton>
-         <Button sx={{mx:1}}>Export</Button>
+
+         <Button sx={{mx:1}} onClick={()=> {handleDownloadAdminData(); }}>Export</Button>
      </Box>
 
      <TableContainer>

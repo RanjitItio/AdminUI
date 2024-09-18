@@ -145,7 +145,7 @@ export default function MerchantRefunds({open}) {
     const handleSearchInputChange = (e)=> {
         updateSearchQuery(e.target.value);
     };
-    
+
 
     return (
         <Main open={open}>
@@ -179,8 +179,8 @@ export default function MerchantRefunds({open}) {
                             <TableCell align="center"><b>Merchant Email</b></TableCell>
                             <TableCell align="center"><b>Date</b></TableCell>
                             <TableCell align="center"><b>Time</b></TableCell>
-                            <TableCell align="center"><b>Refund Amount</b></TableCell>
                             <TableCell align="center"><b>Transaction Amount</b></TableCell>
+                            <TableCell align="center"><b>Refund Amount</b></TableCell>
                             <TableCell align="center"><b>Status</b></TableCell>
                             <TableCell align="center"><b>Edit</b></TableCell>
                             

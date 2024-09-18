@@ -17,6 +17,8 @@ import Menu from '@mui/joy/Menu';
 import MenuItem from '@mui/joy/MenuItem';
 import MenuButton from '@mui/joy/MenuButton';
 import { useNavigate } from 'react-router-dom';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 
 
@@ -104,18 +106,20 @@ const Button = styled(BaseButton)(
 // View all available merchant by Admin
 export default function AllMerchantTable({open}) {
     const navigate = useNavigate();
-    const [kycData, updateKycData] = useState([]);  // All merchant withdrawals
-    const [userData, updateUserData] = useState([]);
-    const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
-    const [totalRows, updateTotalRows]   = useState(0);    // paginated rows
-    const [error, setError]              = useState('');
+    const [error, setError]                  = useState('');
+    const [kycData, updateKycData]           = useState([]);  // All merchant withdrawals
+    const [userData, updateUserData]         = useState([]);
+    const [totalRows, updateTotalRows]       = useState(0);    // paginated rows
     const [deleteOpen, setDeleteOpen]        = useState(false);  // Delete popup state
-    const [deleteUserID, updateDeleteUserID] = useState(0)  // Delete user ID
     const [accessToken, setAccessToken]      = useState(null);
-    const [refreshToken, setRefreshToken]    = useState(null);
     const [loginError, setLoginError]        = useState('');
-    const [merchantFullName, setMerchantFullName] = useState(''); // To redirect to merchant page
+    const [refreshToken, setRefreshToken]    = useState(null);
+    const [searchQuery, updateSearchQuery]   = useState('');  // Search Query state
     const [isMerchant, setIsMerchant]             = useState('') // To redirect to merchant page
+    const [deleteUserID, updateDeleteUserID]      = useState(0)  // Delete user ID
+    const [merchantFullName, setMerchantFullName] = useState(''); // To redirect to merchant page
+    const [exportMerchantData, updateExportMerchantData] = useState([]); // Merchant Excel Data
+    const [exportKycData, updateExportKycData] = useState([]); // Kyc Excel Data
 
     const counPagination = Math.floor(totalRows);   // Total pagination count
     
@@ -156,9 +160,9 @@ export default function AllMerchantTable({open}) {
         } else {
             setError('')
         }
-
       })
     }, []);
+
 
 
     // Change status color according to the transaction status
@@ -259,6 +263,72 @@ export default function AllMerchantTable({open}) {
     }, [accessToken, refreshToken])
 
 
+    // Export merchant data to Excel
+    const exportMerchantToExcel = async ()=> {
+        if (exportMerchantData && exportMerchantData.length > 0) {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('sheet1')
+
+            const headers = Object.keys(exportMerchantData[0])
+
+            worksheet.addRow(headers)
+
+            exportMerchantData.forEach((item)=> {
+                worksheet.addRow(Object.values(item))
+            })
+
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            saveAs(blob, 'merchant.xlsx');
+        } else {
+            console.log('No Data available to Download')
+        }
+    };
+
+    // Export merchant kyc to excel
+    const exportKycToExcel = async ()=> {
+        if (exportKycData && exportKycData.length > 0) {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('sheet1')
+
+            const headers = Object.keys(exportKycData[0])
+
+            worksheet.addRow(headers)
+
+            exportKycData.forEach((item)=> {
+                worksheet.addRow(Object.values(item))
+            })
+
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            saveAs(blob, 'kyc.xlsx');
+        } else {
+            console.log('No Data available to Download')
+        }
+    };
+
+    
+    // Download all withdrawal requests
+    const handleDownloadMerchantData = ()=> {
+        axiosInstance.get(`/api/v1/admin/export/merchants/`).then((res)=> {
+            // console.log(res)
+    
+            if (res.status === 200 && res.data.success === true) {
+                updateExportMerchantData(res.data.all_users);
+                updateExportKycData(res.data.all_Kyc)
+                
+                setTimeout(() => {
+                    exportMerchantToExcel();
+                    exportKycToExcel();
+                }, 1000);
+            };
+    
+          }).catch((error)=> {
+            console.log(error)
+          })
+    };
+
+
 
     return (
         <>
@@ -289,7 +359,7 @@ export default function AllMerchantTable({open}) {
                     <SearchIcon color='primary' />
                 </IconButton>
 
-                {/* <Button sx={{mx:1}} >Export</Button> */}
+                <Button sx={{mx:1}} onClick={()=> {handleDownloadMerchantData();}}>Export</Button>
             </Box>
             </Box>
 
@@ -376,9 +446,9 @@ export default function AllMerchantTable({open}) {
                                         <Menu>
                                             <MenuItem onClick={() => handleActionClicked('Edit', row)}>Edit</MenuItem>
                                             <MenuItem onClick={() => handleActionClicked('Login', row)}>Login</MenuItem>
-                                            <MenuItem variant="soft" color="danger" onClick={() => handleActionClicked('Delete', row)}>
+                                            {/* <MenuItem variant="soft" color="danger" onClick={() => handleActionClicked('Delete', row)}>
                                                 Delete
-                                            </MenuItem>
+                                            </MenuItem> */}
                                         </Menu>
                                     </Dropdown>
                                 </TableCell>
