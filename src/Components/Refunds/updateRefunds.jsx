@@ -1,6 +1,6 @@
 import { Main, DrawerHeader } from '../Content';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import BackupIcon from '@mui/icons-material/Backup';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -30,7 +30,7 @@ export default function UpdateMerchantRefund({open}) {
         updateStatus(newValue)
     };
 
-    // Update Status method
+    // Update Refund Status method
     const handleUpdateRefund = ()=> {
 
         axiosInstance.put(`api/v6/admin/merchant/update/refunds/`, {
@@ -50,12 +50,33 @@ export default function UpdateMerchantRefund({open}) {
             };
 
         }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
+
             if (error.response.data.message === 'Can not perform the same action again') {
                 setError('Transaction has already been approved, Can not perform this action')
+            } else if (error.response.data.message == 'Donot have sufficient balance in account') {
+                setError(`Don't have sufficient balance in account`)
+            } else {
+                setError('')
             }
         })
     };
+
+    // Disapear the error and success message
+    useEffect(() => {
+      if (error) {
+        setTimeout(() => {
+            setError('')
+        }, 2000);
+      }
+
+      if (successMessage) {
+        setTimeout(() => {
+            setSuccessMessage('')
+        }, 2000);
+      }
+    }, [error, successMessage])
+    
 
     // If the values are not present
     if (states === '') {
@@ -68,6 +89,7 @@ export default function UpdateMerchantRefund({open}) {
         );
     };
 
+    
     return (
         <Main open={open}>
             <DrawerHeader />
@@ -211,16 +233,15 @@ export default function UpdateMerchantRefund({open}) {
                                 <Option value="Hold">On Hold</Option>
                         </Select>
                     </Grid>
-
                 </Grid>
 
                 {/* Error Message */}
-                <Typography sx={{color:'red', display:'flex', justifyContent: 'center'}}>{error}</Typography>
+                <Typography sx={{color:'red', display:'flex', justifyContent: 'center', mt:2}}>{error}</Typography>
 
                 {/* Success Message */}
                 <Typography sx={{color:'green', display:'flex', justifyContent: 'center'}}>{successMessage}</Typography>
 
-                <Grid container justifyContent="center" sx={{ mt: 3 }} spacing={2}>
+                <Grid container justifyContent="center" sx={{ mt: 2 }} spacing={2}>
                     <Grid item>
                         <Button 
                             sx={{mx:2}} 
@@ -235,7 +256,7 @@ export default function UpdateMerchantRefund({open}) {
                             sx={{mx:2}} 
                             variant="contained" 
                             endIcon={<CancelIcon color='error'/>}
-                            // onClick={handleCancelButton}
+                            onClick={()=> {navigate('/admin/merchant/refunds/')}}
                             >
                             Cancel
                         </Button>

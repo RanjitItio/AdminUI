@@ -23,10 +23,12 @@ import { saveAs } from 'file-saver';
 
 // All Admin users
 export default function AllAdminUsers({open}) {
-    const navigate = useNavigate();
     const [adminUsers, updateAdminUsers] = useState([]); // All Admin users
     const [exportData, updateExportData] = useState([]); // Excel Data
     const [searchedText, updateSearchedText] = useState('');  // Searched Text
+    const [totalRows, updateTotalRows]       = useState(0);    // paginated rows
+
+    const countPagination = Math.ceil(totalRows);
 
 
     // Update Searched text value
@@ -55,6 +57,7 @@ export default function AllAdminUsers({open}) {
             // console.log(res)
             if (res.status === 200 && res.data.all_admin_users) {
                 updateAdminUsers(res.data.all_admin_users)
+                updateTotalRows(res.data.total_rows)
             }
 
         }).catch((error)=> {
@@ -118,6 +121,25 @@ export default function AllAdminUsers({open}) {
           }).catch((error)=> {
             console.log(error)
           })
+    };
+
+    // Get the paginated data
+    const handlePaginatedData = (e, value)=> {
+        let limit = 20;
+        let offset = (value - 1) * limit;
+
+        axiosInstance.get(`api/v2/admin/users/?limit=${limit}&offset=${offset}`).then((res)=> {
+            // console.log(res);
+
+            if (res.status === 200 && res.data.all_admin_users) {
+                updateAdminUsers(res.data.all_admin_users)
+                // updateTotalRows(res.data.total_rows)
+            }
+
+        }).catch((error)=> {
+            console.log(error);
+
+        })
     };
 
 
@@ -202,8 +224,8 @@ return (
 
      <Box sx={{display:'flex', justifyContent:'space-between'}}>
          <Pagination 
-            //  count={countPagination}
-            //  onChange={(e, value)=> {handlePaginatedData(e, value);}}
+             count={countPagination}
+             onChange={(e, value)=> {handlePaginatedData(e, value);}}
              color="primary"
              sx={{mb:2, mt:2}}
              />

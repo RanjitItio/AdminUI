@@ -205,7 +205,7 @@ export default function AllMerchantTable({open}) {
         let offset = (value - 1) * limit;
 
         axiosInstance.get(`api/v1/user/kyc/?limit=${limit}&offset=${offset}`).then((res)=> {
-            console.log(res);
+            // console.log(res);
 
             if (res.status === 200) {
                 updateKycData(res.data.all_Kyc)

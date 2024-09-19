@@ -183,7 +183,6 @@ export default function MerchantRefunds({open}) {
                             <TableCell align="center"><b>Refund Amount</b></TableCell>
                             <TableCell align="center"><b>Status</b></TableCell>
                             <TableCell align="center"><b>Edit</b></TableCell>
-                            
                         </TableRow>
                     </TableHead>
 
