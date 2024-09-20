@@ -142,7 +142,6 @@ const AuthRoutes = () => {
                   <Route exact path='*' element={
                     <Box sx={{display: {xs: 'block', sm:'block', md:'block', lg:'flex'}}}>
                     <CssBaseline />
-
                 
                     <MainNavbar handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} open={open} />
 

@@ -16,8 +16,8 @@ import { WalletTableColumns, DisputeTableColumn, WalletsTableName,
  import UserPipeTable from './pipe/pipeTable';
  import MerchantKeys from './Keys/APIKeys';
  import UpdateMerchantKyc from '../Merchants/editMerchantKyc';
- import UpdateMerchantProfile from '../Merchants/editMerchantProfile';
  import Alert from '@mui/material/Alert';
+ import UpdateMerchantProfile from '../Merchants/editMerchantProfile';
 
 
 
@@ -48,7 +48,7 @@ const Profile = ({ open }) => {
         landmark:       Kycdetails?.landmark     || '',
         id_expiry_date: Kycdetails?.id_expiry_date  || '',
         city:           Kycdetails?.city  || '',
-    }
+    };
 
     const [activeTab, setActiveTab]     = useState('profile');
     const [allGroup, updateAllGroup]    = useState([]);  // Group data 
@@ -122,7 +122,7 @@ const Profile = ({ open }) => {
             setError('')
         };
     })
-    }, [])
+    }, []);
 
 
 // Method to update user Kyc details
@@ -250,22 +250,6 @@ useEffect(() => {
 
 
 
-// Get all the Wallets related to the user
-const handleUserWallets = () => {
-    axiosInstance.post(`api/v2/admin/user/wallet/`, {
-        user_id: Kycdetails.user_id,
-
-      }).then((res) => {
-        // console.log(res.data.user_wallet_data)
-        const SortedWallet = res.data.user_wallet_data
-        updateUserWallet(SortedWallet)
-
-      }).catch((error)=> {
-            console.log(error)
-      })
-};
-
-
 
 if (userDetails === '') {
     
@@ -306,9 +290,9 @@ if (userDetails === '') {
                             </Nav.Item>
 
                             {/* Wallets */}
-                            <Nav.Item>
+                            {/* <Nav.Item>
                                 <Nav.Link eventKey="wallets" onClick={handleUserWallets}>Wallets</Nav.Link>
-                            </Nav.Item>
+                            </Nav.Item> */}
 
                             {/* Bank Accounts */}
                             <Nav.Item>
@@ -370,14 +354,14 @@ if (userDetails === '') {
                         </Alert>
                 )}
 
-                {activeTab === 'wallets' && (
+                {/* {activeTab === 'wallets' && (
                     <WalletTable 
                         headCells={WalletTableColumns} 
                         TableName={WalletsTableName} 
                         rows={userWallet} 
                         />
 
-                )}
+                )} */}
                 {activeTab === 'tickets' && (
                     <MerchantKeys
                       merchantID={Kycdetails.user_id}

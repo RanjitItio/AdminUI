@@ -107,13 +107,13 @@ const Button = styled(BaseButton)(
 export default function AllMerchantTable({open}) {
     const navigate = useNavigate();
     const [error, setError]                  = useState('');
-    const [kycData, updateKycData]           = useState([]);  // All merchant withdrawals
-    const [userData, updateUserData]         = useState([]);
+    const [kycData, updateKycData]           = useState([]);  // All merchant kyc
+    const [userData, updateUserData]         = useState([]);  // All merchant data
     const [totalRows, updateTotalRows]       = useState(0);    // paginated rows
     const [deleteOpen, setDeleteOpen]        = useState(false);  // Delete popup state
-    const [accessToken, setAccessToken]      = useState(null);
+    const [accessToken, setAccessToken]      = useState(null);   // Access Token
     const [loginError, setLoginError]        = useState('');
-    const [refreshToken, setRefreshToken]    = useState(null);
+    const [refreshToken, setRefreshToken]    = useState(null);  // Refresh Token 
     const [searchQuery, updateSearchQuery]   = useState('');  // Search Query state
     const [isMerchant, setIsMerchant]             = useState('') // To redirect to merchant page
     const [deleteUserID, updateDeleteUserID]      = useState(0)  // Delete user ID
@@ -233,7 +233,7 @@ export default function AllMerchantTable({open}) {
         } else if (text === 'Login') {
             // Call api for token
             axiosInstance.get(`/api/v6/admin/merchant/login/${user.user_id}`).then((res)=> {
-                console.log(res)
+                // console.log(res)
 
                 if (res.status === 200 && res.data.success === true) {
                     setAccessToken(res.data.access)
@@ -432,9 +432,9 @@ export default function AllMerchantTable({open}) {
 
                                 {/* Status Column */}
                                 <TableCell align="left">
-                                <button type="button" className={`btn btn-outline-${getStatusColor(row.active ? 'Active' : "Inactive")} my-2`}>
-                                    <b>{row.active ? 'Active' : 'Inactive'}</b>
-                                </button>
+                                    <button type="button" className={`btn btn-outline-${getStatusColor(row.active ? 'Active' : "Inactive")} my-2`}>
+                                        <b>{row.active ? 'Active' : 'Inactive'}</b>
+                                    </button>
                                 </TableCell>
 
                                 {/* Action Column */}

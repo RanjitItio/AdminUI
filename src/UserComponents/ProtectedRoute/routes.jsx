@@ -3,7 +3,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 
 const UserDashBoard = React.lazy(()=> import('../Dashboard/Dashboard'));
-const UsersTable = React.lazy(()=> import('../Users/Users'));
+const UsersTable    = React.lazy(()=> import('../Users/Users'));
+const UserTabs      = React.lazy(()=> import('../Users/UserTabs'));
+
 
 
 
@@ -23,6 +25,14 @@ export const AdditionalAuthenticatedRoutes = (open)=> {
       element: (
         <Suspense fallback={<CircularProgress />}>
             <UsersTable open={open} />
+        </Suspense>
+      )
+    },
+    {
+      path: '/admin/users/data/update/',
+      element: (
+        <Suspense fallback={<CircularProgress />}>
+            <UserTabs open={open} />
         </Suspense>
       )
     },

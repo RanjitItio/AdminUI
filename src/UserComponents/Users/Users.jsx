@@ -2,7 +2,6 @@ import { Table, TableBody, TableCell, TableContainer,
     TableHead, TableRow, Paper, Box } from '@mui/material';
 import { Main, DrawerHeader } from '../../Components/Content';
 import IconButton from '@mui/material/IconButton';
-import Chip from '@mui/material/Chip';
 import Pagination from '@mui/material/Pagination';
 import { Button as BaseButton, buttonClasses } from '@mui/base/Button';
 import { styled } from '@mui/system';
@@ -17,7 +16,8 @@ import Menu from '@mui/joy/Menu';
 import MenuItem from '@mui/joy/MenuItem';
 import MenuButton from '@mui/joy/MenuButton';
 import { useNavigate } from 'react-router-dom';
-import UserDelete from './UserDelete';
+import Chip from '@mui/material/Chip';
+// import UserDelete from './UserDelete';
 
 
 
@@ -91,22 +91,34 @@ const Button = styled(BaseButton)(
 
 
 
-
+// All users table
 export default function UsersTable({open}) {
     const navigate = useNavigate();
-    const [kycData, updateKycData]           = useState([]);  // All kyc data state
+    const [kycData, updateKycData]           = useState([]);  // All merchant kyc
+    const [userData, updateUserData]         = useState([]);  // All merchant data
+    const [totalRows, updateTotalRows]       = useState(0);    // paginated rows
     const [deleteUserID, updateDeleteUserID] = useState(0)  // Delete user ID
     const [deleteOpen, setDeleteOpen]        = useState(false);  // Delete popup state
+    const [loginError, setLoginError]        = useState('');
+    const [accessToken, setAccessToken]      = useState(null);  // Access Token
+    const [refreshToken, setRefreshToken]    = useState(null);  // Refresh Token 
+    const [isMerchant, setIsMerchant]        = useState('') // To redirect to merchant page
+    const [userFullName, setUserFullName]    = useState(''); // To redirect to merchant page
+    const [searchQuery, updateSearchQuery]   = useState('');  // Search Query state
 
+
+    const counPagination = Math.floor(totalRows);   // Total pagination count
 
     // Fetch all the available Kyc of None Merchant users
     useEffect(() => {
-        axiosInstance.get(`/api/v2/kyc/user/`).then((res)=> {
+        axiosInstance.get(`/api/v2/crypto/user/kyc/`).then((res)=> {
     
-        if(res.status === 200 && res.data.allKyc) {
-            updateKycData(res.data.allKyc)
-        };
-        
+        if(res.status === 200 && res.data.all_Kyc) {
+            updateKycData(res.data.all_Kyc)
+            updateUserData(res.data.all_users)
+            updateTotalRows(res.data.total_row_count)
+        }
+
     }).catch((error)=> {
         console.log(error)
     
@@ -137,21 +149,54 @@ export default function UsersTable({open}) {
 
     
     // Update user details
-    const handleActionClicked = (text, kyc, user, userID) => {
-
-        if (text === 'Edit') {
-            navigate('/admin/users/details/', {state: {kycID: kyc, userID: user}})
-        } else if (text === 'Delete') {
-            updateDeleteUserID(userID);
-            setDeleteOpen(true);    // Open delete popup
-        };
+    const handleActionClicked = (text, user) => {
+        let kycDetail =  kycData.find((kyc)=> kyc.user_id === user.user_id);
         
+        if (text === 'Edit') {
+            navigate('/admin/users/data/update/', {state: {kycID: kycDetail || null, userID: user}})
+
+        } else if (text === 'Delete') {
+            // updateDeleteUserID(userID);
+            // setDeleteOpen(true);   
+
+        } else if (text === 'Login') {
+            // Call api for token
+            axiosInstance.get(`/api/v6/admin/merchant/login/${user.user_id}`).then((res)=> {
+                // console.log(res)
+
+                if (res.status === 200 && res.data.success === true) {
+                    setAccessToken(res.data.access)
+                    setRefreshToken(res.data.refresh)
+                    setUserFullName(res.data.user_name)
+                    setIsMerchant(res.data.is_merchant)
+                };
+            }).catch((error)=> {
+                
+                if (error.response.data.message === 'Inactiv user') {
+                    setLoginError('User is not active');
+
+                    setTimeout(() => {
+                        setLoginError('')
+                    }, 2000);
+                }
+            })
+        }
     };
+
+
+    // Redirect to merchat home page
+    useEffect(() => {
+        if (accessToken && refreshToken) {
+            window.location.replace(`${redirectUrl}/admin/merchant/login/?access=${accessToken}&refresh=${refreshToken}&name=${merchantFullName}&ismerchant=${isMerchant}`);
+        };
+    }, [accessToken, refreshToken])
+
 
     // Close the delete popup
     const handleCloseDeletePopUp = ()=> {
         setDeleteOpen(false);
     };
+
 
     // Change user status color
     const getStatusColor = (status)=> {
@@ -166,31 +211,83 @@ export default function UsersTable({open}) {
     };
 
 
+    // Get the paginated data
+    const handlePaginatedData = (e, value)=> {
+        let limit = 20;
+        let offset = (value - 1) * limit;
+
+        axiosInstance.get(`/api/v2/crypto/user/kyc/?limit=${limit}&offset=${offset}`).then((res)=> {
+            // console.log(res);
+
+            if (res.status === 200) {
+                updateKycData(res.data.all_Kyc)
+                updateUserData(res.data.all_users)
+            };
+
+        }).catch((error)=> {
+            console.log(error);
+
+        })
+    };
+
+     // Search Merchant users
+     const handleSearch = ()=> {
+        axiosInstance.get(`/api/v1/crypto/admin/user/search/?query=${searchQuery}`).then((res)=> {
+            // console.log(res)
+            if (res.status === 200) {
+                updateKycData(res.data.all_Kyc)
+                updateUserData(res.data.all_users)
+            };
+
+        }).catch((error)=> {
+            console.log(error)
+        })
+    };
+
+
+    // Input Search values
+    const handleSearchInputChange = (e)=> {
+        updateSearchQuery(e.target.value);
+    };
+
+
     return (
         <>
         <Main open={open}>
             <DrawerHeader />
 
-            <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}> 
+            <p style={{color:'red'}}>{loginError && loginError}</p>
+            <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}>
+            <Box 
+            sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                p:2,
+                flexWrap: 'wrap'
+            }}>
 
+            <h5><b>All Users</b></h5>
             <Box 
                 sx={{ 
                     display: 'flex', 
-                    justifyContent: 'start',
+                    justifyContent: 'end',
                     alignItems: 'center',
                     p:2
                     }}>
-                <Input placeholder="Type in here…" />
-                <IconButton aria-label="Example">
+                <Input placeholder="Type in here…" onChange={handleSearchInputChange} />
+                <IconButton aria-label="Example" onClick={handleSearch}>
                     <SearchIcon color='primary' />
                 </IconButton>
-                <Button sx={{mx:1}} >Export</Button>
+
+                <Button sx={{mx:1}} onClick={()=> {handleDownloadMerchantData();}}>Export</Button>
+            </Box>
             </Box>
 
             <TableContainer>
-            <Box sx={{ height: 450, overflowY: 'auto' }}>
+            <Box sx={{ maxHeight: '95rem', overflowY: 'auto' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead sx={{position:'sticky', zIndex: 1, top: 0, backgroundColor: 'white'}}>
+                    <TableHead sx={{position:'sticky', zIndex: 1, top: 0, backgroundColor: '#e2f4fb'}}>
                         <TableRow>
                             <TableCell><b>Sl No.</b></TableCell>
                             <TableCell align="center"><b>First Name</b></TableCell>
@@ -206,59 +303,71 @@ export default function UsersTable({open}) {
                     </TableHead>
 
                     <TableBody>
-                        {kycData.map((kyc, index) => (
+                    {userData.map((row, index) => (
                             <TableRow
-                            key={index}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell scope="row">
-                                    {kyc.user_kyc_details?.id}
+                                key={index}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                {/* ID Column */}
+                               <TableCell component="th" scope="row">
+                                    <b>{row?.user_id || 0}</b>
                                 </TableCell>
 
-                                <TableCell scope="row" align='left'>
-                                    {kyc.user_kyc_details?.firstname}
+                                {/* First Name Column */}
+                                <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}>
+                                    <b>{row?.firstname || 'NA'}</b>
                                 </TableCell>
 
-                                <TableCell  scope="row" align='left'>
-                                    {kyc.user_kyc_details?.lastname}
+                                {/* Last Name Column */}
+                                <TableCell align="left" style={{fontFamily: 'Platypi', fontSize: '15px'}}>
+                                    <b>{row?.lastname || 'NA'}</b>
                                 </TableCell>
 
-                                <TableCell component="th" scope="row">
-                                    {kyc.user_kyc_details?.phoneno}
+                                {/* Phone Number Column */}
+                                <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
+                                    <b>{row?.phoneno || 'NA'}</b>
                                 </TableCell>
 
-                                <TableCell component="th" scope="row" align='center'>
-                                    {kyc.user_kyc_details?.email}
+                                {/* Email Column */}
+                                <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
+                                    <b>{row?.email || 'NA'}</b>
                                 </TableCell>
 
-                                <TableCell component="th" scope="row">
-                                    {kyc.user?.group_name}
+                                {/* Group Column */}
+                                <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
+                                <b>{
+                                    row?.group_name || 'NA'
+                                    }
+                                </b>
                                 </TableCell>
 
-                                <TableCell component="th" scope="row">
-                                    {kyc.user.lastlogin ? new Date(kyc.user.lastlogin).toLocaleDateString() : '0:00:00'} &nbsp;
-                                    {kyc.user.lastlogin ? new Date(kyc.user.lastlogin).toLocaleTimeString() : '0:00:00'}
+                                {/* Last Login Column */}
+                                <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
+                                    <b>{row.lastlogin ? new Date(row.lastlogin).toLocaleTimeString() : '0:00:00'}</b>
                                 </TableCell>
 
-                                <TableCell component="th" scope="row">
-                                    {kyc.user?.ip_address}
+                                {/* IP Address Column */}
+                                <TableCell align="left" style={{fontFamily: 'sedan', fontSize: '15px'}}>
+                                    <b>{row?.ip_address || '0.0.0.0'}</b>
                                 </TableCell>
 
-                                <TableCell component="th" scope="row">
-                                    <Chip label={kyc.user.verified ? 'Active' : 'Inactive'} variant="outlined" color={getStatusColor(kyc.user.verified ? 'Active' : 'Inactive')} />
+                                {/* Status Column */}
+                                <TableCell align="left">
+                                    <Chip label={row.active ? 'Active' : 'Inactive'} color={getStatusColor(row.active ? 'Active' : 'Inactive')} />
                                 </TableCell>
 
+                                {/* Action Column */}
                                 <TableCell component="th" scope="row">
                                     <Dropdown>
                                         <MenuButton aria-label="Example">
                                             <FontAwesomeIcon icon={faEllipsisV} />
                                         </MenuButton>
                                         <Menu>
-                                            <MenuItem onClick={() => handleActionClicked('Edit', kyc.user_kyc_details, kyc.user)}>Edit</MenuItem>
-                                            <MenuItem onClick={() => handleActionClicked('Login')}>Login</MenuItem>
-                                            <MenuItem variant="soft" color="danger" onClick={() => handleActionClicked('Delete', kyc.user_kyc_details, kyc.user, kyc.user_kyc_details.user_id)}>
+                                            <MenuItem onClick={() => handleActionClicked('Edit', row)}>Edit</MenuItem>
+                                            <MenuItem onClick={() => handleActionClicked('Login', row)}>Login</MenuItem>
+                                            {/* <MenuItem variant="soft" color="danger" onClick={() => handleActionClicked('Delete', row)}>
                                                 Delete
-                                            </MenuItem>
+                                            </MenuItem> */}
                                         </Menu>
                                     </Dropdown>
                                 </TableCell>
@@ -269,7 +378,12 @@ export default function UsersTable({open}) {
             </Box>
 
             <Box sx={{display:'flex', justifyContent:'space-between'}}>
-                <Pagination count={10} color="primary" sx={{mb:2, mt:2}} />
+                <Pagination 
+                    count={counPagination}
+                    onChange={(e, value)=> {handlePaginatedData(e, value)}}
+                    color="primary" 
+                    sx={{mb:2, mt:2}} 
+                    />
             </Box>
 
             </TableContainer>
@@ -277,7 +391,7 @@ export default function UsersTable({open}) {
             </Paper>
         </Main>
 
-        <UserDelete deleteUserID={deleteUserID} open={deleteOpen} handleClose={handleCloseDeletePopUp}/>
+        {/* <UserDelete deleteUserID={deleteUserID} open={deleteOpen} handleClose={handleCloseDeletePopUp}/> */}
         </>
     );
 };

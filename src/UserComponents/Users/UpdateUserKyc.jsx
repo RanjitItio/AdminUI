@@ -9,12 +9,13 @@ import { Grid } from '@mui/material';
 
 
 
-// Update Merchant KYC Data
-export default function UpdateMerchantKyc({
-            kycDetail, Kycdetails, groupValue, statusValue, handleProfileChange, 
-            allGroup, disableKycUpdateButton, handleProfileStatusMessage, 
-            handleStatusValueUpdate, statusMessage, handleKYCStatusUpdate, 
-            error, successMessage, handleGroupValueChange}) {
+
+
+export default function UdateCrptoUsersKyc({kycDetail, Kycdetails, groupValue, statusValue, handleProfileChange, 
+                allGroup, disableKycUpdateButton,handleProfileStatusMessage, 
+                handleStatusValueUpdate, statusMessage, handleKYCStatusUpdate, error, 
+                successMessage, handleGroupValueChange}) {
+
 
     return (
         <Row>
