@@ -79,7 +79,7 @@ const extractNames = (types) => {
 const SettleMentPeriod = SettleMentPeriodDroDown;
 
 
-
+// Update Pipe
 export default function UpdatePipe({open}) {
 
     const location = useLocation();
@@ -498,11 +498,10 @@ export default function UpdatePipe({open}) {
                         <FormControl fullWidth size='small'>
                             <InputLabel id="demo-simple-select-label">Processing Mode</InputLabel>
                             <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
+                            id="process-mode-simple-select"
                             name='process_mode'
                             value={processMode}
-                            label="Status"
+                            label="Processing Mode"
                             onChange={(event)=> {handleFormValueChange(event);}}
                             >
                             <MenuItem value={'Live'}>Live</MenuItem>
@@ -519,7 +518,7 @@ export default function UpdatePipe({open}) {
                             id="demo-simple-select"
                             name='conect_mode'
                             value={connectionMode}
-                            label="Status"
+                            label="Connection Mode"
                             onChange={(event)=> {handleFormValueChange(event);}}
                             >
                             <MenuItem value={'Curl'}>Direct(Curl)</MenuItem>
@@ -536,15 +535,14 @@ export default function UpdatePipe({open}) {
                         <FormControl fullWidth size='small'>
                             <InputLabel id="demo-simple-select-label">Processing Currency</InputLabel>
                             <Select
-                            labelId="process-currency-simple-select-label"
-                            id="process-currency-simple-select"
-                            label="Processing Currency"
-                            value={processingCurrency}
-                            onChange={handleProcessingCurrencyChange}
-                            >
-                                {currencies.map((curr)=> (
-                                    <MenuItem key={curr.id} value={curr.id}>{curr.name}</MenuItem>
-                                ))}
+                                id="process-currency-simple-select"
+                                label="Processing Currency"
+                                value={processingCurrency}
+                                onChange={handleProcessingCurrencyChange}
+                                >
+                                    {currencies.map((curr)=> (
+                                        <MenuItem key={curr.id} value={curr.id}>{curr.name}</MenuItem>
+                                    ))}
                             </Select>
                         </FormControl>
                     </Grid>
@@ -571,33 +569,33 @@ export default function UpdatePipe({open}) {
 
                     <Grid item xs={12} sm={6} md={4}>
                         <FormControl fullWidth size='small'>
-                            <InputLabel id="demo-multiple-chip-label">Active Countries</InputLabel>
+                            <InputLabel id="active-countries-select">Active Countries</InputLabel>
                             <Select
-                            labelId="demo-multiple-chip-label"
-                            id="demo-multiple-chip"
-                            name='active_cntry'
-                            multiple
-                            value={activeCountry.length === 0 ? formData.active_cntry : activeCountry}
-                            onChange={(event)=> {handleActiveCountriesChange(event); handleFormValueChange(event);}}
-                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                            renderValue={(selected) => (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => (
-                                    <Chip key={value} label={value} />
-                                ))}
-                                </Box>
-                            )}
-                            MenuProps={MenuProps}
-                            >
-                            {Countrynames.map((name) => (
-                                <MenuItem
-                                key={name}
-                                value={name}
-                                style={getStyles(name, activeCountry, theme)}
+                                label='Active Countries'
+                                id="active-countries-select"
+                                name='active_cntry'
+                                multiple
+                                value={activeCountry.length === 0 ? formData.active_cntry : activeCountry}
+                                onChange={(event)=> {handleActiveCountriesChange(event); handleFormValueChange(event);}}
+                                input={<OutlinedInput id="select-multiple-chip" label="Active Countries" />}
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value} />
+                                    ))}
+                                    </Box>
+                                )}
+                                MenuProps={MenuProps}
                                 >
-                                {name}
-                                </MenuItem>
-                            ))}
+                                {Countrynames.map((name) => (
+                                    <MenuItem
+                                    key={name}
+                                    value={name}
+                                    style={getStyles(name, activeCountry, theme)}
+                                    >
+                                    {name}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
                     </Grid>
@@ -613,7 +611,7 @@ export default function UpdatePipe({open}) {
                             multiple
                             value={blockedCountry.length === 0 ? formData.block_cntry : blockedCountry}
                             onChange={(event)=> {handleBlockedCountriesChange(event); handleFormValueChange(event);}}
-                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                            input={<OutlinedInput id="select-multiple-chip" label="Blocked Countries" />}
                             renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                 {selected.map((value) => (
@@ -640,31 +638,30 @@ export default function UpdatePipe({open}) {
                         <FormControl fullWidth size='small'>
                             <InputLabel id="demo-multiple-chip-label">Mode of Payment</InputLabel>
                             <Select
-                            labelId="demo-multiple-chip-label"
-                            id="demo-multiple-chip"
-                            name='mop'
-                            multiple
-                            value={modeofPayment.length === 0 ? formData.mop : modeofPayment}
-                            onChange={(event)=> {handleModeofPaymentChange(event); }}
-                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                            renderValue={(selected) => (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => (
-                                    <Chip key={value} label={value} />
-                                ))}
-                                </Box>
-                            )}
-                            MenuProps={MenuProps}
-                            >
-                            {mopdata.map((data) => (
-                                <MenuItem
-                                key={data.id}
-                                value={data.name}
-                                style={getStyles(data.name, modeofPayment, theme)}
+                                id="demo-multiple-chip"
+                                name='mop'
+                                multiple
+                                value={modeofPayment.length === 0 ? formData.mop : modeofPayment}
+                                onChange={(event)=> {handleModeofPaymentChange(event); }}
+                                input={<OutlinedInput id="select-multiple-chip" label="Mode of Payment" />}
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value} />
+                                    ))}
+                                    </Box>
+                                )}
+                                MenuProps={MenuProps}
                                 >
-                                {data.name}
-                                </MenuItem>
-                            ))}
+                                {mopdata.map((data) => (
+                                    <MenuItem
+                                    key={data.id}
+                                    value={data.name}
+                                    style={getStyles(data.name, modeofPayment, theme)}
+                                    >
+                                    {data.name}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
                     </Grid>

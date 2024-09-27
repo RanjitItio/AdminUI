@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableContainer, 
-         TableHead, TableRow, Paper, Box } from '@mui/material';
+         TableHead, TableRow, Paper, Box, Grid, Typography } from '@mui/material';
 import { Main, DrawerHeader } from '../Content';
 import { useEffect, useState } from 'react';
 import axiosInstance from '../Authentication/axios';
@@ -15,7 +15,14 @@ import Input from '@mui/joy/Input';
 import SearchIcon from '@mui/icons-material/Search';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-
+import { useTheme } from '@mui/material/styles';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { useMediaQuery } from '@mui/material';
+import Select from '@mui/joy/Select';
+import Option from '@mui/joy/Option';
+import {Button as JoyButton} from '@mui/joy';
+import FormControl from '@mui/material/FormControl';
 
 
 
@@ -25,13 +32,44 @@ import { saveAs } from 'file-saver';
 // All Transaction Data
 export default function AllMerchantPGTransactions({open}) {
     const navigate = useNavigate();
+    const theme    = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
     const [transactionData, updateTransactionData] = useState([]); // All Transaction data state
-    const [modeName, setModeName] = useState('Production Mode');   // Mode Name
-    const [exportData, updateExportData] = useState([]);  // Excel data
+    const [modeName, setModeName]            = useState('Production Mode');   // Mode Name
+    const [exportData, updateExportData]     = useState([]);  // Excel data
     const [searchedText, updateSearchedText] = useState('');  // Searched text
-    const [totalRows, updateTotalRows] = useState(0);
+    const [totalRows, updateTotalRows]       = useState(0);
+    const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
+    const [filterDate, setFilterDate]        = useState('');  // Filter date state field
+    const [filterError, setFilterError]      = useState('');  // Error message of filter
+    const [filterData, updateFilterData]     = useState({
+        transaction_id: '',
+        transaction_amount: '',
+        business_name: '',
+    });  // Filter filed data state
+
 
     const countPagination = Math.ceil(totalRows);
+
+     /// Open close Filter fields
+    const handleToggleFilters = () => {
+        setShowFilters(!showFilters);
+    };
+
+    /// Get selected date range
+    const handleFilterDateChange = (e, newValue)=> {
+        setFilterDate(newValue)
+    };
+
+    // Get Filter Input field values
+    const handleFilterInputChange = (e)=> {
+        const { name, value } = e.target;
+        updateFilterData({
+            ...filterData,
+            [name]: value
+        })
+    };
 
     // Method to get Search input value
      const handleUpdateSearchedText = (e)=> {
@@ -237,6 +275,60 @@ export default function AllMerchantPGTransactions({open}) {
         }
     };
 
+    // Get Filter data
+    const handleFilterData = ()=> {
+        if(modeName === 'Production Mode') {
+
+            axiosInstance.post(`/api/v2/admin/filter/merchant/transaction/`, {
+                date: filterDate,
+                transaction_id: filterData.transaction_id,
+                transaction_amount: filterData.transaction_amount,
+                business_name: filterData.business_name
+
+            }).then((res)=> {
+                // console.log(res)
+
+                if (res.status === 200 && res.data.success === true) {
+                    updateTransactionData(res.data.AdminmerchantPGTransactions)
+                    setFilterError('')
+                }   
+            }).catch((error)=> {
+                console.log(error)
+
+                if (error.response.data.message === 'No transaction found') {
+                    setFilterError('No data found')
+                } else {
+                    setFilterError('')
+                };
+            })
+
+            // For Sandbox mode filter Data
+        } else if (modeName === 'Test Mode') { 
+            
+            axiosInstance.post(`/api/v2/admin/merchant/filter/sandbox/transaction/`, {
+                date: filterDate,
+                transaction_id: filterData.transaction_id,
+                transaction_amount: filterData.transaction_amount,
+                business_name: filterData.business_name
+
+            }).then((res)=> {
+                // console.log(res)
+
+                if (res.status === 200 && res.data.success === true) {
+                    updateTransactionData(res.data.AdminmerchantPGSandboxTransactions)
+                    setFilterError('')
+                }   
+            }).catch((error)=> {
+                console.log(error)
+
+                if (error.response.data.message === 'No transaction found') {
+                    setFilterError('No data found')
+                } else {
+                    setFilterError('')
+                };
+            });
+        };
+    };
 
 
     return (
@@ -244,20 +336,123 @@ export default function AllMerchantPGTransactions({open}) {
             <DrawerHeader />
 
             <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}> 
-                <h5 style={{margin:9}}><b>All Merchant Transactions</b></h5>
             <Box 
                 sx={{ 
                     display: 'flex', 
-                    justifyContent: 'start',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
-                    p:2
+                    p:2,
                     }}>
-                <Input placeholder="Type in here…" onChange={handleUpdateSearchedText} />
-                <IconButton aria-label="Example" onClick={handleSearchedData}>
-                    <SearchIcon color='primary' />
-                </IconButton>
-                <Button sx={{mx:1}} onClick={handleExportClicked}>Export</Button>
+                    <Typography 
+                            variant="h5"
+                            sx={{
+                            fontSize: {
+                                xs:'0.9rem',
+                                sm:'1.1rem',
+                                md:'1.3rem'
+                            },
+                            margin:0
+                            }}
+                        >
+                            <b>All Merchant Transactions</b>
+                        </Typography>
+
+                        {/* <div style={{ display: 'flex', alignItems: 'center', marginBottom: isSmallScreen ? '16px' : '0'}}>
+                            <Input placeholder="Type in here…" onChange={handleUpdateSearchedText} />
+
+                            <IconButton aria-label="Example" onClick={handleSearchedData}>
+                                <SearchIcon color='primary' />
+                            </IconButton>
+                        </div> */}
+
+                {/* For small screen sizes */}
+                {isSmallScreen ? (
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                            <IconButton aria-label="export" onClick={handleExportClicked}>
+                                <FileDownloadIcon color='primary' />
+                            </IconButton>
+
+                            <IconButton aria-label="filter" onClick={handleToggleFilters}>
+                                <FilterAltIcon color='primary' />
+                            </IconButton>
+                        </div>
+                        ) : (
+                        <div>
+                            <Button sx={{ mx: 1 }} onClick={handleExportClicked}>Export</Button>
+                            <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
+                        </div>
+                    )}
             </Box>
+
+            {/* Hidden Filter fields */}
+            {showFilters && (
+                <>
+                <Grid container p={2} justifyContent="flex-end" spacing={2}>
+                    <Grid item xs={12} sm={6} md={2.5}>
+                        <FormControl fullWidth>
+                        <Select
+                            label="date"
+                            placeholder='Date'
+                            id="date"
+                            name="date"
+                            value={filterDate}
+                            onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                        >
+                            <Option value="Today">Today</Option>
+                            <Option value="Yesterday">Yesterday</Option>
+                            <Option value="ThisWeek">This Week</Option>
+                            <Option value="ThisMonth">This Month</Option>
+                            <Option value="PreviousMonth">Previous Month</Option>
+                        </Select>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={2.5}>
+                        <FormControl fullWidth>
+                            <Input 
+                                placeholder="Transaction ID" 
+                                name='transaction_id'
+                                value={filterData.transaction_id}
+                                onChange={handleFilterInputChange}
+                            />
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth>
+                            <Input 
+                                name='transaction_amount'
+                                value={filterData.transaction_amount}
+                                onChange={handleFilterInputChange}
+                                placeholder="Transaction Amount" 
+                                />
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth>
+                            <Input 
+                                placeholder="Business Name"
+                                name='business_name'
+                                value={filterData.business_name} 
+                                onChange={handleFilterInputChange}
+                                />
+                        </FormControl>
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={6} md={1}>
+                        <FormControl fullWidth>
+                            <JoyButton 
+                            onClick={handleFilterData}
+                            >
+                                Submit
+                            </JoyButton>
+                        </FormControl>
+                    </Grid>
+                </Grid>
+                <small style={{color:'red'}}>{filterError && filterError}</small>
+            </>
+            )}
 
             <TableContainer>
             <Box sx={{ maxHeight: '75rem', overflowY: 'auto' }}>

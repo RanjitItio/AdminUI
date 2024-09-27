@@ -1,6 +1,6 @@
 import { Main, DrawerHeader } from "../Content";
 import { Table, TableBody, TableCell, TableContainer, 
-    TableHead, TableRow, Paper, Box } from '@mui/material';
+    TableHead, TableRow, Paper, Box, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import axiosInstance from "../Authentication/axios";
 import IconButton from '@mui/material/IconButton';
@@ -15,6 +15,11 @@ import { saveAs } from 'file-saver';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PipeDeleteModal from './PipeDeleteModal';
+import { useTheme } from '@mui/material/styles';
+import { useMediaQuery } from '@mui/material';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import Tooltip from '@mui/material/Tooltip';
 
 
 
@@ -23,6 +28,8 @@ import PipeDeleteModal from './PipeDeleteModal';
 // All Merchant Withdrawal transactions of PG
 export default function AllPipeTable({open}) {
     const navigate = useNavigate();
+    const theme    = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [pipeData, updatePipeData]          = useState([]);  // All merchant withdrawals
     const [searchQuery, updateSearchQuery]    = useState('');  // Search Query state
@@ -166,20 +173,64 @@ export default function AllPipeTable({open}) {
             <DrawerHeader />
 
             <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}> 
-                <h5 style={{margin:9}}><b>All Available PIPE</b></h5>
+                
             <Box 
                 sx={{ 
                     display: 'flex', 
-                    justifyContent: 'start',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
                     p:2
                     }}>
-                <Input placeholder="Type in here…" onChange={handleSearchInputChange}/>
-                <IconButton aria-label="Example" onClick={handleSearch}>
-                    <SearchIcon color='primary' />
-                </IconButton>
-                <Button sx={{mx:1}} onClick={handleDownloadPipes}>Export</Button>
+                    <Typography 
+                            variant="h5"
+                            sx={{
+                            fontSize: {
+                                xs:'0.9rem',
+                                sm:'1.1rem',
+                                md:'1.3rem'
+                            },
+                            margin:0
+                            }}
+                        >
+                            <b>All Available Pipes</b>
+                    </Typography>
+                
+                    {isSmallScreen ? (
+                        <></>
+                    ) : (
+                        <div style={{display:'flex', justifyContent:'center'}}>
+                            <Input placeholder="Type in here…" onChange={handleSearchInputChange}/>
+                            <IconButton aria-label="Example" onClick={handleSearch}>
+                                <SearchIcon color='primary' />
+                            </IconButton>
+                            <Button sx={{mx:1}} onClick={handleDownloadPipes}>Export</Button>
+                            <Button sx={{mx:1}} onClick={()=> {navigate('/admin/add/pipe/')}}>Add</Button>
+                        </div>
+                    )}
+               
             </Box>
+
+            {isSmallScreen && (
+                <div style={{display:'flex', justifyContent:'center', marginBottom:10}}>
+                    <Input placeholder="Type in here…" onChange={handleSearchInputChange}/>
+                    <IconButton aria-label="Example" onClick={handleSearch}>
+                        <SearchIcon color='primary' />
+                    </IconButton>
+
+                    <Tooltip title="Export">
+                        <IconButton aria-label="Example" onClick={handleDownloadPipes}>
+                            <FileUploadIcon color='primary' />
+                        </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Add new pipe">
+                        <IconButton aria-label="Example" onClick={()=> {navigate('/admin/add/pipe/')}}>
+                            <AddCircleIcon color='primary' />
+                        </IconButton>
+                    </Tooltip>
+                </div>
+            )}
+
 
             <TableContainer>
             <Box sx={{ maxHeight: '90rem', overflowY: 'auto' }}>

@@ -1,6 +1,6 @@
 import { Main, DrawerHeader } from "../Content";
 import { Table, TableBody, TableCell, TableContainer, 
-    TableHead, TableRow, Paper, Box } from '@mui/material';
+    TableHead, TableRow, Paper, Box, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import axiosInstance from "../Authentication/axios";
 import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
@@ -13,6 +13,15 @@ import Button from "../MUIBaseButton/button";
 import { useNavigate } from "react-router-dom";
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { useTheme } from '@mui/material/styles';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { useMediaQuery } from '@mui/material';
+import Select from '@mui/joy/Select';
+import Option from '@mui/joy/Option';
+import {Button as JoyButton} from '@mui/joy';
+import FormControl from '@mui/material/FormControl';
+
 
 
 
@@ -20,13 +29,44 @@ import { saveAs } from 'file-saver';
 // Get all the merchant Refunds
 export default function MerchantRefunds({open}) {
     const navigate = useNavigate();
+    const theme    = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
     const [merchantRefunds, updateMerchantRefunds] = useState([]); // Refund Transactions
     const [totalRowCount, setTotalRowCount]        = useState(0);
     const [exportData, updateExportData] = useState([]); // Excel Data
     const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
-
+    const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
+    const [filterDate, setFilterDate]        = useState('');  // Filter date state field
+    const [filterError, setFilterError]      = useState('');  // Error message of filter
+    const [filterData, updateFilterData]     = useState({
+        merchant_email: '',
+        refundCurrency: '',
+        refundAmount: ''
+    });  // Filter filed data state
 
     let countPagination = Math.ceil(totalRowCount); 
+
+    /// Open close Filter fields
+    const handleToggleFilters = () => {
+        setShowFilters(!showFilters);
+    };
+
+    // Update Filter fields data
+    const handleUpdateFilterInput = (e)=> {
+        const {name, value} = e.target;
+
+        updateFilterData({
+            ...filterData,
+            [name]: value
+        })
+    };
+
+    // Update selected date of Filters
+    const handleFilterDateChange = (e, newValue) => {
+        setFilterDate(newValue)
+    };
+
 
     // Fetch all the Merchant refund transactions
     useEffect(() => {
@@ -147,27 +187,160 @@ export default function MerchantRefunds({open}) {
     };
 
 
+    // Get all the Filtered data
+    const handleGetFilterData = ()=> {
+        axiosInstance.post(`/api/v6/admin/filter/merchant/refunds/`, {
+            date: filterDate,
+            email: filterData.merchant_email,
+            currency: filterData.refundCurrency,
+            amount: filterData.refundAmount
+
+        }).then((res)=> {
+            // console.log(res)
+
+            if (res.status === 200 && res.data.success === true) {
+                updateMerchantRefunds(res.data.admin_merchant_filter_refunds)
+                setFilterError('')
+            }   
+        }).catch((error)=> {
+            // console.log(error)
+
+            if (error.response.data.message === 'No transaction found') {
+                setFilterError('No data found')
+            } else if (error.response.data.message === 'Invalid email address') {
+                setFilterError('Invalid email address')
+            } else if (error.response.data.message === 'Invalid Currency') {
+                setFilterError('Invalid Currency')
+            } else {
+                setFilterError('')
+            };
+        })
+    };
+
+
     return (
         <Main open={open}>
             <DrawerHeader />
 
             <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}> 
-                <h5 style={{margin:9}}><b>All Merchant Refunds</b></h5>
-            <Box 
-                sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'start',
-                    alignItems: 'center',
-                    p:2
-                    }}>
-                <Input placeholder="Type in here…" onChange={handleSearchInputChange}/>
 
-                <IconButton aria-label="Example" onClick={handleSearch}>
-                    <SearchIcon color='primary' />
-                </IconButton>
-                
-                <Button sx={{mx:1}} onClick={()=> handleDownloadRefunds()}>Export</Button>
-            </Box>
+                <Box 
+                    sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        p:2,
+                        }}>
+                            <Typography 
+                                variant="h5"
+                                sx={{
+                                fontSize: {
+                                    xs:'0.9rem',
+                                    sm:'1.1rem',
+                                    md:'1.3rem'
+                                },
+                                margin:0
+                                }}
+                            >
+                                <b>All Merchant Refunds</b>
+                            </Typography>
+
+                    {/* <div style={{ display: 'flex', alignItems: 'center', marginBottom: isSmallScreen ? '16px' : '0'}}>
+                        <Input placeholder="Type in here…" onChange={handleSearchInputChange} />
+
+                        <IconButton aria-label="Example" onClick={handleSearch}>
+                            <SearchIcon color='primary' />
+                        </IconButton>
+                    </div> */}
+
+                    {/* For small screen sizes */}
+                    {isSmallScreen ? (
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <IconButton aria-label="export" onClick={handleDownloadRefunds}>
+                                    <FileDownloadIcon color='primary' />
+                                </IconButton>
+
+                                <IconButton aria-label="filter" onClick={handleToggleFilters}>
+                                    <FilterAltIcon color='primary' />
+                                </IconButton>
+                            </div>
+                            ) : (
+                            <div>
+                                <Button sx={{ mx: 1 }} onClick={handleDownloadRefunds}>Export</Button>
+                                <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
+                            </div>
+                        )}
+                </Box>
+
+                {/* Hidden Filter fields */}
+                {showFilters && (
+                    <>
+                    <Grid container p={2} justifyContent="flex-end" spacing={2}>
+                        <Grid item xs={12} sm={6} md={2.5}>
+                            <FormControl fullWidth>
+                            <Select
+                                label="date"
+                                placeholder='Date'
+                                id="date"
+                                name="date"
+                                value={filterDate}
+                                onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                            >
+                                <Option value="Today">Today</Option>
+                                <Option value="Yesterday">Yesterday</Option>
+                                <Option value="ThisWeek">This Week</Option>
+                                <Option value="ThisMonth">This Month</Option>
+                                <Option value="PreviousMonth">Previous Month</Option>
+                            </Select>
+                            </FormControl>
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={2.5}>
+                            <FormControl fullWidth>
+                                <Input 
+                                placeholder="Merchant Email" 
+                                name='merchant_email'
+                                value={filterData.merchant_email}
+                                onChange={handleUpdateFilterInput}
+                                />
+                            </FormControl>
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={3}>
+                            <FormControl fullWidth>
+                                <Input 
+                                    name='refundCurrency'
+                                    value={filterData.refundCurrency}
+                                    onChange={handleUpdateFilterInput}
+                                    placeholder="Refund Currency" 
+                                    />
+                            </FormControl>
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={3}>
+                            <FormControl fullWidth>
+                                <Input 
+                                    placeholder="Refund Amount"
+                                    name='refundAmount'
+                                    value={filterData.refundAmount} 
+                                    onChange={handleUpdateFilterInput}
+                                    />
+                            </FormControl>
+                        </Grid>
+                        
+                        <Grid item xs={12} sm={6} md={1}>
+                            <FormControl fullWidth>
+                                <JoyButton 
+                                onClick={handleGetFilterData}
+                                >
+                                    Submit
+                                </JoyButton>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                    <small style={{color:'red'}}>{filterError && filterError}</small>
+                </>
+                )}
 
             <TableContainer>
             <Box sx={{ maxHeight: '90rem', overflowY: 'auto' }}>

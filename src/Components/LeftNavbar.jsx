@@ -29,9 +29,10 @@ import AutorenewIcon from '@mui/icons-material/Autorenew';
 import GoogleIcon from '@mui/icons-material/Google';
 import ContactlessIcon from '@mui/icons-material/Contactless';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import { Paper } from '@mui/material';
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import { ConfirmationNumberOutlined } from '@mui/icons-material';
+import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
+import { el } from 'date-fns/locale';
 
 
 
@@ -63,7 +64,7 @@ const UserNavContent = [
       {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
       
     ],
-    icon: <ReceiptIcon />
+    icon: <CurrencyBitcoinIcon />
   },
 
   { text: 'Crypto', subItems: [
@@ -72,7 +73,7 @@ const UserNavContent = [
       {text: 'Currencies', icon: <HistoryOutlinedIcon />, url: ''},
       
     ],
-    icon: <ReceiptIcon />
+    icon: <CurrencyBitcoinIcon />
   },
   { text: 'Addons', subItems: [
       {text: 'Crypto Exchange', icon: <HistoryOutlinedIcon />, url: ''},
@@ -214,15 +215,22 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
                 {MerchantNavContent.map((item, index) => (
                 <React.Fragment key={item.text}>
                   <ListItem disablePadding>
-                    <ListItemButton onClick={() => handleClick(index)} >
+                    <ListItemButton onClick={() => {
+                      if (item.text === 'Dashboard') {
+                        window.location.href = item.subItems[0].url;
+                      } else {
+                        handleClick(index);
+                      }
+                    }} >
                       <ListItemIcon style={{color: '#e7ebf2'}}>
                         {item.icon}
                       </ListItemIcon>
                       <ListItemText primary={item.text} />
-                        {dropDown[index] ? <ExpandLess /> : <ExpandMore />}
+                        {item.text !== 'Dashboard' && (dropDown[index] ? <ExpandLess /> : <ExpandMore />)}
                     </ListItemButton>
                   </ListItem>
-                
+            
+                  {item.text !== 'Dashboard' && (
                   <Collapse in={dropDown[index]} timeout="auto" unmountOnExit >
                     <List component="div" disablePadding >
                       {item.subItems.map((subItem, subIndex) => (
@@ -236,9 +244,8 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
                         </ListItem>
                       ))}
               </List>
-              
-
             </Collapse>
+                  )}
         </React.Fragment>
       ))}
         </List>
@@ -250,12 +257,18 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
                 {UserNavContent.map((item, index) => (
                 <React.Fragment key={item.text}>
                   <ListItem disablePadding>
-                    <ListItemButton onClick={() => handleClick(index)} >
+                    <ListItemButton onClick={() =>{
+                      if (item.text === 'Dashboard') {
+                        window.location.href = item.subItems[0].url;
+                      } else {
+                        handleClick(index)
+                      }
+                    }}>
                       <ListItemIcon style={{color: '#e7ebf2'}}>
                         {item.icon}
                       </ListItemIcon>
                       <ListItemText primary={item.text} />
-                        {dropDown[index] ? <ExpandLess /> : <ExpandMore />}
+                          {item.text !== 'Dashboard' && (dropDown[index] ? <ExpandLess /> : <ExpandMore />)}
                     </ListItemButton>
                   </ListItem>
                 

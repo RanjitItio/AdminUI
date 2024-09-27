@@ -400,10 +400,9 @@ export default function AddNewPipe({open}) {
                         <FormControl fullWidth size='small'>
                             <InputLabel id="demo-simple-select-label">Processing Mode</InputLabel>
                             <Select
-                            labelId="demo-simple-select-label"
                             id="demo-simple-select"
                             value={processMode}
-                            label="Status"
+                            label="Processing Mode"
                             onChange={handleProcessModeChange}
                             >
                             <MenuItem value={'Live'}>Live</MenuItem>
@@ -416,10 +415,9 @@ export default function AddNewPipe({open}) {
                         <FormControl fullWidth size='small'>
                             <InputLabel id="demo-simple-select-label">Connection Mode</InputLabel>
                             <Select
-                            labelId="demo-simple-select-label"
                             id="demo-simple-select"
                             value={connectionMode}
-                            label="Status"
+                            label="Connection Mode"
                             onChange={handleConnectionModeChange}
                             >
                             <MenuItem value={'Curl'}>Direct(Curl)</MenuItem>
@@ -472,12 +470,11 @@ export default function AddNewPipe({open}) {
                         <FormControl fullWidth size='small'>
                             <InputLabel id="demo-multiple-chip-label">Active Countries</InputLabel>
                             <Select
-                            labelId="demo-multiple-chip-label"
                             id="demo-multiple-chip"
                             multiple
                             value={activeCountry}
                             onChange={handleActiveCountriesChange}
-                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                            input={<OutlinedInput id="select-multiple-chip" label="Active Countries" />}
                             renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                 {selected.map((value) => (
@@ -505,12 +502,11 @@ export default function AddNewPipe({open}) {
                         <FormControl fullWidth size='small'>
                             <InputLabel id="demo-multiple-chip-label">Blocked Countries</InputLabel>
                             <Select
-                            labelId="demo-multiple-chip-label"
                             id="demo-multiple-chip"
                             multiple
                             value={blockedCountry}
                             onChange={handleBlockedCountriesChange}
-                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                            input={<OutlinedInput id="select-multiple-chip" label="Blocked Countries" />}
                             renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                 {selected.map((value) => (
@@ -543,7 +539,7 @@ export default function AddNewPipe({open}) {
                             multiple
                             value={modeofPayment}
                             onChange={handleModeofPaymentChange}
-                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                            input={<OutlinedInput id="select-multiple-chip" label="Mode of Payment" />}
                             renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                 {selected.map((value) => (

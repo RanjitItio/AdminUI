@@ -21,16 +21,16 @@ const UserCreateForm = React.lazy(()=> import('../Users/userCreateForm'));
 const MerchantCreateForm = React.lazy(()=> import('../Merchant/MerchantCreateForm'));
 const AdminCreateForm = React.lazy(()=> import('../Users/AdminCreateForm'));
 const AllTransactionData = React.lazy(()=> import('../Transaction/AllTransaction'));
-const AllDepositDetail = React.lazy(()=> import('../Transaction/Deposit'));
+// const AllDepositDetail = React.lazy(()=> import('../Transaction/Deposit'));
 const Withdrawls = React.lazy(()=> import('../Transaction/Withdrawl'));
-const TransferDetails = React.lazy(()=> import('../Transaction/Transfer'));
+// const TransferDetails = React.lazy(()=> import('../Transaction/Transfer'));
 const CurrencyExchange = React.lazy(()=> import('../Transaction/CurrencyExchange'));
 const RequestPaymentDetails = React.lazy(()=> import('../Transaction/RequestPayment'));
 const MerchantPaymentDetails = React.lazy(()=> import('../MerchantTransactions/merchantPayment'));
 const CryptoSentDetails = React.lazy(()=> import('../Transaction/CryptoSent'));
 const CryptoReceivedDetails = React.lazy(()=> import('../Transaction/CryptoReceived'));
 const Logout = React.lazy(()=> import('../Authentication/Logout'));
-const DepositUpdate = React.lazy(()=> import('../Transaction/DepositUpdate'));
+// const DepositUpdate = React.lazy(()=> import('../Transaction/DepositUpdate'));
 const WithdrawUpdate = React.lazy(()=> import('../Transaction/WithdrawUpdate'));
 const CurrencyTable = React.lazy(()=> import('../Currency/Currency'));
 const AddCurrency = React.lazy(()=> import('../Currency/AddCurrency'));
@@ -48,7 +48,7 @@ const AllTransactionDetail = React.lazy(()=> import('../Transaction/AllTransacti
 const TicketAddForm = React.lazy(()=> import('../Ticket/TicketAdd'));
 const TicketUpdateForm = React.lazy(()=> import('../Ticket/TicketUpdate'));
 const ActivityLogData = React.lazy(()=> import('../ActivityLog/ActivityLog'));
-const TransferTransactionDetail = React.lazy(()=> import('../Transaction/TransferDetails'));
+// const TransferTransactionDetail = React.lazy(()=> import('../Transaction/TransferDetails'));
 const MerchantProfile = React.lazy(()=> import('../Merchant/MerchantProfile'));
 const MerchantPaymentUpdate = React.lazy(()=> import('../MerchantTransactions/paymentUpdate'));
 const MerchantBankDetail = React.lazy(()=> import('../Users/Bank/BankDetails'));
@@ -166,15 +166,14 @@ const AuthRoutes = () => {
 
                           <Route exact path="/admin/all-transaction/detial/" element={<AllTransactionDetail open={open} />} ></Route>
 
-                          <Route exact path="/admin/deposits/" element={<AllDepositDetail open={open} />} ></Route>
                           <Route exact path="/admin/withdrawls/" element={<Withdrawls open={open} />} ></Route>
-                          <Route exact path="/admin/transfers/" element={<TransferDetails open={open} />} ></Route>
-                          <Route exact path="/admin/transfers/details/" element={<TransferTransactionDetail open={open} />} ></Route>
+                          {/* <Route exact path="/admin/transfers/" element={<TransferDetails open={open} />} ></Route> */}
+                          {/* <Route exact path="/admin/transfers/details/" element={<TransferTransactionDetail open={open} />} ></Route> */}
                           <Route exact path="/admin/exchanges/" element={<CurrencyExchange open={open} />} ></Route>
                           <Route exact path="/admin/request-payments/" element={<RequestPaymentDetails open={open} />} ></Route>
                           <Route exact path="/admin/crypto-sent-transactions/" element={<CryptoSentDetails open={open} />} ></Route>
                           <Route exact path="/admin/crypto-received-transactions/" element={<CryptoReceivedDetails open={open} />} ></Route>
-                          <Route exact path="/admin/deposits/update/" element={<DepositUpdate open={open} />} ></Route>
+                          
                           <Route exact path="/admin/withdrawls/update/" element={<WithdrawUpdate open={open} />} ></Route>
                           <Route exact path="/currencies/" element={<CurrencyTable open={open} />} ></Route>
                           <Route exact path="/currencies/add/" element={<AddCurrency open={open} />} ></Route>

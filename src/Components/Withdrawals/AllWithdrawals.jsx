@@ -1,6 +1,7 @@
 import { Main, DrawerHeader } from "../Content";
 import { Table, TableBody, TableCell, TableContainer, 
-    TableHead, TableRow, Paper, Box } from '@mui/material';
+    TableHead, TableRow, Paper, Box, Grid, 
+    Typography} from '@mui/material';
 import { useEffect, useState } from 'react';
 import axiosInstance from "../Authentication/axios";
 import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
@@ -13,6 +14,14 @@ import Button from "../MUIBaseButton/button";
 import { useNavigate } from "react-router-dom";
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { useTheme } from '@mui/material/styles';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { useMediaQuery } from '@mui/material';
+import Select from '@mui/joy/Select';
+import Option from '@mui/joy/Option';
+import {Button as JoyButton} from '@mui/joy';
+import FormControl from '@mui/material/FormControl';
 
 
 
@@ -21,12 +30,43 @@ import { saveAs } from 'file-saver';
 // All Merchant Withdrawal transactions of PG
 export default function AllMerchantPGWithdrawals({open}) {
     const navigate = useNavigate();
+    const theme    = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
     const [merchantWithdrawals, updateMerchantWithdrawals] = useState([]);  // All merchant withdrawals
     const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
     const [exportData, updateExportData] = useState([]); // Excel Data
-    const [totalRows, updateTotalRows]   = useState(0);
+    const [totalRows, updateTotalRows]   = useState(0);  // Paginated value
+    const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
+    const [filterDate, setFilterDate]        = useState('');  // Filter date state field
+    const [filterError, setFilterError]      = useState('');  // Error message of filter
+    const [filterData, updateFilterData]     = useState({
+        merchant_email: '',
+        WithdrawalCurrency: '',
+        withdrawalAmount: ''
+    });  // Filter filed data state
 
     const counPagination = Math.floor(totalRows);   // Total pagination count
+
+     /// Open close Filter fields
+     const handleToggleFilters = () => {
+        setShowFilters(!showFilters);
+    };
+
+     /// Get selected date range
+     const handleFilterDateChange = (e, newValue)=> {
+        setFilterDate(newValue)
+    };
+
+
+    // Get Filter Input field values
+    const handleFilterInputChange = (e)=> {
+        const { name, value } = e.target;
+        updateFilterData({
+            ...filterData,
+            [name]: value
+        })
+    };
 
 
     // Fetch all the merchant withdrawals
@@ -75,7 +115,7 @@ export default function AllMerchantPGWithdrawals({open}) {
 
             if (res.status === 200 && res.data.success === true) {
                 updateMerchantWithdrawals(res.data.merchant_withdrawal_search)
-            };
+            }
 
         }).catch((error)=> {
             console.log(error)
@@ -132,7 +172,7 @@ export default function AllMerchantPGWithdrawals({open}) {
           })
     };
 
- 
+
     // Get the paginated data
     const handleDownloadPaginatedData = (e, value)=> {
         let limit = 10;
@@ -150,26 +190,166 @@ export default function AllMerchantPGWithdrawals({open}) {
         })
     };
 
-    
+    // Get Filter data
+    const handleFilterData = ()=> {
+
+        axiosInstance.post(`/api/v4/admin/filter/merchant/withdrawals/`, {
+            date: filterDate,
+            email: filterData.merchant_email,
+            currency: filterData.WithdrawalCurrency,
+            amount: filterData.withdrawalAmount
+
+        }).then((res)=> {
+            // console.log(res)
+
+            if (res.status === 200 && res.data.success === true) {
+                updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
+                setFilterError('')
+            }
+
+        }).catch((error)=> {
+            // console.log(error)
+
+            if (error.response.data.message === 'No transaction found') {
+                setFilterError('No data found')
+            } else if (error.response.data.message === "Invalid Email") {
+                setFilterError('Invalid email address')
+            } else if (error.response.data.message === 'Invalid Currency') {
+                setFilterError('Invalid Currency')
+            } else {
+                setFilterError('')
+            };
+        })
+    };
+
+
     return (
         <Main open={open}>
             <DrawerHeader />
 
             <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}> 
-                <h5 style={{margin:9}}><b>All Merchant Withdrawals</b></h5>
-            <Box 
-                sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'start',
-                    alignItems: 'center',
-                    p:2
-                    }}>
-                <Input placeholder="Type in here…" onChange={handleSearchInputChange}/>
-                <IconButton aria-label="Example" onClick={handleSearch}>
-                    <SearchIcon color='primary' />
-                </IconButton>
-                <Button sx={{mx:1}} onClick={handleDownloadWithdrawals}>Export</Button>
-            </Box>
+                {/* <h5 style={{margin:9}}><b>All Merchant Withdrawals</b></h5> */}
+                
+                <Box 
+                    sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        p:2,
+                        // flexDirection:{
+                        //     xs:'column', 
+                        //     sm:'row',
+                        //     }
+                        }}>
+                            <Typography 
+                               variant="h5"
+                               sx={{
+                                fontSize: {
+                                    xs:'0.9rem',
+                                    sm:'1.1rem',
+                                    md:'1.3rem'
+                                },
+                                margin:0
+                               }}
+                            >
+                                <b>All Merchant Withdrawals</b>
+                            </Typography>
+                    {/* <div style={{ display: 'flex', alignItems: 'center', marginBottom: isSmallScreen ? '16px' : '0'}}>
+                        <Input placeholder="Type in here…" onChange={handleSearchInputChange} />
+
+                        <IconButton aria-label="Example" onClick={handleSearch}>
+                            <SearchIcon color='primary' />
+                        </IconButton>
+                    </div> */}
+
+                    {/* For small screen sizes */}
+                    {isSmallScreen ? (
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <IconButton aria-label="export" onClick={handleDownloadWithdrawals}>
+                                    <FileDownloadIcon color='primary' />
+                                </IconButton>
+
+                                <IconButton aria-label="filter" onClick={handleToggleFilters}>
+                                    <FilterAltIcon color='primary' />
+                                </IconButton>
+                            </div>
+                            ) : (
+                            <div>
+                                <Button sx={{ mx: 1 }} onClick={handleDownloadWithdrawals}>Export</Button>
+                                <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
+                            </div>
+                        )}
+                </Box>
+
+                {/* Hidden Filter fields */}
+                {showFilters && (
+                    <>
+                    <Grid container p={2} justifyContent="flex-end" spacing={2}>
+                        <Grid item xs={12} sm={6} md={2.5}>
+                            <FormControl fullWidth>
+                            <Select
+                                label="date"
+                                placeholder='Date'
+                                id="date"
+                                name="date"
+                                value={filterDate}
+                                onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                            >
+                                <Option value="Today">Today</Option>
+                                <Option value="Yesterday">Yesterday</Option>
+                                <Option value="ThisWeek">This Week</Option>
+                                <Option value="ThisMonth">This Month</Option>
+                                <Option value="PreviousMonth">Previous Month</Option>
+                            </Select>
+                            </FormControl>
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={2.5}>
+                            <FormControl fullWidth>
+                                <Input 
+                                placeholder="Merchant Email" 
+                                name='merchant_email'
+                                value={filterData.merchant_email}
+                                onChange={handleFilterInputChange}
+                                />
+                            </FormControl>
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={3}>
+                            <FormControl fullWidth>
+                                <Input 
+                                    name='WithdrawalCurrency'
+                                    value={filterData.WithdrawalCurrency}
+                                    onChange={handleFilterInputChange}
+                                    placeholder="Withdrawal Currency" 
+                                    />
+                            </FormControl>
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={3}>
+                            <FormControl fullWidth>
+                                <Input 
+                                    placeholder="Withdrawal Amount"
+                                    name='withdrawalAmount'
+                                    value={filterData.withdrawalAmount} 
+                                    onChange={handleFilterInputChange}
+                                    />
+                            </FormControl>
+                        </Grid>
+                        
+                        <Grid item xs={12} sm={6} md={1}>
+                            <FormControl fullWidth>
+                                <JoyButton 
+                                onClick={handleFilterData}
+                                >
+                                    Submit
+                                </JoyButton>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                    <small style={{color:'red'}}>{filterError && filterError}</small>
+                </>
+                )}
 
             <TableContainer>
             <Box sx={{ maxHeight: '90rem', overflowY: 'auto' }}>
