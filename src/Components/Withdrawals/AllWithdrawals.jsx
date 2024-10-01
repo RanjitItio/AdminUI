@@ -41,7 +41,7 @@ export default function AllMerchantPGWithdrawals({open}) {
     const [filterError, setFilterError]      = useState('');  // Error message of filter
     const [filterData, updateFilterData]     = useState({
         merchant_email: '',
-        WithdrawalCurrency: '',
+        status: '',
         withdrawalAmount: ''
     });  // Filter filed data state
 
@@ -209,7 +209,7 @@ export default function AllMerchantPGWithdrawals({open}) {
         axiosInstance.post(`/api/v4/admin/filter/merchant/withdrawals/`, {
             date: filterDate,
             email: filterData.merchant_email,
-            currency: filterData.WithdrawalCurrency,
+            status: filterData.status,
             amount: filterData.withdrawalAmount
 
         }).then((res)=> {
@@ -331,10 +331,10 @@ export default function AllMerchantPGWithdrawals({open}) {
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
                                 <Input 
-                                    name='WithdrawalCurrency'
-                                    value={filterData.WithdrawalCurrency}
+                                    name='status'
+                                    value={filterData.status}
                                     onChange={handleFilterInputChange}
-                                    placeholder="Withdrawal Currency" 
+                                    placeholder="Status" 
                                     />
                             </FormControl>
                         </Grid>
