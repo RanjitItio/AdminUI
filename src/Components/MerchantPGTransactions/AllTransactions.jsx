@@ -275,6 +275,17 @@ export default function AllMerchantPGTransactions({open}) {
         }
     };
 
+    // Reset Filter Method
+    const handleResetFilter = ()=> {
+        setFilterDate('');
+        updateFilterData({
+            transaction_id: '',
+            transaction_amount: '',
+            business_name: ''
+        })
+        handlePaginatedData('e', 1);
+    };
+
     // Get Filter data
     const handleFilterData = ()=> {
         if(modeName === 'Production Mode') {
@@ -418,7 +429,7 @@ export default function AllMerchantPGTransactions({open}) {
                         </FormControl>
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={6} md={2.5}>
                         <FormControl fullWidth>
                             <Input 
                                 name='transaction_amount'
@@ -429,7 +440,7 @@ export default function AllMerchantPGTransactions({open}) {
                         </FormControl>
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={6} md={2.5}>
                         <FormControl fullWidth>
                             <Input 
                                 placeholder="Business Name"
@@ -440,12 +451,22 @@ export default function AllMerchantPGTransactions({open}) {
                         </FormControl>
                     </Grid>
                     
-                    <Grid item xs={12} sm={6} md={1}>
+                    <Grid item xs={6} sm={6} md={1}>
                         <FormControl fullWidth>
                             <JoyButton 
                             onClick={handleFilterData}
                             >
                                 Submit
+                            </JoyButton>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={6} sm={6} md={1}>
+                        <FormControl fullWidth>
+                            <JoyButton 
+                            onClick={handleResetFilter}
+                            >
+                                Reset
                             </JoyButton>
                         </FormControl>
                     </Grid>

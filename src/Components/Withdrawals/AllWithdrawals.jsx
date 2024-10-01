@@ -9,7 +9,6 @@ import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
 import Pagination from '@mui/material/Pagination';
 import Input from '@mui/joy/Input';
-import SearchIcon from '@mui/icons-material/Search';
 import Button from "../MUIBaseButton/button";
 import { useNavigate } from "react-router-dom";
 import ExcelJS from 'exceljs';
@@ -47,6 +46,7 @@ export default function AllMerchantPGWithdrawals({open}) {
     });  // Filter filed data state
 
     const counPagination = Math.floor(totalRows);   // Total pagination count
+
 
      /// Open close Filter fields
      const handleToggleFilters = () => {
@@ -174,7 +174,7 @@ export default function AllMerchantPGWithdrawals({open}) {
 
 
     // Get the paginated data
-    const handleDownloadPaginatedData = (e, value)=> {
+    const handlePaginatedData = (e, value)=> {
         let limit = 10;
         let offset = (value - 1) * limit;
 
@@ -189,6 +189,19 @@ export default function AllMerchantPGWithdrawals({open}) {
 
         })
     };
+
+
+    // Reset Filter Method
+    const handleResetFilter = ()=> {
+        setFilterDate('');
+        updateFilterData({
+            merchant_email:'',
+            WithdrawalCurrency: '',
+            withdrawalAmount: ''
+        })
+        handlePaginatedData('e', 1)
+    };
+
 
     // Get Filter data
     const handleFilterData = ()=> {
@@ -315,7 +328,7 @@ export default function AllMerchantPGWithdrawals({open}) {
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3}>
+                        <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
                                 <Input 
                                     name='WithdrawalCurrency'
@@ -326,7 +339,7 @@ export default function AllMerchantPGWithdrawals({open}) {
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3}>
+                        <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
                                 <Input 
                                     placeholder="Withdrawal Amount"
@@ -337,12 +350,22 @@ export default function AllMerchantPGWithdrawals({open}) {
                             </FormControl>
                         </Grid>
                         
-                        <Grid item xs={12} sm={6} md={1}>
+                        <Grid item xs={6} sm={6} md={1}>
                             <FormControl fullWidth>
                                 <JoyButton 
                                 onClick={handleFilterData}
                                 >
                                     Submit
+                                </JoyButton>
+                            </FormControl>
+                        </Grid>
+
+                        <Grid item xs={6} sm={6} md={1}>
+                            <FormControl fullWidth>
+                                <JoyButton 
+                                onClick={handleResetFilter}
+                                >
+                                    Reset
                                 </JoyButton>
                             </FormControl>
                         </Grid>
@@ -352,7 +375,7 @@ export default function AllMerchantPGWithdrawals({open}) {
                 )}
 
             <TableContainer>
-            <Box sx={{ maxHeight: '90rem', overflowY: 'auto' }}>
+            <Box sx={{ maxHeight: '130rem', overflowY: 'auto' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead sx={{position:'sticky', zIndex: 1, top: 0, backgroundColor: '#e2f4fb'}}>
                         <TableRow>
@@ -422,7 +445,7 @@ export default function AllMerchantPGWithdrawals({open}) {
             <Box sx={{display:'flex', justifyContent:'space-between'}}>
                 <Pagination 
                     count={counPagination} 
-                    onChange={(e, value)=> {handleDownloadPaginatedData(e, value)}}
+                    onChange={(e, value)=> {handlePaginatedData(e, value)}}
                     color="primary" 
                     sx={{mb:2, mt:2}} 
                     />

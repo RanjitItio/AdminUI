@@ -8,7 +8,6 @@ import Pagination from '@mui/material/Pagination';
 import { useNavigate } from 'react-router-dom';
 import Button from '../MUIBaseButton/button';
 import Input from '@mui/joy/Input';
-import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
@@ -20,6 +19,7 @@ import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import {Button as JoyButton} from '@mui/joy';
 import FormControl from '@mui/material/FormControl';
+
 
 
 
@@ -97,6 +97,7 @@ export default function MerchantBusinessTable({open}) {
         }
       };
 
+
     /// Method to handle Edit button click event
     const handleMerchantEdit = (merchant, user, group, currency)=> {
         const merchant_detail  = merchant
@@ -106,11 +107,13 @@ export default function MerchantBusinessTable({open}) {
 
         navigate('/admin/merchant/details/', {state: {merchant: merchant_detail, user: user_details, group: group_details, currency: currency_details}})
     };
+
     
     // Input search field
     const handleSearchedText = (e)=> {
             updateSearchedText(e.target.value);
     };
+
 
     // Fetch searched data
     const handleSearchedData = ()=> {
@@ -126,6 +129,7 @@ export default function MerchantBusinessTable({open}) {
 
         })
     };
+
 
     // Get all the pagination data
     const handlePaginationData = (e, value)=> {
@@ -143,6 +147,7 @@ export default function MerchantBusinessTable({open}) {
 
         })
     };
+
 
     // Export to Excel
     const exportToExcel = async ()=> {
@@ -183,6 +188,17 @@ export default function MerchantBusinessTable({open}) {
             console.log(error)
 
           })
+    };
+
+    // Reset Filter inputs
+    const handelFilterReset = ()=> {
+        setFilterDate('');
+        updateFilterData({
+            status: '',
+            merchantName: '',
+            business_name: ''
+        })
+        handlePaginationData('e', 1);
     };
 
 
@@ -296,7 +312,7 @@ export default function MerchantBusinessTable({open}) {
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3}>
+                        <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
                                 <Input 
                                     name='business_name'
@@ -307,7 +323,7 @@ export default function MerchantBusinessTable({open}) {
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3}>
+                        <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
                                 <Input 
                                     placeholder="Status"
@@ -318,12 +334,22 @@ export default function MerchantBusinessTable({open}) {
                             </FormControl>
                         </Grid>
                         
-                        <Grid item xs={12} sm={6} md={1}>
+                        <Grid item xs={6} sm={6} md={1}>
                             <FormControl fullWidth>
                                 <JoyButton 
                                 onClick={handleFilterData}
                                 >
                                     Submit
+                                </JoyButton>
+                            </FormControl>
+                        </Grid>
+
+                        <Grid item xs={6} sm={6} md={1}>
+                            <FormControl fullWidth>
+                                <JoyButton 
+                                onClick={handelFilterReset}
+                                >
+                                    Reset
                                 </JoyButton>
                             </FormControl>
                         </Grid>

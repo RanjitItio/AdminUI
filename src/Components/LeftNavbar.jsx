@@ -51,7 +51,7 @@ const UserNavContent = [
   icon: <AccountCircleOutlinedIcon />},
 
   { text: 'Transactions', subItems: [
-    {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all/uat/transaction/'},
+    {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/fiat/transactions/'},
     {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
     {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
     {text: '-Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},

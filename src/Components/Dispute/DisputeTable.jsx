@@ -366,7 +366,7 @@ export default function DisputeTable({headCells, rows, TableName}) {
         <Paper sx={{ width: '100%', height: '90px', mb: 2 }} className='shadow rounded border border-primary'>
             <FormControl sx={{minWidth: 170, marginTop: '14px', marginLeft: '10px'}} >
                 <InputLabel id="demo-simple-select-helper-label">Pick a date range</InputLabel>
-                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={dateFormat} label="DateFormat" onChange={handleDateFormatChange}>
+                <Select  id="demo-simple-select" value={dateFormat} label="Pick a date range" onChange={handleDateFormatChange}>
                     {dateFormats.map((format, index)=> (
                         <MenuItem key={index} value={format.value}>{format.label}</MenuItem>
                     ))}

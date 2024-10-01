@@ -20,7 +20,7 @@ const AllAdminUsers = React.lazy(()=> import('../Users/AdminTable'));
 const UserCreateForm = React.lazy(()=> import('../Users/userCreateForm'));
 const MerchantCreateForm = React.lazy(()=> import('../Merchant/MerchantCreateForm'));
 const AdminCreateForm = React.lazy(()=> import('../Users/AdminCreateForm'));
-const AllTransactionData = React.lazy(()=> import('../Transaction/AllTransaction'));
+// const AllTransactionData = React.lazy(()=> import('../Transaction/AllTransaction'));
 // const AllDepositDetail = React.lazy(()=> import('../Transaction/Deposit'));
 const Withdrawls = React.lazy(()=> import('../Transaction/Withdrawl'));
 // const TransferDetails = React.lazy(()=> import('../Transaction/Transfer'));
@@ -160,7 +160,7 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/create-admin/" element={<AdminCreateForm open={open} />} ></Route>
 
                           {/* Transactions */}
-                          <Route exact path="/admin/all/uat/transaction/" element={<AllTransactionData open={open} />} ></Route>
+                          {/* <Route exact path="/admin/all/uat/transaction/" element={<AllTransactionData open={open} />} ></Route> */}
                           <Route exact path="/admin/all-transaction/" element={<AllMerchantPGTransactions open={open} />} ></Route>
                           <Route exact path="/admin/update/merchant/pg/transactions/" element={<MerchantPGTransactionUpdate open={open} />} ></Route>
 

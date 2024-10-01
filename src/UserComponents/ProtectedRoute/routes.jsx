@@ -6,9 +6,10 @@ const UserDashBoard = React.lazy(()=> import('../Dashboard/Dashboard'));
 const UsersTable    = React.lazy(()=> import('../Users/Users'));
 const UserTabs      = React.lazy(()=> import('../Users/UserTabs'));
 const AllDeposites  = React.lazy(()=> import('../Deposit/AllDeposits'));
-const UpdateDepositTransaction  = React.lazy(()=> import('../Deposit/UpdateDeposit'));
-const AllTransferTransactions  = React.lazy(()=> import('../Transfer/AllTransfers'));
+const UpdateDepositTransaction   = React.lazy(()=> import('../Deposit/UpdateDeposit'));
+const AllTransferTransactions    = React.lazy(()=> import('../Transfer/AllTransfers'));
 const UpdateTransferTransaction  = React.lazy(()=> import('../Transfer/UpdateTransfer'));
+const AllFiatTransactions        = React.lazy(()=> import('../FiatTransactions/AllTransactions'));
 
 
 
@@ -69,6 +70,14 @@ export const AdditionalAuthenticatedRoutes = (open)=> {
       element: (
         <Suspense fallback={<CircularProgress />}>
             <UpdateTransferTransaction open={open} />
+        </Suspense>
+      )
+    },
+    {
+      path: '/admin/fiat/transactions/',
+      element: (
+        <Suspense fallback={<CircularProgress />}>
+            <AllFiatTransactions open={open} />
         </Suspense>
       )
     },

@@ -1,15 +1,16 @@
-import { Main, DrawerHeader } from "../Content";
+import { Main, DrawerHeader } from "../../Components/Content";
 import { Table, TableBody, TableCell, TableContainer, 
-    TableHead, TableRow, Paper, Box, Grid, Typography } from '@mui/material';
+    TableHead, TableRow, Paper, Box, Grid, 
+    Typography} from '@mui/material';
 import { useEffect, useState } from 'react';
-import axiosInstance from "../Authentication/axios";
+import axiosInstance from "../../Components/Authentication/axios";
 import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
 import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
 import Pagination from '@mui/material/Pagination';
 import Input from '@mui/joy/Input';
-// import SearchIcon from '@mui/icons-material/Search';
-import Button from "../MUIBaseButton/button";
+import SearchIcon from '@mui/icons-material/Search';
+import Button from "../../Components/MUIBaseButton/button";
 import { useNavigate } from "react-router-dom";
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
@@ -26,57 +27,56 @@ import FormControl from '@mui/material/FormControl';
 
 
 
-// Get all the merchant Refunds
-export default function MerchantRefunds({open}) {
+// All Fiat Transactions
+export default function AllFiatTransactions({open}) {
     const navigate = useNavigate();
     const theme    = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const [merchantRefunds, updateMerchantRefunds] = useState([]); // Refund Transactions
-    const [totalRowCount, setTotalRowCount]        = useState(0);
-    const [exportData, updateExportData] = useState([]); // Excel Data
+    const [merchantWithdrawals, updateMerchantWithdrawals] = useState([]);  // All merchant withdrawals
     const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
+    const [exportData, updateExportData] = useState([]); // Excel Data
+    const [totalRows, updateTotalRows]   = useState(0);  // Paginated value
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
     const [filterData, updateFilterData]     = useState({
         merchant_email: '',
-        refundCurrency: '',
-        refundAmount: ''
+        WithdrawalCurrency: '',
+        withdrawalAmount: ''
     });  // Filter filed data state
 
-    let countPagination = Math.ceil(totalRowCount); 
+    const counPagination = Math.floor(totalRows);   // Total pagination count
 
-    /// Open close Filter fields
-    const handleToggleFilters = () => {
+     /// Open close Filter fields
+     const handleToggleFilters = () => {
         setShowFilters(!showFilters);
     };
 
-    // Update Filter fields data
-    const handleUpdateFilterInput = (e)=> {
-        const {name, value} = e.target;
+     /// Get selected date range
+     const handleFilterDateChange = (e, newValue)=> {
+        setFilterDate(newValue)
+    };
 
+
+    // Get Filter Input field values
+    const handleFilterInputChange = (e)=> {
+        const { name, value } = e.target;
         updateFilterData({
             ...filterData,
             [name]: value
         })
     };
 
-    // Update selected date of Filters
-    const handleFilterDateChange = (e, newValue) => {
-        setFilterDate(newValue)
-    };
 
-
-    // Fetch all the Merchant refund transactions
+    // Fetch all the merchant withdrawals
     useEffect(() => {
-      axiosInstance.get(`api/v6/admin/merchant/refunds/`).then((res)=> {
+      axiosInstance.get(`/api/v4/admin/merchant/pg/withdrawals/`).then((res)=> {
         // console.log(res)
-
-        if (res.status === 200 && res.data.success === true){
-            updateMerchantRefunds(res.data.admin_merchant_refunds)
-            setTotalRowCount(res.data.total_count)
-        }
+        if (res.status === 200 && res.data.success === true) {
+            updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
+            updateTotalRows(res.data.total_row_count)
+        };
 
       }).catch((error)=> {
         console.log(error)
@@ -84,28 +84,12 @@ export default function MerchantRefunds({open}) {
       })
     }, []);
 
-    // Method to redirect to Update page
-    const handleRedirectUpdateRefund = (refunds)=> {
-        navigate('/admin/merchant/update/refunds/', {state: {merchantRefunds: refunds}})
+
+    // Method to redirect the user to Edit page
+    const handleEditClicked = (withdrawalRequests)=> {
+        navigate('/admin/merchant/update/withdrawals/', {state: {withdrawal: withdrawalRequests}})
     };
 
-    // Fetch all paginated data
-    const handlePaginatedData = (e, value)=> {
-        let limit = 10;
-        let offset = (value - 1) * limit;
-
-        axiosInstance.get(`api/v6/admin/merchant/refunds/?limit=${limit}&offset=${offset}`).then((res)=> {
-            // console.log(res)
-            if (res.status === 200 && res.data.success === true) {
-                updateMerchantRefunds(res.data.admin_merchant_refunds)
-                setTotalRowCount(res.data.total_count)
-            };
-
-        }).catch((error)=> {
-            console.log(error);
-
-        })
-    };
 
     // Change status color according to the transaction status
     const getStatusColor = (status)=> {
@@ -121,6 +105,28 @@ export default function MerchantRefunds({open}) {
             default:
                 return 'primary'
         }
+    };
+
+
+    // Search Withdrawal Transactions
+    const handleSearch = ()=> {
+        axiosInstance.get(`api/v4/admin/merchant/withdrawal/search/?query=${searchQuery}`).then((res)=> {
+            // console.log(res)
+
+            if (res.status === 200 && res.data.success === true) {
+                updateMerchantWithdrawals(res.data.merchant_withdrawal_search)
+            }
+
+        }).catch((error)=> {
+            console.log(error)
+
+        })
+    };
+
+
+    // Input Search values
+    const handleSearchInputChange = (e)=> {
+        updateSearchQuery(e.target.value);
     };
 
 
@@ -140,86 +146,73 @@ export default function MerchantRefunds({open}) {
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            saveAs(blob, 'merchantRefunds.xlsx');
+            saveAs(blob, 'withdrawals.xlsx');
         } else {
             console.log('No Data available to Download')
         }
     };
 
-     // Download all withdrawal requests
-     const handleDownloadRefunds = ()=> {
-        axiosInstance.get(`/api/v6/admin/merchant/pg/export/refunds/`).then((res)=> {
+
+    // Download all withdrawal requests
+    const handleDownloadWithdrawals = ()=> {
+        axiosInstance.get(`/api/v4/admin/merchant/pg/export/withdrawals/`).then((res)=> {
             // console.log(res)
     
             if (res.status === 200 && res.data.success === true) {
-                updateExportData(res.data.admin_merchant_refunds_export);
+                updateExportData(res.data.AdminMerchantExportWithdrawalRequests);
                 
                 setTimeout(() => {
                     exportToExcel();
                 }, 1000);
-                
             };
     
           }).catch((error)=> {
             console.log(error)
+    
           })
     };
 
-    // Search Refund Transactions
-    const handleSearch = ()=> {
-        axiosInstance.get(`api/v6/admin/merchant/refund/search/?query=${searchQuery}`).then((res)=> {
-            // console.log(res)
 
+    // Get the paginated data
+    const handleDownloadPaginatedData = (e, value)=> {
+        let limit = 10;
+        let offset = (value - 1) * limit;
+
+        axiosInstance.get(`api/v4/admin/merchant/pg/withdrawals/?limit=${limit}&offset=${offset}`).then((res)=> {
+            // console.log(res)
             if (res.status === 200 && res.data.success === true) {
-                updateMerchantRefunds(res.data.searched_merchant_refund)
-            }
+                updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
+            };
 
         }).catch((error)=> {
-            console.log(error)
+            console.log(error);
 
         })
     };
 
+    // Get Filter data
+    const handleFilterData = ()=> {
 
-    // Input Search values
-    const handleSearchInputChange = (e)=> {
-        updateSearchQuery(e.target.value);
-    };
-
-    // Reset Filter Inputs Method
-    const handleResetFilter = ()=> {
-        setFilterDate('');
-        updateFilterData({
-            merchant_email: '',
-            refundCurrency: '',
-            refundAmount: ''
-        })
-        handlePaginatedData('e', 1);
-    };
-
-
-
-    // Get all the Filtered data
-    const handleGetFilterData = ()=> {
-        axiosInstance.post(`/api/v6/admin/filter/merchant/refunds/`, {
+        axiosInstance.post(`/api/v4/admin/filter/merchant/withdrawals/`, {
             date: filterDate,
             email: filterData.merchant_email,
-            currency: filterData.refundCurrency,
-            amount: filterData.refundAmount
+            currency: filterData.WithdrawalCurrency,
+            amount: filterData.withdrawalAmount
 
         }).then((res)=> {
             // console.log(res)
 
             if (res.status === 200 && res.data.success === true) {
-                updateMerchantRefunds(res.data.admin_merchant_filter_refunds)
+                updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
                 setFilterError('')
-            }   
+            }
+
         }).catch((error)=> {
             // console.log(error)
 
             if (error.response.data.message === 'No transaction found') {
                 setFilterError('No data found')
-            } else if (error.response.data.message === 'Invalid email address') {
+            } else if (error.response.data.message === "Invalid Email") {
                 setFilterError('Invalid email address')
             } else if (error.response.data.message === 'Invalid Currency') {
                 setFilterError('Invalid Currency')
@@ -229,34 +222,37 @@ export default function MerchantRefunds({open}) {
         })
     };
 
-
     return (
         <Main open={open}>
             <DrawerHeader />
 
             <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}> 
-
+                {/* <h5 style={{margin:9}}><b>All Merchant Withdrawals</b></h5> */}
+                
                 <Box 
                     sx={{ 
                         display: 'flex', 
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         p:2,
+                        // flexDirection:{
+                        //     xs:'column', 
+                        //     sm:'row',
+                        //     }
                         }}>
                             <Typography 
-                                variant="h5"
-                                sx={{
+                               variant="h5"
+                               sx={{
                                 fontSize: {
                                     xs:'0.9rem',
                                     sm:'1.1rem',
                                     md:'1.3rem'
                                 },
                                 margin:0
-                                }}
+                               }}
                             >
-                                <b>All Merchant Refunds</b>
+                                <b>All FIAT Transactions</b>
                             </Typography>
-
                     {/* <div style={{ display: 'flex', alignItems: 'center', marginBottom: isSmallScreen ? '16px' : '0'}}>
                         <Input placeholder="Type in here…" onChange={handleSearchInputChange} />
 
@@ -268,7 +264,7 @@ export default function MerchantRefunds({open}) {
                     {/* For small screen sizes */}
                     {isSmallScreen ? (
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <IconButton aria-label="export" onClick={handleDownloadRefunds}>
+                                <IconButton aria-label="export" onClick={handleDownloadWithdrawals}>
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
@@ -278,7 +274,7 @@ export default function MerchantRefunds({open}) {
                             </div>
                             ) : (
                             <div>
-                                <Button sx={{ mx: 1 }} onClick={handleDownloadRefunds}>Export</Button>
+                                <Button sx={{ mx: 1 }} onClick={handleDownloadWithdrawals}>Export</Button>
                                 <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
                             </div>
                         )}
@@ -313,49 +309,39 @@ export default function MerchantRefunds({open}) {
                                 placeholder="Merchant Email" 
                                 name='merchant_email'
                                 value={filterData.merchant_email}
-                                onChange={handleUpdateFilterInput}
+                                onChange={handleFilterInputChange}
                                 />
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={2.5}>
+                        <Grid item xs={12} sm={6} md={3}>
                             <FormControl fullWidth>
                                 <Input 
-                                    name='refundCurrency'
-                                    value={filterData.refundCurrency}
-                                    onChange={handleUpdateFilterInput}
-                                    placeholder="Refund Currency" 
+                                    name='WithdrawalCurrency'
+                                    value={filterData.WithdrawalCurrency}
+                                    onChange={handleFilterInputChange}
+                                    placeholder="Withdrawal Currency" 
                                     />
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={2.5}>
+                        <Grid item xs={12} sm={6} md={3}>
                             <FormControl fullWidth>
                                 <Input 
-                                    placeholder="Refund Amount"
-                                    name='refundAmount'
-                                    value={filterData.refundAmount} 
-                                    onChange={handleUpdateFilterInput}
+                                    placeholder="Withdrawal Amount"
+                                    name='withdrawalAmount'
+                                    value={filterData.withdrawalAmount} 
+                                    onChange={handleFilterInputChange}
                                     />
                             </FormControl>
                         </Grid>
                         
-                        <Grid item xs={6} sm={6} md={1}>
+                        <Grid item xs={12} sm={6} md={1}>
                             <FormControl fullWidth>
                                 <JoyButton 
-                                onClick={handleGetFilterData}
+                                onClick={handleFilterData}
                                 >
                                     Submit
-                                </JoyButton>
-                            </FormControl>
-                        </Grid>
-
-                        <Grid item xs={6} sm={6} md={1}>
-                            <FormControl fullWidth>
-                                <JoyButton 
-                                onClick={handleResetFilter}
-                                >
-                                    Reset
                                 </JoyButton>
                             </FormControl>
                         </Grid>
@@ -372,63 +358,57 @@ export default function MerchantRefunds({open}) {
                             <TableCell><b>Sl No.</b></TableCell>
                             <TableCell align="center"><b>Merchant</b></TableCell>
                             <TableCell align="center"><b>Merchant Email</b></TableCell>
+                            <TableCell align="center"><b>Withdrawal Amount</b></TableCell>
                             <TableCell align="center"><b>Date</b></TableCell>
                             <TableCell align="center"><b>Time</b></TableCell>
-                            <TableCell align="center"><b>Transaction Amount</b></TableCell>
-                            <TableCell align="center"><b>Refund Amount</b></TableCell>
                             <TableCell align="center"><b>Status</b></TableCell>
                             <TableCell align="center"><b>Edit</b></TableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody>
-                        {merchantRefunds.map((refunds, index) => (
+                        {merchantWithdrawals.map((transaction, index) => (
                             <TableRow
                             key={index}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 {/* Sl No. Column */}
                                 <TableCell scope="row">
-                                    {refunds?.id}
+                                    {transaction?.id}
                                 </TableCell>
 
                                 {/* Merchant Name Column */}
                                 <TableCell scope="row" align='left'>
-                                    {refunds?.merchant_name}
+                                    {transaction?.merchant_name}
                                 </TableCell>
 
                                 {/* Merchant Email Column */}
                                 <TableCell  scope="row" align='center'>
-                                    {refunds?.merchant_email}
+                                    {transaction?.merchant_email}
+                                </TableCell>
+
+                                {/* Withdrawal Amount */}
+                                <TableCell component="th" scope="row" align="center">
+                                    {transaction?.withdrawalAmount} {transaction?.withdrawalCurrency}
                                 </TableCell>
 
                                 {/* Date Column */}
                                 <TableCell component="th" scope="row" align="center">
-                                    {refunds?.createdAt.split('T')[0]}
+                                    {transaction?.createdAt.split('T')[0]}
                                 </TableCell>
 
                                 {/* Time Column */}
                                 <TableCell component="th" scope="row" align="center">
-                                    {refunds?.createdAt.split('T')[1]}
-                                </TableCell>
-
-                                {/* Transaction Amount Amount */}
-                                <TableCell component="th" scope="row" align="center">
-                                    {refunds?.transaction_amount} {refunds?.transaction_currency}
-                                </TableCell>
-                                
-                                {/* Refund Amount */}
-                                <TableCell component="th" scope="row" align="center">
-                                    {refunds?.amount} {refunds?.currency}
+                                    {transaction?.createdAt.split('T')[1]}
                                 </TableCell>
 
                                 {/* Status Column */}
                                 <TableCell component="th" scope="row" align="center">
-                                    <Chip label={refunds?.status} variant="outlined" color={getStatusColor(refunds.status)} />
+                                    <Chip label={transaction?.status} variant="outlined" color={getStatusColor(transaction?.status)} />
                                 </TableCell>
 
                                 <TableCell component="th" scope="row" align="center">
-                                    <IconButton aria-label="Example" onClick={()=> {handleRedirectUpdateRefund(refunds)}}>
+                                    <IconButton aria-label="Example" onClick={()=> {handleEditClicked(transaction)}}>
                                         <ModeEditSharpIcon color='secondary'/>
                                     </IconButton>
                                 </TableCell>
@@ -440,8 +420,8 @@ export default function MerchantRefunds({open}) {
 
             <Box sx={{display:'flex', justifyContent:'space-between'}}>
                 <Pagination 
-                    count={countPagination} 
-                    onChange={(e, value)=> {handlePaginatedData(e, value);}}
+                    count={counPagination} 
+                    onChange={(e, value)=> {handleDownloadPaginatedData(e, value)}}
                     color="primary" 
                     sx={{mb:2, mt:2}} 
                     />
