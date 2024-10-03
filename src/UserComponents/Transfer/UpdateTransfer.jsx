@@ -1,5 +1,5 @@
 import TextField from '@mui/material/TextField';
-import { Paper, Typography, Grid } from '@mui/material';
+import { Paper, Typography, Grid, Box } from '@mui/material';
 import { Main, DrawerHeader } from '../../Components/Content';
 import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
@@ -9,6 +9,7 @@ import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import axiosInstance from '../../Components/Authentication/axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 
@@ -19,12 +20,13 @@ export default function UpdateTransferTransaction({open}) {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const Transaction    = location.state?.transactionID 
-    const TransactionID  = parseInt(Transaction.transaction.id)
+    const Transaction     = location.state?.transactionID 
+    const transactionData  = Transaction?.transaction || '';
+    const TransactionID    = parseInt(transactionData.id)
 
 
     const [transactionDetail, updateTransactionDetail] = useState([]);    // Transaction Detail
-    const [statusValue, updateStatusValue]             = useState('');   // Selectd status value
+    const [statusValue, updateStatusValue]             = useState(transactionData?.status || '');   // Selectd status value
     const [successMessage, SetSuccessMessage]          = useState('');   // Success Message
     const [loader, setLoader]                          = useState(true); 
     const [disableButton, setDisablebutton]            = useState(false); // Diable Button
@@ -33,10 +35,11 @@ export default function UpdateTransferTransaction({open}) {
 
     // Get the transaction details from API
     useEffect(() => {
-        axiosInstance.get(`/api/2/admin/transfer/transaction/details/${TransactionID}/`).then((res)=> {
+        axiosInstance.get(`/api/v2/admin/transfer/transaction/details/${TransactionID}/`).then((res)=> {
           if (res.status === 200) {
             // console.log(res)
             updateTransactionDetail(res.data.transfer_transaction_data[0])
+            setLoader(false);
           }
 
         }).catch((error)=> {
@@ -64,6 +67,8 @@ export default function UpdateTransferTransaction({open}) {
 
       // Update Transaction Satatus
       const handleTransactionStatusUpdate = () => {
+        setDisablebutton(true);
+
         axiosInstance.put(`/api/v4/update/transfer/transactions/`, {
             status:         statusValue,
             transaction_id: TransactionID
@@ -72,7 +77,8 @@ export default function UpdateTransferTransaction({open}) {
             // console.log(res)
             if (res.status === 200) {
                 SetSuccessMessage('Transaction updated Successfully')
-
+                setDisablebutton(false);
+                
                 setTimeout(() => {
                     navigate('/admin/transfers/');
                 }, 1000);
@@ -80,6 +86,7 @@ export default function UpdateTransferTransaction({open}) {
 
         }).catch((error)=> {
             console.log(error)
+            setDisablebutton(false);
 
             if (error.response.data.msg === 'Sender donot have sufficient balance in wallet'){
               setError('Donot have sufficient wallet in Sender account')
@@ -107,6 +114,18 @@ export default function UpdateTransferTransaction({open}) {
     // Get selected status
     const handleUpdateStatusValue = (e, newValue) => {
         updateStatusValue(newValue)
+    };
+
+    // Until data has not fetched
+    if (loader) {
+        return (
+            <Main open={open}>
+            <DrawerHeader />
+                <Box sx={{ display: 'flex', justifyContent:'center', marginTop:'20%' }}>
+                    <CircularProgress />
+                </Box>
+            </Main>
+        )
     };
 
 
@@ -182,7 +201,7 @@ export default function UpdateTransferTransaction({open}) {
                     </Grid>
 
                 </Grid>
-                <Grid container spacing={1} sx={{mb:2}}>
+                <Grid container spacing={2} sx={{mb:2}}>
                     <Grid item xs={12}>
                         <Typography 
                             variant="p" 
@@ -237,8 +256,20 @@ export default function UpdateTransferTransaction({open}) {
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='text' 
+                            id="transactionFee" 
+                            label="Transaction Fee" 
+                            variant="outlined" 
+                            fullWidth 
+                            name='transactionFee'
+                            value={`${transactionData?.transaction_fee || ''} ${transactionDetail?.sender_currency?.name || ''}`}
+                            />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <TextField 
+                            type='text' 
                             id="payoutAmount" 
-                            label="Payout Amount" 
+                            label="Total Amount" 
                             variant="outlined" 
                             fullWidth 
                             name='payoutAmount'

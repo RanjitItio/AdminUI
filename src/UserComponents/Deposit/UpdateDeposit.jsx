@@ -1,5 +1,5 @@
 import TextField from '@mui/material/TextField';
-import { Paper, Typography, Grid } from '@mui/material';
+import { Paper, Typography, Grid, Box } from '@mui/material';
 import { Main, DrawerHeader } from '../../Components/Content';
 import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
@@ -9,6 +9,7 @@ import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import axiosInstance from '../../Components/Authentication/axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 
@@ -22,9 +23,10 @@ export default function UpdateDepositTransaction({open}) {
 
     const [transactionDetail, updateTransactionDetail] = useState([]);  // Transaction Data
     const [successMessage, SetSuccessMessage]          = useState('');  // Success message
-    const [statusValue, updateStatusValue]             = useState(transactionDetail?.status || '');  // Selected status
+    const [statusValue, updateStatusValue]             = useState(Transaction?.status || '');  // Selected status
     const [disableButton, setDisablebutton]            = useState(false);
-    const [error, setError] = useState('');  // Error Message
+    const [error, setError]                            = useState('');  // Error Message
+    const [loader, setLoader]                          = useState(true);
     
 
     // Get the transaction details from API
@@ -32,6 +34,7 @@ export default function UpdateDepositTransaction({open}) {
         axiosInstance.get(`api/v2/admin/deposit/transaction/detail/${TransactionID}/`).then((res)=> {
           if (res.status === 200) {
               updateTransactionDetail(res.data.deposite_data[0])
+              setLoader(false);
           }
 
         }).catch((error)=> {
@@ -61,8 +64,7 @@ export default function UpdateDepositTransaction({open}) {
                     setTimeout(() => {
                         navigate('/admin/deposits/')
                     }, 1000);
-                    
-                };
+                }
     
             }).catch((error)=> {
                 console.log(error)
@@ -88,8 +90,7 @@ export default function UpdateDepositTransaction({open}) {
                 } else {
                     setError('');
                     setDisablebutton(false);
-                };
-    
+                }
             });
         };
     };
@@ -98,6 +99,18 @@ export default function UpdateDepositTransaction({open}) {
     // Update status
     const handleUpdateStatusValue = (e, newValue) => {
         updateStatusValue(newValue)
+    };
+
+    // Untill API data not fetched
+    if (loader) {
+        return (
+            <Main open={open}>
+            <DrawerHeader />
+                <Box sx={{ display: 'flex', justifyContent:'center', marginTop:'20%' }}>
+                    <CircularProgress />
+                </Box>
+            </Main>
+        )
     };
 
 
@@ -156,12 +169,24 @@ export default function UpdateDepositTransaction({open}) {
                             value={`${transactionDetail?.amount || ''} ${transactionDetail?.transaction_currency || ''}`}
                             />
                     </Grid>
+                   
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <TextField 
+                            type='text' 
+                            id="transactionFee" 
+                            label="Transaction Fee" 
+                            variant="outlined" 
+                            fullWidth 
+                            name='transactionFee'
+                            value={`${transactionDetail?.transaction_fee || ''} ${transactionDetail?.transaction_currency || ''}`}
+                            />
+                    </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='text' 
                             id="payoutAmount" 
-                            label="Payout Amount" 
+                            label="Total Amount" 
                             variant="outlined" 
                             fullWidth 
                             name='payoutAmount'
@@ -202,7 +227,7 @@ export default function UpdateDepositTransaction({open}) {
                             value={transactionDetail?.created_At?.split('T')[1] || ''}
                             />
                     </Grid>
-
+                    
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='text' 
@@ -214,7 +239,7 @@ export default function UpdateDepositTransaction({open}) {
                             value={`${transactionDetail?.converted_amount || ''} ${transactionDetail?.converted_currency || ''}`}
                             />
                     </Grid>
-                    
+
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <Select
                             placeholder="Select Status"

@@ -197,7 +197,6 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/merchant/payment/detail/" element={<MerchantBankDetail open={open} />} ></Route>
                           <Route exact path="/admin/merchant-payments/" element={<MerchantPaymentDetails open={open} />} ></Route>
 
-
                           <Route exact path="/admin/users/transaction/details/" element={<UserTransactionDetail open={open} />} ></Route>
                           {/* <Route exact path="/admin/users/add/" element={<Profile open={open} />} ></Route> */}
                           <Route exact path="/admin/update/" element={<AdminUpdateForm open={open} />} ></Route>

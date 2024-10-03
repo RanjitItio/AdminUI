@@ -33,7 +33,7 @@ export default function AllFiatTransactions({open}) {
     const theme    = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const [merchantWithdrawals, updateMerchantWithdrawals] = useState([]);  // All merchant withdrawals
+    const [allTransactions, updateAllTransactions] = useState([]);  // All merchant withdrawals
     const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
     const [exportData, updateExportData] = useState([]); // Excel Data
     const [totalRows, updateTotalRows]   = useState(0);  // Paginated value
@@ -46,12 +46,15 @@ export default function AllFiatTransactions({open}) {
         withdrawalAmount: ''
     });  // Filter filed data state
 
+
     const counPagination = Math.floor(totalRows);   // Total pagination count
+
 
      /// Open close Filter fields
      const handleToggleFilters = () => {
         setShowFilters(!showFilters);
     };
+
 
      /// Get selected date range
      const handleFilterDateChange = (e, newValue)=> {
@@ -69,12 +72,15 @@ export default function AllFiatTransactions({open}) {
     };
 
 
-    // Fetch all the merchant withdrawals
+    // Fetch all the user Transactions
     useEffect(() => {
-      axiosInstance.get(`/api/v4/admin/merchant/pg/withdrawals/`).then((res)=> {
+      axiosInstance.get(`/api/v4/admin/fiat/transactions/`).then((res)=> {
         // console.log(res)
         if (res.status === 200 && res.data.success === true) {
-            updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
+            const sortedTransactions = res.data.all_fiat_transactions.sort((a,b)=> {
+                return new Date(b.data.created_At) - new Date(a.data.created_At)
+            })
+            updateAllTransactions(sortedTransactions)
             updateTotalRows(res.data.total_row_count)
         };
 
@@ -86,8 +92,43 @@ export default function AllFiatTransactions({open}) {
 
 
     // Method to redirect the user to Edit page
-    const handleEditClicked = (withdrawalRequests)=> {
-        navigate('/admin/merchant/update/withdrawals/', {state: {withdrawal: withdrawalRequests}})
+    const handleEditClicked = (transaction)=> {
+        let depositData = {}
+        let transferData = []
+
+        depositData = {
+            "id": 66,
+            "transaction_id": transaction.data.transaction_id,
+            "created_At": transaction.data.created_At,
+            "amount": transaction.data.amount,
+            "transaction_fee": transaction.data.transaction_fee,
+            "payout_amount": transaction.data.payout_amount,
+            "status": transaction.data.status,
+            "payment_mode": transaction.data.payment_mode,
+            "is_completed": transaction.data.is_completed,
+            "user_name": transaction.user.first_name + transaction.user.lastname,
+            "user_email": transaction.user.email,
+            "transaction_currency": transaction.currency.name
+        }
+
+        const newData = {
+            transaction: {
+                "id": transaction.data.id,
+                "status": transaction.data.status,
+                "transaction_fee": transaction.data.transaction_fee
+            }
+        };
+
+        transferData.push(newData);
+
+        if (transaction.type === 'Transfer') {
+            navigate('/admin/transfers/details/', {state: {transactionID: transferData[0]}})
+
+        } else if (transaction.type === 'Deposit') {
+            navigate('/admin/deposits/update/', {state: {transactionID: depositData}})
+        } else {
+            console.log('')
+        };
     };
 
 
@@ -154,7 +195,7 @@ export default function AllFiatTransactions({open}) {
 
 
     // Download all withdrawal requests
-    const handleDownloadWithdrawals = ()=> {
+    const handleDownloadTransactions = ()=> {
         axiosInstance.get(`/api/v4/admin/merchant/pg/export/withdrawals/`).then((res)=> {
             // console.log(res)
     
@@ -174,21 +215,24 @@ export default function AllFiatTransactions({open}) {
 
 
     // Get the paginated data
-    const handleDownloadPaginatedData = (e, value)=> {
+    const handlePaginatedData = (e, value)=> {
         let limit = 10;
         let offset = (value - 1) * limit;
 
-        axiosInstance.get(`api/v4/admin/merchant/pg/withdrawals/?limit=${limit}&offset=${offset}`).then((res)=> {
+        axiosInstance.get(`/api/v4/admin/fiat/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
             // console.log(res)
             if (res.status === 200 && res.data.success === true) {
-                updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
+                const sortedTransactions = res.data.all_fiat_transactions.sort((a,b)=> {
+                    return new Date(b.data.created_At) - new Date(a.data.created_At)
+                })
+                updateAllTransactions(sortedTransactions)
             };
 
         }).catch((error)=> {
             console.log(error);
-
         })
     };
+
 
     // Get Filter data
     const handleFilterData = ()=> {
@@ -203,6 +247,7 @@ export default function AllFiatTransactions({open}) {
             // console.log(res)
 
             if (res.status === 200 && res.data.success === true) {
+                // const soterdTransactions = res.data.
                 updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
                 setFilterError('')
             }
@@ -222,6 +267,7 @@ export default function AllFiatTransactions({open}) {
         })
     };
 
+
     return (
         <Main open={open}>
             <DrawerHeader />
@@ -235,10 +281,6 @@ export default function AllFiatTransactions({open}) {
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         p:2,
-                        // flexDirection:{
-                        //     xs:'column', 
-                        //     sm:'row',
-                        //     }
                         }}>
                             <Typography 
                                variant="h5"
@@ -264,7 +306,7 @@ export default function AllFiatTransactions({open}) {
                     {/* For small screen sizes */}
                     {isSmallScreen ? (
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <IconButton aria-label="export" onClick={handleDownloadWithdrawals}>
+                                <IconButton aria-label="export">
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
@@ -274,7 +316,7 @@ export default function AllFiatTransactions({open}) {
                             </div>
                             ) : (
                             <div>
-                                <Button sx={{ mx: 1 }} onClick={handleDownloadWithdrawals}>Export</Button>
+                                <Button sx={{ mx: 1 }}>Export</Button>
                                 <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
                             </div>
                         )}
@@ -358,7 +400,8 @@ export default function AllFiatTransactions({open}) {
                             <TableCell><b>Sl No.</b></TableCell>
                             <TableCell align="center"><b>Merchant</b></TableCell>
                             <TableCell align="center"><b>Merchant Email</b></TableCell>
-                            <TableCell align="center"><b>Withdrawal Amount</b></TableCell>
+                            <TableCell align="center"><b>Type</b></TableCell>
+                            <TableCell align="center"><b>Amount</b></TableCell>
                             <TableCell align="center"><b>Date</b></TableCell>
                             <TableCell align="center"><b>Time</b></TableCell>
                             <TableCell align="center"><b>Status</b></TableCell>
@@ -367,44 +410,49 @@ export default function AllFiatTransactions({open}) {
                     </TableHead>
 
                     <TableBody>
-                        {merchantWithdrawals.map((transaction, index) => (
+                        {allTransactions.map((transaction, index) => (
                             <TableRow
                             key={index}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 {/* Sl No. Column */}
                                 <TableCell scope="row">
-                                    {transaction?.id}
+                                    {transaction?.data?.id || ''}
                                 </TableCell>
 
                                 {/* Merchant Name Column */}
                                 <TableCell scope="row" align='left'>
-                                    {transaction?.merchant_name}
+                                    {transaction?.user?.first_name || ''} {transaction?.user?.lastname || ''}
                                 </TableCell>
 
                                 {/* Merchant Email Column */}
                                 <TableCell  scope="row" align='center'>
-                                    {transaction?.merchant_email}
+                                    {transaction?.user?.email}
                                 </TableCell>
 
-                                {/* Withdrawal Amount */}
+                                {/* Transaction Type Column */}
+                                <TableCell  scope="row" align='center'>
+                                    {transaction?.type || ''}
+                                </TableCell>
+
+                                {/* Amount */}
                                 <TableCell component="th" scope="row" align="center">
-                                    {transaction?.withdrawalAmount} {transaction?.withdrawalCurrency}
+                                    {transaction?.data?.amount || ''} {transaction?.currency?.name || ''}
                                 </TableCell>
 
                                 {/* Date Column */}
                                 <TableCell component="th" scope="row" align="center">
-                                    {transaction?.createdAt.split('T')[0]}
+                                    {transaction?.data?.created_At?.split('T')[0] || ''}
                                 </TableCell>
 
                                 {/* Time Column */}
                                 <TableCell component="th" scope="row" align="center">
-                                    {transaction?.createdAt.split('T')[1]}
+                                    {transaction?.data?.created_At?.split('T')[1] || ''}
                                 </TableCell>
 
                                 {/* Status Column */}
                                 <TableCell component="th" scope="row" align="center">
-                                    <Chip label={transaction?.status} variant="outlined" color={getStatusColor(transaction?.status)} />
+                                    <Chip label={transaction?.data?.status} variant="outlined" color={getStatusColor(transaction?.data?.status)} />
                                 </TableCell>
 
                                 <TableCell component="th" scope="row" align="center">
@@ -421,7 +469,7 @@ export default function AllFiatTransactions({open}) {
             <Box sx={{display:'flex', justifyContent:'space-between'}}>
                 <Pagination 
                     count={counPagination} 
-                    onChange={(e, value)=> {handleDownloadPaginatedData(e, value)}}
+                    onChange={(e, value)=> {handlePaginatedData(e, value)}}
                     color="primary" 
                     sx={{mb:2, mt:2}} 
                     />
