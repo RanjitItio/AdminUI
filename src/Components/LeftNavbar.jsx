@@ -54,7 +54,8 @@ const UserNavContent = [
     {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/fiat/transactions/'},
     {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
     {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
-    {text: '-Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
+    {text: 'Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
+    {text: 'Exchange Money', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/all/exchange/money/'},
   ],
   icon: <ReceiptLongOutlinedIcon />},
 
