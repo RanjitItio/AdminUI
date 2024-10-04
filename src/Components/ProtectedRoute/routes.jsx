@@ -22,7 +22,7 @@ const MerchantCreateForm = React.lazy(()=> import('../Merchant/MerchantCreateFor
 const AdminCreateForm = React.lazy(()=> import('../Users/AdminCreateForm'));
 // const AllTransactionData = React.lazy(()=> import('../Transaction/AllTransaction'));
 // const AllDepositDetail = React.lazy(()=> import('../Transaction/Deposit'));
-const Withdrawls = React.lazy(()=> import('../Transaction/Withdrawl'));
+// const Withdrawls = React.lazy(()=> import('../Transaction/Withdrawl'));
 // const TransferDetails = React.lazy(()=> import('../Transaction/Transfer'));
 const CurrencyExchange = React.lazy(()=> import('../Transaction/CurrencyExchange'));
 const RequestPaymentDetails = React.lazy(()=> import('../Transaction/RequestPayment'));
@@ -31,7 +31,7 @@ const CryptoSentDetails = React.lazy(()=> import('../Transaction/CryptoSent'));
 const CryptoReceivedDetails = React.lazy(()=> import('../Transaction/CryptoReceived'));
 const Logout = React.lazy(()=> import('../Authentication/Logout'));
 // const DepositUpdate = React.lazy(()=> import('../Transaction/DepositUpdate'));
-const WithdrawUpdate = React.lazy(()=> import('../Transaction/WithdrawUpdate'));
+// const WithdrawUpdate = React.lazy(()=> import('../Transaction/WithdrawUpdate'));
 const CurrencyTable = React.lazy(()=> import('../Currency/Currency'));
 const AddCurrency = React.lazy(()=> import('../Currency/AddCurrency'));
 const TicketTable = React.lazy(()=> import('../Ticket/Ticket'));
@@ -166,7 +166,8 @@ const AuthRoutes = () => {
 
                           <Route exact path="/admin/all-transaction/detial/" element={<AllTransactionDetail open={open} />} ></Route>
 
-                          <Route exact path="/admin/withdrawls/" element={<Withdrawls open={open} />} ></Route>
+                          {/* <Route exact path="/admin/withdrawls/" element={<Withdrawls open={open} />} ></Route> */}
+                          {/* <Route exact path="/admin/withdrawls/update/" element={<WithdrawUpdate open={open} />} ></Route> */}
                           {/* <Route exact path="/admin/transfers/" element={<TransferDetails open={open} />} ></Route> */}
                           {/* <Route exact path="/admin/transfers/details/" element={<TransferTransactionDetail open={open} />} ></Route> */}
                           <Route exact path="/admin/exchanges/" element={<CurrencyExchange open={open} />} ></Route>
@@ -174,7 +175,6 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/crypto-sent-transactions/" element={<CryptoSentDetails open={open} />} ></Route>
                           <Route exact path="/admin/crypto-received-transactions/" element={<CryptoReceivedDetails open={open} />} ></Route>
                           
-                          <Route exact path="/admin/withdrawls/update/" element={<WithdrawUpdate open={open} />} ></Route>
                           <Route exact path="/currencies/" element={<CurrencyTable open={open} />} ></Route>
                           <Route exact path="/currencies/add/" element={<AddCurrency open={open} />} ></Route>
                           <Route exact path="/tickets/" element={<TicketTable open={open} />} ></Route>

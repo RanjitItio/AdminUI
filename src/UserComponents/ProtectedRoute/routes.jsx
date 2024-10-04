@@ -10,6 +10,8 @@ const UpdateDepositTransaction   = React.lazy(()=> import('../Deposit/UpdateDepo
 const AllTransferTransactions    = React.lazy(()=> import('../Transfer/AllTransfers'));
 const UpdateTransferTransaction  = React.lazy(()=> import('../Transfer/UpdateTransfer'));
 const AllFiatTransactions        = React.lazy(()=> import('../FiatTransactions/AllTransactions'));
+const FiatWithdrawals            = React.lazy(()=> import('../Withdrawals/AllWithdrawals'));
+const UpdateFIATWithdrawals      = React.lazy(()=> import('../Withdrawals/UpdateWithdrawal'));
 
 
 
@@ -78,6 +80,22 @@ export const AdditionalAuthenticatedRoutes = (open)=> {
       element: (
         <Suspense fallback={<CircularProgress />}>
             <AllFiatTransactions open={open} />
+        </Suspense>
+      )
+    },
+    {
+      path: '/admin/withdrawls/',
+      element: (
+        <Suspense fallback={<CircularProgress />}>
+            <FiatWithdrawals open={open} />
+        </Suspense>
+      )
+    },
+    {
+      path: '/admin/withdrawls/update/',
+      element: (
+        <Suspense fallback={<CircularProgress />}>
+            <UpdateFIATWithdrawals open={open} />
         </Suspense>
       )
     },

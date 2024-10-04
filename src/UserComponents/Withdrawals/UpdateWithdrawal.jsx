@@ -1,6 +1,6 @@
+import { Main, DrawerHeader } from "../../Components/Content";
 import TextField from '@mui/material/TextField';
 import { Paper, Typography, Grid, Box } from '@mui/material';
-import { Main, DrawerHeader } from '../../Components/Content';
 import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import BackupIcon from '@mui/icons-material/Backup';
@@ -13,33 +13,38 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 
 
-// Update Deposit Transactions
-export default function UpdateDepositTransaction({open}) {
 
+// Update FIAT withdrawal by admin
+export default function UpdateFIATWithdrawals({open}) {
     const location = useLocation();
     const navigate = useNavigate();
-    const Transaction    = location.state.transactionID 
-    const TransactionID = parseInt(Transaction.id)
+    const Withdrawal = location.state?.withdrawal || '';
+    const WithdrawalID = Withdrawal?.id || '';
 
-    const [transactionDetail, updateTransactionDetail] = useState([]);  // Transaction Data
+
+    const [withdrawalDetail, updateWithdrawalDetail]   = useState([]);  // Transaction Data
     const [successMessage, SetSuccessMessage]          = useState('');  // Success message
-    const [statusValue, updateStatusValue]             = useState(Transaction?.status || '');  // Selected status
+    const [statusValue, updateStatusValue]             = useState(Withdrawal?.status || '');  // Selected status
     const [disableButton, setDisablebutton]            = useState(false);
     const [error, setError]                            = useState('');  // Error Message
     const [loader, setLoader]                          = useState(true);
-    
+
 
     // Get the transaction details from API
     useEffect(() => {
-        axiosInstance.get(`api/v2/admin/deposit/transaction/detail/${TransactionID}/`).then((res)=> {
+        axiosInstance.post(`/api/v5/admin/fiat/withdrawals/?id=${WithdrawalID}`).then((res)=> {
+            // console.log(res.data.withdrawal_data)
           if (res.status === 200) {
-              updateTransactionDetail(res.data.deposite_data[0])
+              updateWithdrawalDetail(res.data.withdrawal_data[0])
               setLoader(false);
           }
 
         }).catch((error)=> {
           console.log(error.response)
 
+          if (error.response.status === 401) {
+            navigate('/signin/')
+          }
         })
       }, []);
     
@@ -52,44 +57,35 @@ export default function UpdateDepositTransaction({open}) {
         } else {
             setDisablebutton(true);
 
-            axiosInstance.put(`/api/v4/admin/update/deposit/transaction/`, {
-                status: statusValue,
-                transaction_id: TransactionID
-    
+            axiosInstance.put(`/api/v5/admin/fiat/withdrawals/`, {
+                withdrawal_id: WithdrawalID,
+                converted_amount: parseFloat(withdrawalDetail.debit_amount),
+                status: statusValue
+
             }).then((res)=> {
                 // console.log(res)
                 if (res.status === 200)  {
                     SetSuccessMessage('Transaction Updated Successfully')
-    
+
                     setTimeout(() => {
-                        navigate('/admin/deposits/')
+                        navigate('/admin/withdrawls/')
                     }, 1000);
                 }
-    
+
             }).catch((error)=> {
                 console.log(error)
-    
-                if (error.response.data.message === 'Requested transaction not available') {
-                    setError('Invalid Transaction')
-                    setDisablebutton(false);
-                } else if (error.response.data.message === 'Transaction is completed') {
-                    setError('Transaction has been completed Can not re-perform this action');
-                    setDisablebutton(false);
-                } else if (error.response.data.message === 'Sender donot have a selected wallet') {
-                    setError('Selected wallet not available');
-                    setDisablebutton(false);
-                } else if (error.response.data.message === 'Error calling external API') {
-                    alert('Currency Conversion API Failed');
-                    setDisablebutton(false);
-                } else if (error.response.data.message === 'Currency API Error') {
-                    alert('Currency Conversion API Failed');
-                    setDisablebutton(false);
-                } else if (error.response.data.message === 'Invalid Curency Converter API response') {
-                    alert('Currency Conversion API Failed');
-                    setDisablebutton(false);
+                setDisablebutton(false);
+
+                if (error.response.data.message === 'User do not have any existing wallet') {
+                    setError('user do not have existing wallet')
+                } else if (error.response.data.message === 'Do not have sufficient balance in wallet') {
+                    setError('Do not have sufficient balance in Wallet');
+                } else if (error.response.status === 401) {
+                    navigate('/signin/')
+                } else if (error.response.data.message === 'Transaction Already Approved can not perform this action') {
+                    setError('Transaction already approved can not perform this action again')
                 } else {
-                    setError('');
-                    setDisablebutton(false);
+                    setError('')
                 }
             });
         };
@@ -100,6 +96,7 @@ export default function UpdateDepositTransaction({open}) {
     const handleUpdateStatusValue = (e, newValue) => {
         updateStatusValue(newValue)
     };
+
 
     // Untill API data not fetched
     if (loader) {
@@ -130,7 +127,7 @@ export default function UpdateDepositTransaction({open}) {
                 }}
                 >
                 <Typography variant="h5" gutterBottom sx={{mb:3}}>
-                    Update User Deposite
+                    Update User's Withdrawal Request
                 </Typography>
 
                 <Grid container spacing={3}>
@@ -142,7 +139,7 @@ export default function UpdateDepositTransaction({open}) {
                             variant="outlined" 
                             fullWidth
                             name='userName'
-                            value={transactionDetail?.user_name || ''}
+                            value={withdrawalDetail?.user_name || ''}
                             />
                     </Grid>
 
@@ -154,55 +151,67 @@ export default function UpdateDepositTransaction({open}) {
                             variant="outlined" 
                             fullWidth 
                             name='userEmail'
-                            value={transactionDetail?.user_email || ''}
+                            value={withdrawalDetail?.user_email || ''}
                             />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='text' 
-                            id="depositAmount" 
-                            label="Deposite Amount" 
+                            id="withdrawalAmount" 
+                            label="Withdrawal Amount" 
                             variant="outlined" 
                             fullWidth 
-                            name='depositeAmount'
-                            value={`${transactionDetail?.amount || ''} ${transactionDetail?.transaction_currency || ''}`}
-                            />
-                    </Grid>
-                   
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <TextField 
-                            type='text' 
-                            id="transactionFee" 
-                            label="Transaction Fee" 
-                            variant="outlined" 
-                            fullWidth 
-                            name='transactionFee'
-                            value={`${transactionDetail?.transaction_fee || ''} ${transactionDetail?.transaction_currency || ''}`}
+                            name='withdrawalAmount'
+                            value={`${withdrawalDetail?.withdrawal_amount || ''} ${withdrawalDetail?.withdrawal_currency || ''}`}
                             />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='text' 
-                            id="payoutAmount" 
+                            id="withdrawalFee" 
+                            label="Withdrawal Fee" 
+                            variant="outlined" 
+                            fullWidth 
+                            name='withdrawalFee'
+                            value={`${withdrawalDetail?.withdrawal_fee || ''} ${withdrawalDetail?.withdrawal_currency || ''}`}
+                            />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <TextField 
+                            type='text' 
+                            id="totalAmount" 
                             label="Total Amount" 
                             variant="outlined" 
                             fullWidth 
-                            name='payoutAmount'
-                            value={`${transactionDetail?.payout_amount || ''} ${transactionDetail?.transaction_currency || ''}`}
+                            name='totalAmount'
+                            value={`${withdrawalDetail?.total_amount || ''} ${withdrawalDetail?.withdrawal_currency || ''}`}
                             />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='text' 
-                            id="paymentMode" 
-                            label="Payment Mode" 
+                            id="wallet" 
+                            label="From Wallet" 
                             variant="outlined" 
                             fullWidth 
-                            name='paymentMode'
-                            value={transactionDetail?.payment_mode || ''}
+                            name='wallet'
+                            value={withdrawalDetail?.wallet_currency || ''}
+                            />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <TextField 
+                            type='text' 
+                            id="walletBalance" 
+                            label="wallet Balance" 
+                            variant="outlined" 
+                            fullWidth 
+                            name='walletBalance'
+                            value={withdrawalDetail?.wallet_balance || ''}
                             />
                     </Grid>
 
@@ -213,7 +222,7 @@ export default function UpdateDepositTransaction({open}) {
                             variant="outlined" 
                             fullWidth 
                             name='date'
-                            value={transactionDetail?.created_At?.split('T')[0] || ''}
+                            value={withdrawalDetail?.created_At?.split('T')[0] || ''}
                             />
                     </Grid>
 
@@ -224,10 +233,10 @@ export default function UpdateDepositTransaction({open}) {
                             variant="outlined" 
                             fullWidth 
                             name='time'
-                            value={transactionDetail?.created_At?.split('T')[1] || ''}
+                            value={withdrawalDetail?.created_At?.split('T')[1] || ''}
                             />
                     </Grid>
-                    
+
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             type='text' 
@@ -236,7 +245,7 @@ export default function UpdateDepositTransaction({open}) {
                             variant="outlined"
                             fullWidth 
                             name='convertedAmount'
-                            value={`${transactionDetail?.converted_amount || ''} ${transactionDetail?.converted_currency || ''}`}
+                            value={`${withdrawalDetail?.debit_amount || ''} ${withdrawalDetail?.debit_currency || ''}`}
                             />
                     </Grid>
 

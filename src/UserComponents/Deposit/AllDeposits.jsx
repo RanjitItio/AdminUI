@@ -206,7 +206,7 @@ export default function AllDeposites({open}) {
                         margin:0
                         }}
                     >
-                        <b>All Deposites</b>
+                        <b>All FIAT Deposites</b>
                     </Typography>
                     {/* <div style={{ display: 'flex', alignItems: 'center', marginBottom: isSmallScreen ? '16px' : '0'}}>
                         <Input placeholder="Type in here…" onChange={handleSearchInputChange} />
