@@ -18,7 +18,7 @@ import Option from '@mui/joy/Option';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import TransactionGatewayLog from './GatewayLog';
 import IconButton from '@mui/material/IconButton';
-import { sq } from 'date-fns/locale';
+
 
 
 
@@ -77,6 +77,9 @@ export const Textarea = styled(BaseTextareaAutosize)(
   `,
   );
 
+
+
+
 // Update Transaction Data
 export default function MerchantPGTransactionUpdate({open}) {
     // Fetch the data from previous page
@@ -84,10 +87,10 @@ export default function MerchantPGTransactionUpdate({open}) {
     const navigate = useNavigate();
 
     // States data
-    const states = location?.state || ''
+    const states          = location?.state || ''
     const transactionData = states?.tranaction || ''
-    const merchantID = transactionData.merchant?.merchant_id || ''
-    const modeState  = states?.mode || ''
+    const merchantID      = transactionData.merchant?.merchant_id || ''
+    const modeState       = states?.mode || ''
 
 
     const initialFormData = {
@@ -156,6 +159,7 @@ export default function MerchantPGTransactionUpdate({open}) {
         }
     };
 
+
     // Submit data to API
     const SubmitFormData = ()=> {
         if (formData.transactionID === '') {
@@ -166,8 +170,7 @@ export default function MerchantPGTransactionUpdate({open}) {
             setError('Please provide amount')
         } else if (currency === '') {
             setError('Please provide Currency')
-        }  
-        else if (formData.merchantRedirectURL === '') {
+        } else if (formData.merchantRedirectURL === '') {
             setError('Please provide Merchant redirect url')
         } else if (formData.merchantCallbackURL === '') {
             setError('Please provide Merchant Webhook url')
@@ -193,7 +196,6 @@ export default function MerchantPGTransactionUpdate({open}) {
 
             }).then((res)=> {
                 // console.log(res)
-
                 if (res.status === 200 && res.data.success === true) {
                     setSuccessMessage('Updated Successfully')
 
@@ -210,11 +212,11 @@ export default function MerchantPGTransactionUpdate({open}) {
                     setError('Please assign transaction fee')
                 } else {
                     setError('')
-                }
+                };
             })
         }
     };
-    
+
     // Calculate Payout Balance
     const CalculatePayoutBalance = (transactionAmount, transactionFee)=> {
            const chargedFee = (transactionAmount / 100) * transactionFee

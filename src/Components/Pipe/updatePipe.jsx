@@ -24,7 +24,7 @@ import axiosInstance from '../Authentication/axios';
 
 
 // Select Active and Blocked Countries
-const ITEM_HEIGHT = 48;
+const ITEM_HEIGHT      = 48;
 const ITEM_PADDING_TOP = 8;
 
 const MenuProps = {
@@ -36,11 +36,13 @@ const MenuProps = {
   },
 };
 
+
 // Validate input url pattern
 const validateURL = (url)=> {
     const urlPattern = /^(https:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[-a-zA-Z0-9@:%._\+~#=]*)*(\?[;&a-zA-Z0-9@:%._\+~#=]*)?$/;
     return urlPattern.test(url);
 };
+
 
 const Countrynames = [
     'India',
@@ -55,6 +57,7 @@ const Countrynames = [
     'Austria',
   ];
 
+
   function getStyles(name, countryName, theme) {
     return {
       fontWeight:
@@ -65,7 +68,8 @@ const Countrynames = [
   };
 
 
-  // Function to extract names from types
+
+// Function to extract names from types
 const extractNames = (types) => {
     if (types && Array.isArray(types)) {
         return types.map(type => type.name);
@@ -73,8 +77,6 @@ const extractNames = (types) => {
     return [];
 };
   
-
-// Select active  and Blocked countries end
 
 const SettleMentPeriod = SettleMentPeriodDroDown;
 
@@ -232,6 +234,7 @@ export default function UpdatePipe({open}) {
         })
     }, [])
 
+
     // Update the currency value to the exact pipe currency when page loads
     useEffect(() => {
         if (currencies.length > 0 && location_pipe_data.process_curr) {
@@ -245,6 +248,7 @@ export default function UpdatePipe({open}) {
     }, [currencies,location_pipe_data.process_curr])
     
     
+
     // Method to capture all the field values
     const handleFormValueChange = (e)=> {
         const {name, value} = e.target;
@@ -312,6 +316,7 @@ export default function UpdatePipe({open}) {
          }))
     };
   
+
     // Update the form value after submission of form
     const handleFormSubmit = ()=> {
 
@@ -336,8 +341,8 @@ export default function UpdatePipe({open}) {
         } else if (processMode === 'Test' && formData.test_url === '') {
             setError('Please type Test url')
 
-        } else if (formData.header === '') {
-            setError('Please type header value')
+        } else if (settleMentPeriod === '') {
+            setError('Please Select Settlement Period')
 
         } else {
             setError('')

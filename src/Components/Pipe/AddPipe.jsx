@@ -260,6 +260,8 @@ export default function AddNewPipe({open}) {
         }
         else if (processMode === 'Test' && formData.test_url === '') {
             setError('Please type Test url')
+        } else if (settleMentPeriod === '') {
+            setError('Please type settlement period')
         }
          else {
             setError('')

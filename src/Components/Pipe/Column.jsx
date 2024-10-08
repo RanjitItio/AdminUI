@@ -48,6 +48,7 @@ export const AllPipeColumn = [
 
 
 export const SettleMentPeriodDroDown = [
+    {value: 0, label: ''},
     {value: 1, label: '1 Day'},
     {value: 2, label: '2 Days'},
     {value: 3, label: '3 Days'},

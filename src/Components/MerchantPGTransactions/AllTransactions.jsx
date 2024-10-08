@@ -106,7 +106,7 @@ export default function AllMerchantPGTransactions({open}) {
         }
      };
 
-    // Call API to fetch all the Transactions
+    // Call API to fetch all production Transactions
     useEffect(()=> {
         axiosInstance.get(`api/v2/admin/merchant/pg/transactions/`).then((res)=> {
             // console.log(res)
