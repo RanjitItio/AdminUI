@@ -136,7 +136,7 @@ export default function TransactionTable({userID}) {
       <Paper elevation={3} sx={{ width: '100%', mb: 2 }}>
       
         <TableContainer>
-        <Box sx={{ height: 450, overflowY: 'auto' }}>
+        <Box sx={{ maxHeight: 800, overflowY: 'auto' }}>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
@@ -155,7 +155,7 @@ export default function TransactionTable({userID}) {
             </TableHead>
 
             <TableBody>
-            {merchantTransaction.map((transaction, index)=> {
+              {merchantTransaction.map((transaction, index)=> {
               return (
                   <TableRow sx={{padding:5 }} key={index}>
                         <TableCell component="th"  scope="row" align="right">

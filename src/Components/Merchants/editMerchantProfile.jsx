@@ -146,7 +146,7 @@ export default function UpdateMerchantProfile({allGroup, groupValue, handleGroup
                                     <InputLabel>Group</InputLabel>
 
                                     <Select
-                                        value={groupValue}
+                                        value={groupValue ? groupValue : ''}
                                         onChange={(event)=> {handleGroupValueChange(event); }}
                                         label="Group"
                                         name='group'

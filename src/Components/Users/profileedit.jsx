@@ -18,6 +18,7 @@ import { WalletTableColumns, DisputeTableColumn, WalletsTableName,
  import UpdateMerchantKyc from '../Merchants/editMerchantKyc';
  import Alert from '@mui/material/Alert';
  import UpdateMerchantProfile from '../Merchants/editMerchantProfile';
+ import MerchantAccountBalance from '../Balance/MerchantBalance';
 
 
 
@@ -306,13 +307,13 @@ if (userDetails === '') {
 
                             {/* Tickets */}
                             <Nav.Item>
-                                <Nav.Link eventKey="tickets">Keys</Nav.Link>
+                                <Nav.Link eventKey="keys">Keys</Nav.Link>
                             </Nav.Item>
 
-                            {/* Disputes */}
-                            {/* <Nav.Item>
-                                <Nav.Link eventKey="disputes">Disputes</Nav.Link>
-                            </Nav.Item> */}
+                            {/* Balance */}
+                            <Nav.Item>
+                                <Nav.Link eventKey="balance">Balance</Nav.Link>
+                            </Nav.Item>
 
                         </Nav>
                     </Col>
@@ -362,7 +363,7 @@ if (userDetails === '') {
                         />
 
                 )} */}
-                {activeTab === 'tickets' && (
+                {activeTab === 'keys' && (
                     <MerchantKeys
                       merchantID={Kycdetails.user_id}
                     />
@@ -374,12 +375,11 @@ if (userDetails === '') {
                         userID={Kycdetails.user_id} 
                     />
                 )}
-                {activeTab === 'disputes' && (
-                    <DisputeTable 
-                        headCells={DisputeTableColumn} 
-                        TableName={DisputeTableName} 
-                        rows={DisputeData} 
-                        />
+                
+                {activeTab === 'balance' && (
+                    <MerchantAccountBalance 
+                        userID={Kycdetails.user_id}
+                    />
                 )}
 
                 {activeTab === 'pipes' && (
