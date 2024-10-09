@@ -137,7 +137,7 @@ export default function UpdatePipe({open}) {
     const [paymentMedium, setPaymentMedium]           = useState(location_pipe_data?.payment_medium || '');   // pipe Payment Medium state
     const [processMode, setProcessMode]               = useState(location_pipe_data?.process_mode || '');   // pipe process mode state
     const [connectionMode, setConnectionMode]         = useState(location_pipe_data?.connection_mode || '');   // pipe connection mode state
-    const [settleMentPeriod, setSettleMentPeriod]     = useState('');   // settlement period state
+    const [settleMentPeriod, setSettleMentPeriod]     = useState(location_pipe_data?.settlement_period || '');   // settlement period state
     const [formData, updateFormData]                  = useState(initialFormData);
     const [mopdata, updateMopData]                    = useState([]);
     const [modeofPayment, setModeofPayment]           = useState([]);
