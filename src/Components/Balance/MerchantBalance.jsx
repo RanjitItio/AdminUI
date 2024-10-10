@@ -521,17 +521,9 @@ export default function MerchantAccountBalance({userID}) {
                     width:'100%'
                 }}
             >
-                <Grid container spacing={2}>
+                <Grid container spacing={6} sx={{display:'flex', justifyContent:'center'}}>
                     {/* Settlement Period */}
-                    <Grid item xs={12} sm={6} md={4}>
-                        {/* <TextField
-                            fullWidth
-                            label="Settlement Period"
-                            variant="outlined"
-                            size="small"
-                            value={settlementPeriod}
-                            onChange={handlechangeSettlemenetPeriod}
-                        /> */}
+                    <Grid item xs={12} sm={4}>
                         <FormControl fullWidth size="small">
                             <InputLabel id="demo-select-small-label">Settlement Period</InputLabel>
                             <Select
@@ -555,7 +547,7 @@ export default function MerchantAccountBalance({userID}) {
                     </Grid>
                     
                     {/* Minimum Amount */}
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item xs={12} sm={4}>
                         <TextField
                             fullWidth
                             label="Minium Withdrawal Amount"
@@ -565,26 +557,6 @@ export default function MerchantAccountBalance({userID}) {
                             onChange={handlechangeWithdrawalAmount}
                         />
                     </Grid>
-
-                    {/* Cooling Period */}
-                    <Grid item xs={12} sm={6} md={4}>
-                        <TextField
-                            fullWidth
-                            label="Cooling Period"
-                            variant="outlined"
-                            size="small"
-                        />
-                    </Grid>
-
-                    {/* Frozen Rolling Balance */}
-                    {/* <Grid item xs={12} sm={6} md={4}>
-                        <TextField
-                            fullWidth
-                            label="Frozen Rolling Balance"
-                            variant="outlined"
-                            size="small"
-                        />
-                    </Grid> */}
                 </Grid>
 
                 {/* Action Buttons */}
