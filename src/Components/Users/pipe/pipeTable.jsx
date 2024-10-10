@@ -266,6 +266,7 @@ export default function UserPipeTable({headCells, TableName, userID  }) {
     setSelected(newSelected);
   };
 
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -279,7 +280,6 @@ export default function UserPipeTable({headCells, TableName, userID  }) {
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 

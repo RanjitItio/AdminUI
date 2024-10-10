@@ -29,18 +29,20 @@ export default function UpdateMerchantPipe({open, setOpen, merchantpipeUpdateDat
   const initialFormData = {
     pipe_name: '',
     fee: 0.00,
-    status: false
+    status: false,
+    coolingPeriod: '',
   };
 
+  
     // const [pipes, setPipes] = React.useState('');
-    const [formData, updateFormData] = React.useState(initialFormData);   // Form values state
-    const [allPipes, updateAllPipes] = React.useState([]);   // All pipe data fetched from API
-    const [pipeID, updatePipeID]     = useState(merchantpipeUpdateData.pipe_id || 0);
-    const [error, setError]          = React.useState('');
-    const [successMessage, setSuccessMessage] = React.useState('');
+    const [formData, updateFormData]          = useState(initialFormData);   // Form values state
+    const [allPipes, updateAllPipes]          = useState([]);   // All pipe data fetched from API
+    const [pipeID, updatePipeID]              = useState(merchantpipeUpdateData.pipe_id || 0);
+    const [error, setError]                   = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
-    const MerchantPipeID = merchantpipeUpdateData.merchant_pipe_id
-    const MerchantId     = merchantpipeUpdateData.merchant_id
+    const MerchantPipeID = merchantpipeUpdateData?.merchant_pipe_id
+    const MerchantId     = merchantpipeUpdateData?.merchant_id
     
 
     // Update the form value field
@@ -50,7 +52,8 @@ export default function UpdateMerchantPipe({open, setOpen, merchantpipeUpdateDat
         updateFormData({
           pipe_name: merchantpipeUpdateData.pipe_name || '',
           fee: (merchantpipeUpdateData.fee) || 0.00,
-          status: merchantpipeUpdateData.status || false
+          status: merchantpipeUpdateData.status || false,
+          coolingPeriod: merchantpipeUpdateData?.settlement_period || ''
         });
       
       if (merchantpipeUpdateData.pipe_id) {
@@ -82,7 +85,7 @@ export default function UpdateMerchantPipe({open, setOpen, merchantpipeUpdateDat
 
       updateFormData({
         ...formData,
-        [e.target.name]: e.target.value
+        [name]: value
       })
     };
   
@@ -124,7 +127,8 @@ export default function UpdateMerchantPipe({open, setOpen, merchantpipeUpdateDat
           merchant_id: MerchantId,
           pipe_id: pipeID,
           fee: pipe_fee,
-          status: formData.status
+          status: formData.status,
+          cooling_period: formData.coolingPeriod
 
         }).then((res)=>{ 
           // console.log(res)
@@ -202,6 +206,28 @@ export default function UpdateMerchantPipe({open, setOpen, merchantpipeUpdateDat
                      value={formData.fee} 
                      onChange={handleFormChange}
                      />
+
+                  <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">Cooling Period</InputLabel>
+                      <Select
+                        id="coolingPeriod"
+                        name='coolingPeriod'
+                        value={formData.coolingPeriod}
+                        label="Cooling Period"
+                        onChange={handleFormChange}
+                      >
+                        <MenuItem value='1 Day'>1 Day</MenuItem>
+                        <MenuItem value='2 Days'>2 Days</MenuItem>
+                        <MenuItem value='3 Days'>3 Days</MenuItem>
+                        <MenuItem value='4 Days'>4 Days</MenuItem>
+                        <MenuItem value='5 Days'>5 Days</MenuItem>
+                        <MenuItem value='6 Days'>6 Days</MenuItem>
+                        <MenuItem value='7 Days'>7 Days</MenuItem>
+                        <MenuItem value='8 Days'>8 Days</MenuItem>
+                        <MenuItem value='9 Days'>9 Days</MenuItem>
+                        <MenuItem value='10 Days'>10 Days</MenuItem>
+                      </Select>
+                  </FormControl>
                   
                 <CustomizedStatusSwitches formData={formData} status={formData.status} setStatus={updateFormData} />
 
