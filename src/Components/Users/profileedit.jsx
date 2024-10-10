@@ -1,15 +1,13 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Nav, Form, } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Nav } from 'react-bootstrap';
 import { Main, DrawerHeader } from "../Content"
 import TransactionTable from './UsersTransactionTable';
-import DisputeTable from './UserDisputesTable';
+// import DisputeTable from './UserDisputesTable';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../Authentication/axios';
-import { Link } from 'react-router-dom';
-import WalletTable from './UserWalletsTable';
+// import { Link } from 'react-router-dom';
+// import WalletTable from './UserWalletsTable';
 import MerchantBankAccountsTable from './Bank/MerchantBankTable';
-import MerchantBankColumn from './Bank/Column';
-import { MerchantBankAccountTableName } from './Bank/Column';
 import { WalletTableColumns, DisputeTableColumn, WalletsTableName,
       DisputeTableName, PipetableName, PipeTableColumns
  } from './Columns';

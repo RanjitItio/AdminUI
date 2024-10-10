@@ -19,6 +19,43 @@ import Chip from '@mui/material/Chip';
 
 
 
+  // Transaction Label
+  const getTransactionLabel = (status)=> {
+    switch (status) {
+      case 'PAYMENT_SUCCESS':
+        return 'Success'
+      case 'PAYMENT_INITIATED':
+        return 'Initiated'
+      case 'PAYMENT_FAILED':
+        return 'Failed'
+      case 'PAYMENT_PENDING':
+        return 'Pending'
+      case 'PAYMENT_HOLD':
+        return 'On Hold'
+      default:
+        return 'Unknown';
+    }
+};
+
+
+// Transaction Status
+const getTransactionStatus = (status)=> {
+  switch (status) {
+    case 'PAYMENT_SUCCESS':
+      return 'success'
+    case 'PAYMENT_INITIATED':
+      return 'primary'
+    case 'PAYMENT_FAILED':
+      return 'error'
+    case 'PAYMENT_PENDING':
+      return 'warning'
+    case 'PAYMENT_HOLD':
+      return 'primary'
+    default:
+      return 'primary';
+  }
+};
+
 
 
 // View all transactions related to specific users
@@ -35,12 +72,11 @@ export default function TransactionTable({userID}) {
   useEffect(() => {
     axiosInstance.get(`/api/v2/admin/merchant/pg/distinct/transactions/?query=${userID}`).then((res)=> {
       // console.log(res)
-
       if (res.status === 200 && res.data.success === true) {
         updateMerchantTransaction(res.data.distinct_merchant_transaction);
         setTotalRows(res.data.total_row_count)
       }
-      
+
       if (res.data.distinct_merchant_transaction.length === 0) {
           updateEmptyData(true);
       }
@@ -79,38 +115,6 @@ export default function TransactionTable({userID}) {
   };
 
 
-  // Transaction Status
-  const getTransactionStatus = (status)=> {
-      switch (status) {
-        case 'PAYMENT_SUCCESS':
-          return 'success'
-        case 'PAYMENT_INITIATED':
-          return 'primary'
-        case 'PAYMENT_FAILED':
-          return 'error'
-        case 'PAYMENT_PENDING':
-          return 'warning'
-        default:
-          return 'primary';
-      }
-  };
-
-  // Transaction Label
-  const getTransactionLabel = (status)=> {
-      switch (status) {
-        case 'PAYMENT_SUCCESS':
-          return 'Success'
-        case 'PAYMENT_INITIATED':
-          return 'Initiated'
-        case 'PAYMENT_FAILED':
-          return 'Failed'
-        case 'PAYMENT_PENDING':
-          return 'Pending'
-        default:
-          return 'Unknown';
-      }
-  };
-
 
    // If Not data found for the merhant
    if (emptyData) {
@@ -136,11 +140,8 @@ export default function TransactionTable({userID}) {
       <Paper elevation={3} sx={{ width: '100%', mb: 2 }}>
       
         <TableContainer>
-        <Box sx={{ maxHeight: 800, overflowY: 'auto' }}>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-          >
+        <Box sx={{ maxHeight: 1200, overflow: 'auto' }}>
+          <Table>
             <TableHead sx={{position:'sticky', zIndex: 1, top: 0, backgroundColor: '#e2f4fb'}}>
                 <TableRow>
                     <TableCell align="center"><b>Sl No</b></TableCell>

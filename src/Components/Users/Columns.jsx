@@ -224,6 +224,12 @@ export const PipeTableColumns = [
         label: "Mode",
     },
     {
+        id: "cooling_period",
+        numeric: false,
+        disablePadding: false,
+        label: "Cooling Period",
+    },
+    {
         id: "currency",
         numeric: false,
         disablePadding: false,

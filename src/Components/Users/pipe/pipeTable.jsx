@@ -86,19 +86,8 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts',
-            }}
-          />
-        </TableCell>
         {props.headCells.map((headCell) => (
-          <TableCell key={headCell.id} align={headCell.numeric ? 'right' : 'left'} padding={headCell.disablePadding ? 'none' : 'normal'} sortDirection={orderBy === headCell.id ? order : false}>
+          <TableCell sx={{p:1, mx:5}} key={headCell.id} align={headCell.numeric ? 'right' : 'left'} padding={headCell.disablePadding ? 'none' : 'normal'} sortDirection={orderBy === headCell.id ? order : false}>
             <TableSortLabel active={orderBy === headCell.id} direction={orderBy === headCell.id ? order : 'asc'} onClick={createSortHandler(headCell.id)}>
               <b>{headCell.label}</b>
               {orderBy === headCell.id ? (
@@ -238,7 +227,7 @@ export default function UserPipeTable({headCells, TableName, userID  }) {
 
     }, 1000);
 
-  }, [])
+  }, []);
 
 
   const handleRequestSort = (event, property) => {
@@ -246,6 +235,7 @@ export default function UserPipeTable({headCells, TableName, userID  }) {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
+
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -255,6 +245,7 @@ export default function UserPipeTable({headCells, TableName, userID  }) {
     }
     setSelected([]);
   };
+
 
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
@@ -284,9 +275,7 @@ export default function UserPipeTable({headCells, TableName, userID  }) {
     setPage(0);
   };
 
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
+ 
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
@@ -308,7 +297,6 @@ export default function UserPipeTable({headCells, TableName, userID  }) {
   useEffect(() => {
       axiosInstance.get(`api/admin/merchant/pipe/${userID}/`).then((res)=> {
         // console.log(res.data.merchant_pipes)
-        
         if (res.status === 200 && res.data.merchant_pipes) {
               const sortedPipes = res.data.merchant_pipes.sort((a, b) => {
                 if (a.pipe_id < b.pipe_id) return 1;
@@ -326,7 +314,6 @@ export default function UserPipeTable({headCells, TableName, userID  }) {
               setNoData(true)
           };
       })
-
   }, []);
 
   
@@ -416,19 +403,9 @@ return (
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId,
-                        }}
-                      onClick={(event) => handleClick(event, row.pipe_id)}
-                      />
-                    </TableCell>
                     
                     {/* Gateway ID Column */}
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
+                    <TableCell component="th" id={labelId} scope="row" sx={{p:1, ml:5}}>
                       {row.pipe_id}
                     </TableCell>
 
@@ -447,6 +424,9 @@ return (
 
                     {/* Processing mode column */}
                     <TableCell align="left">{row.process_mode}</TableCell>
+
+                    {/* Cooling Period column */}
+                    <TableCell align="left">{row.settlement_period}</TableCell>
 
                     {/* Currency mode column */}
                     <TableCell align="left">{row.currency}</TableCell>
@@ -498,10 +478,6 @@ return (
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      />
     </Box>
 
     <UpdateMerchantPipe open={openUpdatePipe} setOpen={setOpenUpdatePipe} merchantpipeUpdateData={merchantpipeUpdateData} />
