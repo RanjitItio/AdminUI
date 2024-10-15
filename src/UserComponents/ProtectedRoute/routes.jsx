@@ -14,6 +14,8 @@ const FiatWithdrawals            = React.lazy(()=> import('../Withdrawals/AllWit
 const UpdateFIATWithdrawals      = React.lazy(()=> import('../Withdrawals/UpdateWithdrawal'));
 const AllExchangeMoneyRequest    = React.lazy(()=> import('../ExchangeMoney/ExchangeMoney'));
 const UpdateExchangeMoneyRequest = React.lazy(()=> import('../ExchangeMoney/UpdateExchangeMoney'));
+const UserWalletRequests         = React.lazy(()=> import('../CryptoWallet/WalletRequests'));
+const UpdateCryptoWallet         = React.lazy(()=> import('../CryptoWallet/UpdateWallet'));
 
 
 
@@ -114,6 +116,22 @@ export const AdditionalAuthenticatedRoutes = (open)=> {
       element: (
         <Suspense fallback={<CircularProgress />}>
             <UpdateExchangeMoneyRequest open={open} />
+        </Suspense>
+      )
+    },
+    {
+      path: '/admin/user/wallets/',
+      element: (
+        <Suspense fallback={<CircularProgress />}>
+            <UserWalletRequests open={open} />
+        </Suspense>
+      )
+    },
+    {
+      path: '/admin/user/update/crypto/wallets/',
+      element: (
+        <Suspense fallback={<CircularProgress />}>
+            <UpdateCryptoWallet open={open} />
         </Suspense>
       )
     },

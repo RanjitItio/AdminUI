@@ -69,10 +69,7 @@ const UserNavContent = [
   },
 
   { text: 'Crypto', subItems: [
-      {text: 'Crypto Provider', icon: <HistoryOutlinedIcon />, url: ''},
-      {text: 'Setting', icon: <HistoryOutlinedIcon />, url: ''},
-      {text: 'Currencies', icon: <HistoryOutlinedIcon />, url: ''},
-      
+      {text: 'Wallet Requests', icon: <HistoryOutlinedIcon />, url: '/admin/user/wallets/'},
     ],
     icon: <CurrencyBitcoinIcon />
   },

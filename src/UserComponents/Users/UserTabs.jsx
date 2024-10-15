@@ -3,7 +3,6 @@ import { Container, Row, Col, Card, Button, Nav, Form, } from 'react-bootstrap';
 import { Main, DrawerHeader } from "../../Components/Content";
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../Components/Authentication/axios';
-import { Link } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import UpdateCryptoUserProfile from './UpdateUser';
 import UdateCrptoUsersKyc from './UpdateUserKyc';
@@ -11,17 +10,18 @@ import UserWalletTable from './UserWallets';
 import { WalletTableColumns } from './Columns/Columns';
 import { WalletsTableName } from './Columns/Columns';
 import UserBankAccountsTable from './UserBankAccounts';
+import FiatTransactionTable from '../UserTransactions/UserFiatTransactions';
 
 
 
 
-
+// user edit tabs
 export default function UserTabs({open}) {
     const location    = useLocation();
     const navigate    = useNavigate();
 
-    const userDetails = location.state?.userID || '';
-    const Kycdetails  = location.state?.kycID || '';
+    const userDetails = location.state?.userID || '';  // Data from table
+    const Kycdetails  = location.state?.kycID || '';   // data from table
     
     const initialProfileData = {
         first_name:     Kycdetails?.firstname || '',
@@ -333,10 +333,9 @@ const handleKYCStatusUpdate = ()=> {
                 )}
                
                 {activeTab === 'transactions' && (
-                    <></>
-                    // <TransactionTable  
-                    //     userID={Kycdetails.user_id} 
-                    // />
+                    <FiatTransactionTable  
+                        userID={Kycdetails.user_id} 
+                    />
                 )}
                 {activeTab === 'disputes' && (
                     <></>

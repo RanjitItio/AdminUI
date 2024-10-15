@@ -187,7 +187,7 @@ EnhancedTableToolbar.propTypes = {
 
 
 
-
+// All the pipe assigned to the merchant
 export default function UserPipeTable({headCells, TableName, userID  }) {
   const [order, setOrder]             = useState('asc');
   const [orderBy, setOrderBy]         = useState('calories');
