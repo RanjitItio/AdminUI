@@ -60,10 +60,7 @@ const UserNavContent = [
   icon: <ReceiptLongOutlinedIcon />},
 
   { text: 'Crypto Transactions', subItems: [
-      {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/all/uat/transaction/'},
-      {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
-      {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
-      
+      {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/user/crypto/transactions/'},
     ],
     icon: <CurrencyBitcoinIcon />
   },
