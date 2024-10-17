@@ -205,7 +205,7 @@ export default function UpdateCryptoTransaction({open}) {
                             variant="outlined" 
                             fullWidth 
                             name='fee'
-                            value={`${Cryptotransaction?.fee || ''} ${Cryptotransaction?.currency || ''}`}
+                            value={`${Cryptotransaction?.fee || ''} ${Cryptotransaction.type === 'Buy' ? Cryptotransaction?.currency : (Cryptotransaction.type === 'Sell' ? Cryptotransaction?.crypto_name : '')}`}
                             />
                     </Grid>
 
