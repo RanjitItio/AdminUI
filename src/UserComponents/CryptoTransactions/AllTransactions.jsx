@@ -92,8 +92,8 @@ export default function AllCryptoTransactions({open}) {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     
     const [cryptoTransactions, updateCryptoTransactions] = useState([]);  // All Transactions
-    const [totalRows, updateTotalRows] = useState(0);     // Paginated Rows
-    const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
+    const [totalRows, updateTotalRows]       = useState(0);     // Paginated Rows
+    const [exportData, updateExportData]     = useState([]);
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
@@ -149,7 +149,7 @@ export default function AllCryptoTransactions({open}) {
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            saveAs(blob, 'withdrawals.xlsx');
+            saveAs(blob, 'cryptoTransactions.xlsx');
         } else {
             console.log('No Data available to Download')
         }
@@ -158,12 +158,12 @@ export default function AllCryptoTransactions({open}) {
 
 
     // Download all Deposit transactions
-    const handleDownloadWithdrawals = ()=> {
-        axiosInstance.get(`/api/v4/admin/merchant/pg/export/withdrawals/`).then((res)=> {
+    const handleDownloadCryptoTransactions = ()=> {
+        axiosInstance.get(`/api/v2/admin/export/crypto/transactions/`).then((res)=> {
             // console.log(res)
     
             if (res.status === 200 && res.data.success === true) {
-                updateExportData(res.data.AdminMerchantExportWithdrawalRequests);
+                updateExportData(res.data.export_crypto_transactions_data);
                 
                 setTimeout(() => {
                     exportToExcel();
@@ -229,7 +229,7 @@ export default function AllCryptoTransactions({open}) {
                         {/* For small screen sizes */}
                         {isSmallScreen ? (
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <IconButton aria-label="export">
+                                <IconButton aria-label="export" onClick={handleDownloadCryptoTransactions}>
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
@@ -239,7 +239,7 @@ export default function AllCryptoTransactions({open}) {
                             </div>
                             ) : (
                             <div>
-                                <Button sx={{ mx: 1 }}>Export</Button>
+                                <Button sx={{ mx: 1 }} onClick={handleDownloadCryptoTransactions}>Export</Button>
                                 <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
                             </div>
                         )}

@@ -153,7 +153,7 @@ export default function UserWalletRequests({open}) {
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            saveAs(blob, 'withdrawals.xlsx');
+            saveAs(blob, 'Wallet.xlsx');
         } else {
             console.log('No Data available to Download')
         }
@@ -162,7 +162,18 @@ export default function UserWalletRequests({open}) {
 
     // Download all withdrawal requests
     const handleDownloadCryptoWallets = ()=> {
-        
+        axiosInstance.get(`/api/v2/admin/export/crypto/wallets/`).then((res)=> {
+            // console.log(res)
+            if (res.status === 200) {
+                updateExportData(res.data.export_wallets_data)
+
+                exportToExcel();
+            }
+
+        }).catch((error)=> {
+            // console.log(error)
+
+        })
     };
 
 
@@ -217,7 +228,7 @@ export default function UserWalletRequests({open}) {
             setTimeout(() => {
                 setFilterError('')
             }, 2000);
-            
+
             if (error.response.data.message === 'Unauthorized') {
                 navigate('/signin/')
             } else if (error.response.data.message === 'Invalid Email') {
