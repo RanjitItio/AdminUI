@@ -85,9 +85,9 @@ export default function UserWalletRequests({open}) {
     const [filterDate, setFilterDate]          = useState('');  // Filter date state field
     const [filterError, setFilterError]        = useState('');  // Error message of filter
     const [filterData, updateFilterData]       = useState({
-        merchant_email: '',
-        status: '',
-        withdrawalAmount: ''
+        user_email: '',
+        crypto_name: '',
+        status: ''
     });  // Filter filed data state
 
     const counPagination = Math.ceil(totalRows);   // Total pagination count
@@ -188,9 +188,9 @@ export default function UserWalletRequests({open}) {
     const handleResetFilter = ()=> {
         setFilterDate('');
         updateFilterData({
-            merchant_email:'',
-            WithdrawalCurrency: '',
-            withdrawalAmount: ''
+            user_email:'',
+            crypto_name: '',
+            status: ''
         })
         handlePaginatedData('e', 1)
     };
@@ -198,7 +198,34 @@ export default function UserWalletRequests({open}) {
 
     // Get Filter data
     const handleFilterData = ()=> {
+        axiosInstance.post(`/api/v2/admin/crypto/wallets/`, {
+            date_range: filterDate,
+            email: filterData.user_email,
+            crypto_name: filterData.crypto_name,
+            status: filterData.status
 
+        }).then((res)=> {
+            // console.log(res);
+
+            if(res.status === 200) {
+                updateCryptoWallets(res.data.all_user_crypto_wallets)
+            }
+
+        }).catch((error)=> {
+            // console.log(error)
+
+            setTimeout(() => {
+                setFilterError('')
+            }, 2000);
+            
+            if (error.response.data.message === 'Unauthorized') {
+                navigate('/signin/')
+            } else if (error.response.data.message === 'Invalid Email') {
+                setFilterError('Invalid Email address')
+            } else if (error.response.data.message === 'No wallet found') {
+                setFilterError('No data found')
+            }
+        })
     };
 
 
@@ -231,7 +258,7 @@ export default function UserWalletRequests({open}) {
                     {/* For small screen sizes */}
                     {isSmallScreen ? (
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <IconButton aria-label="export" onClick={handleDownloadWithdrawals}>
+                                <IconButton aria-label="export">
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
@@ -273,9 +300,9 @@ export default function UserWalletRequests({open}) {
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
                                 <Input 
-                                placeholder="Merchant Email" 
-                                name='merchant_email'
-                                value={filterData.merchant_email}
+                                placeholder="User Email" 
+                                name='user_email'
+                                value={filterData.user_email}
                                 onChange={handleFilterInputChange}
                                 />
                             </FormControl>
@@ -284,10 +311,10 @@ export default function UserWalletRequests({open}) {
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
                                 <Input 
-                                    name='status'
-                                    value={filterData.status}
+                                    name='crypto_name'
+                                    value={filterData.crypto_name}
                                     onChange={handleFilterInputChange}
-                                    placeholder="Status" 
+                                    placeholder="Crypto Name" 
                                     />
                             </FormControl>
                         </Grid>
@@ -295,9 +322,9 @@ export default function UserWalletRequests({open}) {
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
                                 <Input 
-                                    placeholder="Withdrawal Amount"
-                                    name='withdrawalAmount'
-                                    value={filterData.withdrawalAmount} 
+                                    placeholder="Status"
+                                    name='status'
+                                    value={filterData.status} 
                                     onChange={handleFilterInputChange}
                                     />
                             </FormControl>

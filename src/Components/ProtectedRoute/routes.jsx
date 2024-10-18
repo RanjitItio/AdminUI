@@ -65,6 +65,9 @@ const MerchantBusinessTable = React.lazy(()=> import('../Business/BusinessTable'
 const AllPipeTable = React.lazy(()=> import('../Pipe/PipeTable'));
 const AllMerchantTable = React.lazy(()=> import('../Merchants/merchantsTable'));
 const PageNotFound = React.lazy(()=> import('../404Page'));
+const AllFees = React.lazy(()=> import('../Fee/AllFees'));
+const UpdateFees = React.lazy(()=> import('../Fee/UpdateFees'));
+const AddFees = React.lazy(()=> import('../Fee/AddFees'));
 
 
 
@@ -209,6 +212,11 @@ const AuthRoutes = () => {
                           <Route exact path="/admin/pipes/" element={<AllPipeTable open={open} />} ></Route>
                           <Route exact path="/admin/add/pipe/" element={<AddNewPipe open={open} />} ></Route>
                           <Route exact path="/admin/update/pipe/" element={<UpdatePipe open={open} />} ></Route>
+
+                          {/* Fee Configuration  */}
+                          <Route exact path="/admin/fees/" element={<AllFees open={open} />} ></Route>
+                          <Route exact path="/admin/update/fees/" element={<UpdateFees open={open} />} ></Route>
+                          <Route exact path="/admin/add/fees/" element={<AddFees open={open} />} ></Route>
 
                           {/* Withdrawals */}
                           <Route exact path="/admin/merchant/withdrawals/" element={<AllMerchantPGWithdrawals open={open} />} ></Route>

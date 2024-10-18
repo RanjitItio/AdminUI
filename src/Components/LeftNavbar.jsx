@@ -32,7 +32,8 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import { ConfirmationNumberOutlined } from '@mui/icons-material';
 import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
-import { el } from 'date-fns/locale';
+import MoneyIcon from '@mui/icons-material/Money';
+import SellIcon from '@mui/icons-material/Sell';
 
 
 
@@ -50,6 +51,11 @@ const UserNavContent = [
   ],
   icon: <AccountCircleOutlinedIcon />},
 
+  { text: 'Fee', subItems: [
+    {text:'All Fees', icon: <SellIcon />, url: '/admin/fees/'}, 
+  ],
+  icon: <MoneyIcon />},
+
   { text: 'Transactions', subItems: [
     {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/fiat/transactions/'},
     {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
@@ -58,6 +64,7 @@ const UserNavContent = [
     {text: 'Exchange Money', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/all/exchange/money/'},
   ],
   icon: <ReceiptLongOutlinedIcon />},
+
 
   { text: 'Crypto Transactions', subItems: [
       {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/user/crypto/transactions/'},
