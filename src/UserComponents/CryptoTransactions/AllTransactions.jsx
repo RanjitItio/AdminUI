@@ -98,9 +98,9 @@ export default function AllCryptoTransactions({open}) {
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
     const [filterData, updateFilterData]     = useState({
-        merchant_email: '',
-        WithdrawalCurrency: '',
-        withdrawalAmount: ''
+        user_email: '',
+        crypto_name: '',
+        status: ''
     });
 
     const counPagination = Math.ceil(totalRows);   // Total pagination count
@@ -108,6 +108,34 @@ export default function AllCryptoTransactions({open}) {
     /// Open close Filter fields
     const handleToggleFilters = () => {
         setShowFilters(!showFilters);
+    };
+
+
+    // Get Filter Data
+    const handleFilterDateChange = (e, newValue)=> {
+        setFilterDate(newValue);
+    };
+
+    // Get Filter Input data
+    const handleFilterInputDataChange = (e)=> {
+        const {name, value} = e.target;
+
+        updateFilterData({
+            ...filterData,
+            [name]: value
+        })
+    };
+
+
+    // Reset Filter Method
+    const handleResetFilter = ()=> {
+        setFilterDate('');
+        updateFilterData({
+            user_email:'',
+            crypto_name: '',
+            status: ''
+        })
+        handlePaginatedData('e', 1)
     };
 
 
@@ -201,6 +229,45 @@ export default function AllCryptoTransactions({open}) {
     };
 
 
+    // Get filtered data
+    const handleFilterData = ()=> {
+        axiosInstance.post(`/api/v3/admin/crypto/transactions/`, {
+            date_range: filterDate,
+            user_email: filterData.user_email,
+            crypto_name: filterData.crypto_name,
+            status: filterData.status
+
+        }).then((res)=> {
+            console.log(res)
+            
+            if (res.status === 200) {
+                const sortedTransaction = res.data.filtered_data.sort((a,b)=> {
+                    return new Date(b.created_at) - new Date(a.created_at)
+                })
+                updateCryptoTransactions(sortedTransaction)
+            }
+
+        }).catch((error)=> {
+            console.log(error)
+
+            setTimeout(() => {
+                setFilterError('')
+            }, 2000);
+
+            if (error.response.data.message === 'No data found') {
+                setFilterError('No data found')
+            } else if (error.response.data.message === 'Invalid Email') {
+                setFilterError('Invalid Email Address')
+            } else if (error.response.data.message === 'Unauthorized') {
+                window.location.href = '/signin/'
+            } else {
+                setFilterError('')
+            };
+        })
+    };
+
+
+
     return (
        <Main open={open}>
             <DrawerHeader/>
@@ -225,7 +292,7 @@ export default function AllCryptoTransactions({open}) {
                         >
                             <b>All Crypto Transactions</b>
                         </Typography>
-                       
+
                         {/* For small screen sizes */}
                         {isSmallScreen ? (
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -251,20 +318,20 @@ export default function AllCryptoTransactions({open}) {
                         <Grid container p={2} justifyContent="flex-end" spacing={2}>
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
-                                <Select
-                                    label="date"
-                                    placeholder='Date'
-                                    id="date"
-                                    name="date"
-                                    value={filterDate}
-                                    // onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
-                                >
-                                    <Option value="Today">Today</Option>
-                                    <Option value="Yesterday">Yesterday</Option>
-                                    <Option value="ThisWeek">This Week</Option>
-                                    <Option value="ThisMonth">This Month</Option>
-                                    <Option value="PreviousMonth">Previous Month</Option>
-                                </Select>
+                                    <Select
+                                        label="date"
+                                        placeholder='Date'
+                                        id="date"
+                                        name="date"
+                                        value={filterDate}
+                                        onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                                    >
+                                        <Option value="Today">Today</Option>
+                                        <Option value="Yesterday">Yesterday</Option>
+                                        <Option value="ThisWeek">This Week</Option>
+                                        <Option value="ThisMonth">This Month</Option>
+                                        <Option value="PreviousMonth">Previous Month</Option>
+                                    </Select>
                                 </FormControl>
                             </Grid>
 
@@ -273,8 +340,8 @@ export default function AllCryptoTransactions({open}) {
                                     <Input 
                                     placeholder="User Email" 
                                     name='user_email'
-                                    // value={filterData.merchant_email}
-                                    // onChange={handleFilterInputChange}
+                                    value={filterData.user_email}
+                                    onChange={handleFilterInputDataChange}
                                     />
                                 </FormControl>
                             </Grid>
@@ -282,10 +349,10 @@ export default function AllCryptoTransactions({open}) {
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
                                     <Input 
-                                        name='Status'
-                                        // value={filterData.WithdrawalCurrency}
-                                        // onChange={handleFilterInputChange}
-                                        placeholder="Status" 
+                                        name='crypto_name'
+                                        value={filterData.crypto_name}
+                                        onChange={handleFilterInputDataChange}
+                                        placeholder="Crypto Name" 
                                         />
                                 </FormControl>
                             </Grid>
@@ -293,10 +360,10 @@ export default function AllCryptoTransactions({open}) {
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
                                     <Input 
-                                        placeholder="Amount"
-                                        name='Amount'
-                                        // value={filterData.withdrawalAmount} 
-                                        // onChange={handleFilterInputChange}
+                                        placeholder="Status"
+                                        name='status'
+                                        value={filterData.status} 
+                                        onChange={handleFilterInputDataChange}
                                         />
                                 </FormControl>
                             </Grid>
@@ -304,7 +371,7 @@ export default function AllCryptoTransactions({open}) {
                             <Grid item xs={6} sm={6} md={1}>
                                 <FormControl fullWidth>
                                     <JoyButton 
-                                    // onClick={handleFilterData}
+                                    onClick={handleFilterData}
                                     >
                                         Submit
                                     </JoyButton>
@@ -314,7 +381,7 @@ export default function AllCryptoTransactions({open}) {
                             <Grid item xs={6} sm={6} md={1}>
                                 <FormControl fullWidth>
                                     <JoyButton 
-                                    // onClick={handleFilterData}
+                                    onClick={handleResetFilter}
                                     >
                                         Reset
                                     </JoyButton>
