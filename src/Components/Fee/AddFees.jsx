@@ -26,8 +26,19 @@ export default function AddFees({open}) {
     const [formData, updateFormData]          = useState(initialFormData);
     const [feeName, setFeeName]               = useState('');
     const [feeType, setFeeType]               = useState('');
+    const [taxrate, setTaxRate]               = useState(false);
     
     
+    // Flip between Percentage and Fixed field
+    useEffect(() => {
+        if (feeType === 'Percentage') {
+             setTaxRate(true)
+        } else if (feeType === 'Fixed') {
+             setTaxRate(false);
+        }
+     }, []);
+
+
     // Get form data
     const handleFormDataChange = (e, newValue)=> {
         const {name, value} = e.target;
@@ -47,7 +58,19 @@ export default function AddFees({open}) {
 
     // Fee Type
     const handleChangeFeeType = (e, newValue)=> {
-        setFeeType(newValue)
+        if (newValue === 'Percentage') {
+            setTaxRate(true)
+            updateFormData({
+                fixed_value: 0
+            })
+        } else if (newValue === 'Fixed') {
+            setTaxRate(false)
+            updateFormData({
+                tax_rate: 0
+            })
+        }
+
+        setFeeType(newValue);
     };
 
 
@@ -146,23 +169,27 @@ export default function AddFees({open}) {
                         </Select>
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={6}>
-                        <Input 
-                            placeholder="Tax Rate" 
-                            type='number' 
-                            name='tax_rate'
-                            onChange={handleFormDataChange}
-                            />
-                    </Grid>
+                    {taxrate && 
+                        <Grid item xs={12} sm={6} md={6}>
+                            <Input 
+                                placeholder="Tax Rate" 
+                                type='number' 
+                                name='tax_rate'
+                                onChange={handleFormDataChange}
+                                />
+                        </Grid>
+                    }
 
-                    <Grid item xs={12} sm={6} md={6}>
-                        <Input 
-                            placeholder="Fixed Value" 
-                            type='number'
-                            name='fixed_value' 
-                            onChange={handleFormDataChange}
-                            />
-                    </Grid>
+                    {!taxrate && 
+                        <Grid item xs={12} sm={6} md={6}>
+                            <Input 
+                                placeholder="Fixed Value" 
+                                type='number'
+                                name='fixed_value' 
+                                onChange={handleFormDataChange}
+                                />
+                        </Grid>
+                    }
                 </Grid>
 
                 {/* Error Message */}

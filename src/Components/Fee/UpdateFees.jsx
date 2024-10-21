@@ -35,6 +35,7 @@ export default function UpdateFees({open}) {
         setFeeName(newValue)
     };
 
+    // Flip between Percentage and Fixed field
     useEffect(() => {
        if (fees?.fee_type === 'Percentage') {
             setTaxRate(true)
@@ -50,14 +51,9 @@ export default function UpdateFees({open}) {
     const handleChangeFeeType = (e, newValue)=> {
         if (newValue === 'Percentage') {
             setTaxRate(true)
-            updateFormData({
-                fixed_value: 0
-            })
+            
         } else if (newValue === 'Fixed') {
             setTaxRate(false)
-            updateFormData({
-                tax_rate: 0
-            })
         }
 
         setFeeType(newValue);
@@ -81,6 +77,21 @@ export default function UpdateFees({open}) {
        
     };
 
+    const handleFeeValueChange = ()=> {
+        if (feeType === 'Fixed') {
+            updateFormData((prevData)=> ({
+                ...prevData,
+                tax_rate: 0
+            }))
+        } else if (feeType === 'Percentage') {
+            updateFormData((prevData)=> ({
+                ...prevData,
+                fixed_value: 0
+            }))
+        } 
+    };
+    
+
 
     // If the values are abscent
     if (states === '') {
@@ -96,13 +107,16 @@ export default function UpdateFees({open}) {
 
     // Submit Fee data
     const handleSubmitUpdateData = ()=> {
+        handleFeeValueChange();
+
         if (!feeName) {
             setError('Please select Fee Name')
         } else if (!feeType) {
             setError('Please select Fee Type')
+        
         } else {
             setError('')
-
+            
             axiosInstance.put(`/api/v3/admin/fees/`, {
                 fee_id:   fees.id,
                 fee_name: feeName,
@@ -136,9 +150,11 @@ export default function UpdateFees({open}) {
                 setTimeout(() => {
                     setError('')
                 }, 1500);
-            })
+            });
+
         }
     };
+
 
 
 
