@@ -51,9 +51,17 @@ export default function UpdateFees({open}) {
     const handleChangeFeeType = (e, newValue)=> {
         if (newValue === 'Percentage') {
             setTaxRate(true)
-            
+            updateFormData((prevData)=> ({
+                ...prevData,
+                fixed_value: 0
+            }))
+
         } else if (newValue === 'Fixed') {
             setTaxRate(false)
+            updateFormData((prevData)=> ({
+                ...prevData,
+                tax_rate: 0
+            }))
         }
 
         setFeeType(newValue);
@@ -77,19 +85,19 @@ export default function UpdateFees({open}) {
        
     };
 
-    const handleFeeValueChange = ()=> {
-        if (feeType === 'Fixed') {
-            updateFormData((prevData)=> ({
-                ...prevData,
-                tax_rate: 0
-            }))
-        } else if (feeType === 'Percentage') {
-            updateFormData((prevData)=> ({
-                ...prevData,
-                fixed_value: 0
-            }))
-        } 
-    };
+    // const handleFeeValueChange = ()=> {
+    //     if (feeType === 'Fixed') {
+    //         updateFormData((prevData)=> ({
+    //             ...prevData,
+    //             tax_rate: 0
+    //         }))
+    //     } else if (feeType === 'Percentage') {
+    //         updateFormData((prevData)=> ({
+    //             ...prevData,
+    //             fixed_value: 0
+    //         }))
+    //     } 
+    // };
     
 
 
@@ -107,7 +115,7 @@ export default function UpdateFees({open}) {
 
     // Submit Fee data
     const handleSubmitUpdateData = ()=> {
-        handleFeeValueChange();
+        // handleFeeValueChange();
 
         if (!feeName) {
             setError('Please select Fee Name')
