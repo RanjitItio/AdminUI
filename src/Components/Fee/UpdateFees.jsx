@@ -23,6 +23,7 @@ export default function UpdateFees({open}) {
     const [error, setError]                   = useState('');  // Error Message state
     const [feeName, setFeeName]               = useState(fees?.name || '');
     const [feeType, setFeeType]               = useState(fees?.fee_type || '');
+    const [taxrate, setTaxRate]               = useState(false);
     const [formData, updateFormData]          = useState({
         tax_rate: fees?.tax_rate || 0,
         fixed_value: fees?.min_value || 0
@@ -34,20 +35,52 @@ export default function UpdateFees({open}) {
         setFeeName(newValue)
     };
 
+    useEffect(() => {
+       if (fees?.fee_type === 'Percentage') {
+            setTaxRate(true)
+       } else if (fees?.fee_type === 'Fixed') {
+            setTaxRate(false);
+       }
+    }, []);
+
+    
+
+
     // Fee Type
     const handleChangeFeeType = (e, newValue)=> {
-        setFeeType(newValue)
+        if (newValue === 'Percentage') {
+            setTaxRate(true)
+            updateFormData({
+                fixed_value: 0
+            })
+        } else if (newValue === 'Fixed') {
+            setTaxRate(false)
+            updateFormData({
+                tax_rate: 0
+            })
+        }
+
+        setFeeType(newValue);
     };
+
 
     // Update Input Field data
     const handleUpdateFormData = (e)=> {
-        const { name, value } = e.target
+        const { name, value } = e.target;
 
-        updateFormData({
-            ...formData, 
-            [name]: value
-        })
+        if (/^\d+$/.test(value) || value === '') {
+            setError(''); 
+
+            updateFormData({
+                ...formData, 
+                [name]: value === '' ? '' : value
+            });
+        } else {
+            setError('Please type a valid integer');
+        }
+       
     };
+
 
     // If the values are abscent
     if (states === '') {
@@ -60,6 +93,8 @@ export default function UpdateFees({open}) {
         );
     };
 
+
+    // Submit Fee data
     const handleSubmitUpdateData = ()=> {
         if (!feeName) {
             setError('Please select Fee Name')
@@ -69,11 +104,11 @@ export default function UpdateFees({open}) {
             setError('')
 
             axiosInstance.put(`/api/v3/admin/fees/`, {
-                fee_id: fees.id,
+                fee_id:   fees.id,
                 fee_name: feeName,
                 fee_type: feeType,
-                tax_rate: formData?.tax_rate || 0,
-                fixed_value: formData?.fixed_value || 0
+                tax_rate: formData.tax_rate ? parseFloat(formData.tax_rate)  : 0,
+                fixed_value: formData.fixed_value ? parseFloat(formData.fixed_value) : 0
 
             }).then((res)=> {
                 // console.log(res)
@@ -158,26 +193,30 @@ export default function UpdateFees({open}) {
                         </Select>
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={6}>
-                        <Input 
-                            placeholder="Tax Rate" 
-                            type='number'
-                            name='tax_rate'
-                            value={formData.tax_rate}
-                            onChange={handleUpdateFormData}
-                            />
-                    </Grid>
+                    {taxrate && 
+                        <Grid item xs={12} sm={6} md={6}>
+                            <Input 
+                                type='number'
+                                placeholder="Tax Rate" 
+                                name='tax_rate'
+                                value={formData?.tax_rate || ''}
+                                onChange={handleUpdateFormData}
+                                />
+                        </Grid>
+                    }
 
-                    <Grid item xs={12} sm={6} md={6}>
-                        <Input 
-                            placeholder="Fixed Value" 
-                            type='number' 
-                            name='fixed_value'
-                            value={formData.fixed_value}
-                            onChange={handleUpdateFormData}
-                            />
-                    </Grid>
 
+                    {!taxrate && 
+                        <Grid item xs={12} sm={6} md={6}>
+                            <Input 
+                                type='number'
+                                placeholder="Fixed Value" 
+                                name='fixed_value'
+                                value={formData?.fixed_value || ''}
+                                onChange={handleUpdateFormData}
+                                />
+                        </Grid>
+                    }
                 </Grid>
 
                 {/* Error Message */}

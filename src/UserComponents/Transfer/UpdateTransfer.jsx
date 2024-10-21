@@ -85,7 +85,7 @@ export default function UpdateTransferTransaction({open}) {
             };
 
         }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
             setDisablebutton(false);
 
             if (error.response.data.msg === 'Sender donot have sufficient balance in wallet'){
@@ -229,7 +229,7 @@ export default function UpdateTransferTransaction({open}) {
                             />
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                    {/* <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 
                             disabled 
                             id="paymentMode" 
@@ -239,7 +239,7 @@ export default function UpdateTransferTransaction({open}) {
                             name='paymentMode'
                             value={transactionDetail?.sender_payment_mode || ''}
                             />
-                    </Grid>
+                    </Grid> */}
 
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <TextField 

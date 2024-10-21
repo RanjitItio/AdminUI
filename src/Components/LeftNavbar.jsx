@@ -57,11 +57,11 @@ const UserNavContent = [
   icon: <MoneyIcon />},
 
   { text: 'Transactions', subItems: [
-    {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/fiat/transactions/'},
-    {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
-    {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
-    {text: 'Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
-    {text: 'Exchange Money', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/all/exchange/money/'},
+      // {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/fiat/transactions/'},
+      {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
+      {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
+      {text: 'Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
+      {text: 'Exchange Money', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/all/exchange/money/'},
   ],
   icon: <ReceiptLongOutlinedIcon />},
 
@@ -72,21 +72,28 @@ const UserNavContent = [
     icon: <CurrencyBitcoinIcon />
   },
 
+
   { text: 'Crypto', subItems: [
       {text: 'Wallet Requests', icon: <HistoryOutlinedIcon />, url: '/admin/user/wallets/'},
     ],
     icon: <CurrencyBitcoinIcon />
   },
+
+
   { text: 'Addons', subItems: [
       {text: 'Crypto Exchange', icon: <HistoryOutlinedIcon />, url: ''},
       {text: 'Investments', icon: <HistoryOutlinedIcon />, url: ''},
     ],
     icon: <ReceiptIcon />
   },
+
+
   { text: '-Revenues', subItems: [
     {text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: '/admin/revenues/'},],
     icon: <AccountBalanceOutlinedIcon />
   },
+
+  
   { text: '-Disputes', subItems: [
     {text: '-Disputes', icon: <ConfirmationNumberOutlined />, url: '/admin/dispute/'},],
     icon: <ConfirmationNumberOutlined />

@@ -73,7 +73,7 @@ export default function AllTransferTransactions({open}) {
             // console.log(res)
 
             if (res.status === 200 && res.data.success === true) {
-                updateMerchantWithdrawals(res.data.merchant_withdrawal_search)
+                setTransferTransaction(res.data.transfer_transactions)
             };
 
         }).catch((error)=> {
@@ -81,6 +81,7 @@ export default function AllTransferTransactions({open}) {
 
         })
     };
+
 
     // Export to Excel
     const exportToExcel = async ()=> {
