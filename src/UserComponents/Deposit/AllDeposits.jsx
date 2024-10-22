@@ -50,22 +50,37 @@ export default function AllDeposites({open}) {
     
     const [depositTransaction, setDepositTransaction] = useState([]);  // All Transactions
     const [totalRows, updateTotalRows] = useState(0);     // Paginated Rows
-    const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
     const [filterData, updateFilterData]     = useState({
-        merchant_email: '',
-        WithdrawalCurrency: '',
-        withdrawalAmount: ''
+        user_email: '',
+        status: '',
+        amount: ''
     });
 
-    const counPagination = Math.floor(totalRows);   // Total pagination count
+    const counPagination = Math.floor(totalRows ? totalRows : 0);   // Total pagination count
 
     /// Open close Filter fields
     const handleToggleFilters = () => {
         setShowFilters(!showFilters);
     };
+
+    // Update Filter selected Date
+    const handleFilterDateChange = (e, newValue)=> {
+        setFilterDate(newValue)
+    };
+
+    // Update Filter Input field data
+    const handleFilterInputChange = (e)=> {
+        const { name, value } = e.target;
+
+        updateFilterData({
+            ...filterData,
+            [name]: value
+        })
+    };
+
 
     // Fetch all the Deposites
     useEffect(() => {
@@ -82,26 +97,6 @@ export default function AllDeposites({open}) {
         })
       }, []);
 
-
-    // Input Search values
-    const handleSearchInputChange = (e)=> {
-        updateSearchQuery(e.target.value);
-    };
-
-    // Search Withdrawal Transactions
-    const handleSearch = ()=> {
-        axiosInstance.get(`api/v4/admin/merchant/withdrawal/search/?query=${searchQuery}`).then((res)=> {
-            // console.log(res)
-
-            if (res.status === 200 && res.data.success === true) {
-                updateMerchantWithdrawals(res.data.merchant_withdrawal_search)
-            };
-
-        }).catch((error)=> {
-            console.log(error)
-
-        })
-    };
 
     // Export to Excel
     const exportToExcel = async ()=> {
@@ -158,7 +153,7 @@ export default function AllDeposites({open}) {
             };
 
         }).catch((error)=> {
-            console.log(error);
+            // console.log(error);
 
         })
     };
@@ -166,6 +161,48 @@ export default function AllDeposites({open}) {
     // Method to redirect the user to Edit page
     const handleEditClicked = (transaction)=> {
         navigate('/admin/deposits/update/', {state: {transactionID: transaction}})
+    };
+
+
+    /// Get Filtered Data
+    const handleGetFilteredData = ()=> {
+         axiosInstance.post(`/api/v1/admin/filter/fiat/deposit/`, {
+            date_time: filterDate,
+            email: filterData.user_email,
+            status: filterData.status,
+            amount: filterData.amount
+
+         }).then((res)=> {
+            console.log(res)
+
+            if (res.status === 200 && res.data.success === true) {
+                setDepositTransaction(res.data.filter_deposit_transactions)
+            }
+
+         }).catch((error)=> {
+            console.log(error)
+
+            if (error.response.data.message === 'Invalid Email') {
+                setFilterError('Invalid Email Address')
+            } else if (error.response.data.message === 'No data found') {
+                setFilterError('No data found')
+            }
+
+            setTimeout(() => {
+                setFilterError('');
+            }, 1500);
+         })
+    };
+
+    /// Reset Filter data
+    const handleResetFilter = ()=> {
+        setFilterDate('')
+        updateFilterData({
+            user_email:'',
+            status: '',
+            amount: ''
+        })
+        handlePaginatedData('e', 1)
     };
 
 
@@ -208,13 +245,6 @@ export default function AllDeposites({open}) {
                     >
                         <b>All FIAT Deposites</b>
                     </Typography>
-                    {/* <div style={{ display: 'flex', alignItems: 'center', marginBottom: isSmallScreen ? '16px' : '0'}}>
-                        <Input placeholder="Type in here…" onChange={handleSearchInputChange} />
-
-                        <IconButton aria-label="Example" onClick={handleSearch}>
-                            <SearchIcon color='primary' />
-                        </IconButton>
-                    </div> */}
 
                     {/* For small screen sizes */}
                     {isSmallScreen ? (
@@ -247,7 +277,7 @@ export default function AllDeposites({open}) {
                                 id="date"
                                 name="date"
                                 value={filterDate}
-                                // onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                                onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
                             >
                                 <Option value="Today">Today</Option>
                                 <Option value="Yesterday">Yesterday</Option>
@@ -263,8 +293,8 @@ export default function AllDeposites({open}) {
                                 <Input 
                                 placeholder="User Email" 
                                 name='user_email'
-                                // value={filterData.merchant_email}
-                                // onChange={handleFilterInputChange}
+                                value={filterData.user_email}
+                                onChange={handleFilterInputChange}
                                 />
                             </FormControl>
                         </Grid>
@@ -272,9 +302,9 @@ export default function AllDeposites({open}) {
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
                                 <Input 
-                                    name='Status'
-                                    // value={filterData.WithdrawalCurrency}
-                                    // onChange={handleFilterInputChange}
+                                    name='status'
+                                    value={filterData.status}
+                                    onChange={handleFilterInputChange}
                                     placeholder="Status" 
                                     />
                             </FormControl>
@@ -284,9 +314,9 @@ export default function AllDeposites({open}) {
                             <FormControl fullWidth>
                                 <Input 
                                     placeholder="Amount"
-                                    name='Amount'
-                                    // value={filterData.withdrawalAmount} 
-                                    // onChange={handleFilterInputChange}
+                                    name='amount'
+                                    value={filterData.amount} 
+                                    onChange={handleFilterInputChange}
                                     />
                             </FormControl>
                         </Grid>
@@ -294,7 +324,7 @@ export default function AllDeposites({open}) {
                         <Grid item xs={6} sm={6} md={1}>
                             <FormControl fullWidth>
                                 <JoyButton 
-                                // onClick={handleFilterData}
+                                onClick={handleGetFilteredData}
                                 >
                                     Submit
                                 </JoyButton>
@@ -304,7 +334,7 @@ export default function AllDeposites({open}) {
                         <Grid item xs={6} sm={6} md={1}>
                             <FormControl fullWidth>
                                 <JoyButton 
-                                // onClick={handleFilterData}
+                                onClick={handleResetFilter}
                                 >
                                     Reset
                                 </JoyButton>
