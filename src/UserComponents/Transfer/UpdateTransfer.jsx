@@ -261,7 +261,7 @@ export default function UpdateTransferTransaction({open}) {
                             variant="outlined" 
                             fullWidth 
                             name='transactionFee'
-                            value={`${transactionData?.transaction_fee || ''} ${transactionDetail?.sender_currency?.name || ''}`}
+                            value={`${transactionData?.transaction_fee.toFixed(2) || ''} ${transactionDetail?.sender_currency?.name || ''}`}
                             />
                     </Grid>
 
