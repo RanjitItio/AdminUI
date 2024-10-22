@@ -54,6 +54,7 @@ export default function UpdateFIATWithdrawals({open}) {
     const handleTransactionStatusUpdate = () => {
         if(statusValue === '') {
             setError('Please select status')
+
         } else {
             setDisablebutton(true);
 
@@ -241,11 +242,11 @@ export default function UpdateFIATWithdrawals({open}) {
                         <TextField 
                             type='text' 
                             id="convertedAmount" 
-                            label="Converted Amount" 
+                            label="Credited Amount" 
                             variant="outlined"
                             fullWidth 
-                            name='convertedAmount'
-                            value={`${withdrawalDetail?.debit_amount || ''} ${withdrawalDetail?.debit_currency || ''}`}
+                            name='creditedAmount'
+                            value={`${withdrawalDetail?.credit_amount.toFixed(4) || 0} ${withdrawalDetail?.credit_currency || ''}`}
                             />
                     </Grid>
 

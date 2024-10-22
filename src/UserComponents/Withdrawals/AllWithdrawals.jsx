@@ -54,18 +54,35 @@ export default function FiatWithdrawals({open}) {
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
+    const [exportData, updateExportData] = useState([]); // Excel Data
     const [filterData, updateFilterData]     = useState({
-        merchant_email: '',
-        WithdrawalCurrency: '',
-        withdrawalAmount: ''
+        user_email: '',
+        status: '',
+        amount: ''
     });
 
-    const counPagination = Math.ceil(totalRows);   // Total pagination count
+    const counPagination = Math.floor(totalRows);   // Total pagination count
 
     /// Open close Filter fields
     const handleToggleFilters = () => {
         setShowFilters(!showFilters);
     };
+
+    // Update date value
+    const handleFilterDateChange = (e, newValue)=> {
+        setFilterDate(newValue);
+    };
+
+    // Update input field value
+    const handleFilterInputChange = (e)=> {
+        const { name, value } = e.target;
+        updateFilterData({
+            ...filterData,
+            [name]: value
+        })
+    };
+
+
 
     // Fetch all the Withdrawals
     useEffect(() => {
@@ -77,7 +94,7 @@ export default function FiatWithdrawals({open}) {
         };
   
         }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
   
         })
       }, []);
@@ -99,7 +116,7 @@ export default function FiatWithdrawals({open}) {
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            saveAs(blob, 'withdrawals.xlsx');
+            saveAs(blob, 'Fiatwithdrawals.xlsx');
         } else {
             console.log('No Data available to Download')
         }
@@ -109,11 +126,11 @@ export default function FiatWithdrawals({open}) {
 
     // Download all Deposit transactions
     const handleDownloadWithdrawals = ()=> {
-        axiosInstance.get(`/api/v4/admin/merchant/pg/export/withdrawals/`).then((res)=> {
+        axiosInstance.get(`/api/v5/admin/export/fiat/withdrawal/`).then((res)=> {
             // console.log(res)
     
             if (res.status === 200 && res.data.success === true) {
-                updateExportData(res.data.AdminMerchantExportWithdrawalRequests);
+                updateExportData(res.data.export_admin_fiat_withdrawals);
                 
                 setTimeout(() => {
                     exportToExcel();
@@ -121,7 +138,7 @@ export default function FiatWithdrawals({open}) {
             };
     
           }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
     
           })
     };
@@ -139,7 +156,7 @@ export default function FiatWithdrawals({open}) {
             };
 
         }).catch((error)=> {
-            console.log(error);
+            // console.log(error);
 
         })
     };
@@ -148,6 +165,48 @@ export default function FiatWithdrawals({open}) {
     // Method to redirect the user to Edit page
     const handleEditClicked = (withdraw)=> {
         navigate('/admin/withdrawls/update/', {state: {withdrawal: withdraw}})
+    };
+
+    
+    /// Get Filtered Data
+    const handleGetFilterData = ()=> {
+        axiosInstance.post(`/api/v5/admin/filter/fiat/withdrawal/`, {
+            date_time: filterDate,
+            email: filterData.user_email,
+            amount: filterData.amount,
+            status: filterData.status
+
+        }).then((res)=> {
+            console.log(res)
+
+            if (res.status === 200 && res.data.success === true) {
+                updateWithdrawals(res.data.all_admin_fiat_filter_withdrawals)
+            }
+
+        }).catch((error)=> {
+
+            if (error.response.data.message === 'Invalid Email') {
+                setFilterError('Invalid Email Address')
+            } else if (error.response.data.message === 'No Withdrawal found') {
+                setFilterError('No data found')
+            }
+
+            setTimeout(() => {
+                setFilterError('')
+            }, 1500);
+        })
+    };
+
+
+     // Reset Filter Method
+     const handleResetFilter = ()=> {
+        setFilterDate('');
+        updateFilterData({
+            user_email:'',
+            status: '',
+            amount: ''
+        })
+        handlePaginatedData('e', 1)
     };
 
 
@@ -180,7 +239,7 @@ export default function FiatWithdrawals({open}) {
                         {/* For small screen sizes */}
                         {isSmallScreen ? (
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <IconButton aria-label="export">
+                                <IconButton aria-label="export" onClick={handleDownloadWithdrawals}>
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
@@ -190,7 +249,7 @@ export default function FiatWithdrawals({open}) {
                             </div>
                             ) : (
                             <div>
-                                <Button sx={{ mx: 1 }}>Export</Button>
+                                <Button sx={{ mx: 1 }} onClick={handleDownloadWithdrawals}>Export</Button>
                                 <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
                             </div>
                         )}
@@ -208,7 +267,7 @@ export default function FiatWithdrawals({open}) {
                                     id="date"
                                     name="date"
                                     value={filterDate}
-                                    // onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                                    onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
                                 >
                                     <Option value="Today">Today</Option>
                                     <Option value="Yesterday">Yesterday</Option>
@@ -224,8 +283,8 @@ export default function FiatWithdrawals({open}) {
                                     <Input 
                                     placeholder="User Email" 
                                     name='user_email'
-                                    // value={filterData.merchant_email}
-                                    // onChange={handleFilterInputChange}
+                                    value={filterData.user_email}
+                                    onChange={handleFilterInputChange}
                                     />
                                 </FormControl>
                             </Grid>
@@ -233,9 +292,9 @@ export default function FiatWithdrawals({open}) {
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
                                     <Input 
-                                        name='Status'
-                                        // value={filterData.WithdrawalCurrency}
-                                        // onChange={handleFilterInputChange}
+                                        name='status'
+                                        value={filterData.status}
+                                        onChange={handleFilterInputChange}
                                         placeholder="Status" 
                                         />
                                 </FormControl>
@@ -245,9 +304,9 @@ export default function FiatWithdrawals({open}) {
                                 <FormControl fullWidth>
                                     <Input 
                                         placeholder="Amount"
-                                        name='Amount'
-                                        // value={filterData.withdrawalAmount} 
-                                        // onChange={handleFilterInputChange}
+                                        name='amount'
+                                        value={filterData.amount} 
+                                        onChange={handleFilterInputChange}
                                         />
                                 </FormControl>
                             </Grid>
@@ -255,7 +314,7 @@ export default function FiatWithdrawals({open}) {
                             <Grid item xs={6} sm={6} md={1}>
                                 <FormControl fullWidth>
                                     <JoyButton 
-                                    // onClick={handleFilterData}
+                                    onClick={handleGetFilterData}
                                     >
                                         Submit
                                     </JoyButton>
@@ -265,7 +324,7 @@ export default function FiatWithdrawals({open}) {
                             <Grid item xs={6} sm={6} md={1}>
                                 <FormControl fullWidth>
                                     <JoyButton 
-                                    // onClick={handleFilterData}
+                                    onClick={handleResetFilter}
                                     >
                                         Reset
                                     </JoyButton>
@@ -316,7 +375,7 @@ export default function FiatWithdrawals({open}) {
 
                                         {/* Withdrawal Amount Column */}
                                         <TableCell  scope="row" align='center'>
-                                            {transaction?.amount} {transaction?.withdrawal_currency}
+                                            {transaction?.amount} {transaction?.wallet_currency}
                                         </TableCell>
 
                                         {/* Date Column */}
