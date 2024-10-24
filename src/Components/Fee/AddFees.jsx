@@ -152,6 +152,7 @@ export default function AddFees({open}) {
                             <Option value="Fiat Deposit">Fiat Deposit</Option>
                             <Option value="Fiat Transfer">Fiat Transfer</Option>
                             <Option value="Fiat Withdrawal">Fiat Withdrawal</Option>
+                            <Option value="Fiat Exchange">Fiat Exchange</Option>
                         </Select>
                     </Grid>
 

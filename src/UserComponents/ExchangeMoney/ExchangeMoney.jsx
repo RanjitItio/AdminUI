@@ -8,7 +8,6 @@ import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
 import Pagination from '@mui/material/Pagination';
 import Input from '@mui/joy/Input';
-import SearchIcon from '@mui/icons-material/Search';
 import Button from '../../Components/MUIBaseButton/button';
 import { useNavigate } from "react-router-dom";
 import ExcelJS from 'exceljs';
@@ -47,17 +46,18 @@ export default function AllExchangeMoneyRequest({open}){
     const navigate      = useNavigate();
     const theme         = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-    
+
+    const [exportData, updateExportData]    = useState([]);  // Exported Data
     const [exchangeMoney, setExchangeMoney] = useState([]);  // All Transactions
     const [totalRows, updateTotalRows]      = useState(0);     // Paginated Rows
-    const [searchQuery, updateSearchQuery]  = useState('');  // Search Query state
     const [showFilters, setShowFilters]     = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]       = useState('');  // Filter date state field
     const [filterError, setFilterError]     = useState('');  // Error message of filter
+    const [filterStatus, setFilterStatus]   = useState('');  // Filter statue
+    const [filterCurrency, setFilterCurrency] = useState('');
+    const [currencies, setCurrencies]       = useState([]);  // All Currencies
     const [filterData, updateFilterData]    = useState({
-        merchant_email: '',
-        WithdrawalCurrency: '',
-        withdrawalAmount: ''
+        user_email: ''
     });
 
     const counPagination = Math.ceil(totalRows);   // Total pagination count
@@ -66,6 +66,46 @@ export default function AllExchangeMoneyRequest({open}){
     const handleToggleFilters = () => {
         setShowFilters(!showFilters);
     };
+
+    // Get Selected date of Filter
+    const handleFilterDateChange = (e, newValue)=> {
+        setFilterDate(newValue)
+    };
+
+    // Update Filter Status method
+    const handleFilterStatusChange = (e, newValue)=> {
+        setFilterStatus(newValue);
+    };
+
+    const handleFilterCurrencyChange = (e, newValue)=> {
+        setFilterCurrency(newValue)
+    };
+
+
+    // update filter input field data
+    const handleFilterInputChange = (e)=> {
+        const { name,  value } = e.target;
+
+        updateFilterData({
+            ...filterData,
+            [name]: value
+        })
+    };
+
+    // Fetch all the available currency from API
+    useEffect(() => {
+        axiosInstance.get(`api/v2/currency/`).then((res)=> {
+          // console.log(res.data.currencies)
+          if (res.data && res.data.currencies){
+            setCurrencies(res.data.currencies)
+          }
+  
+        }).catch((error)=> {
+        //   console.log(error.response)
+        });
+  
+      }, []);
+
 
     // Fetch all the Exchange Requests
     useEffect(() => {
@@ -80,6 +120,7 @@ export default function AllExchangeMoneyRequest({open}){
             console.log(error)
         })
       }, []);
+
 
 
     // Export to Excel
@@ -98,7 +139,7 @@ export default function AllExchangeMoneyRequest({open}){
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            saveAs(blob, 'withdrawals.xlsx');
+            saveAs(blob, 'exchanges.xlsx');
         } else {
             console.log('No Data available to Download')
         }
@@ -107,11 +148,11 @@ export default function AllExchangeMoneyRequest({open}){
 
     // Download all Deposit transactions
     const handleDownloadExchange = ()=> {
-        axiosInstance.get(`/api/v4/admin/merchant/pg/export/withdrawals/`).then((res)=> {
+        axiosInstance.get(`/api/v6/admin/export/exchange/money/`).then((res)=> {
             // console.log(res)
     
             if (res.status === 200 && res.data.success === true) {
-                updateExportData(res.data.AdminMerchantExportWithdrawalRequests);
+                updateExportData(res.data.export_exchange_money_data);
                 
                 setTimeout(() => {
                     exportToExcel();
@@ -119,7 +160,7 @@ export default function AllExchangeMoneyRequest({open}){
             };
     
           }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
     
           })
     };
@@ -145,6 +186,52 @@ export default function AllExchangeMoneyRequest({open}){
     // Method to redirect the user to Edit page
     const handleEditClicked = (transaction)=> {
         navigate('/admin/update/exchange/money/', {state: {exchangeData: transaction}})
+    };
+
+
+    /// Get filter data
+    const handleGetFilterData = ()=> {
+         axiosInstance.post(`/api/v6/admin/filter/exchange/money/`, {
+            date_time: filterDate,
+            email: filterData.user_email,
+            status: filterStatus,
+            currency: filterCurrency
+
+         }).then((res)=> {
+            // console.log(res);
+            if (res.status === 200 && res.data.success === true) {
+                setExchangeMoney(res.data.filter_exchange_data)
+            }
+
+         }).catch((error)=> {
+            // console.log(error);
+
+            setTimeout(() => {
+                setFilterError('');
+            }, 2000);
+
+            if (error.response.data.message === 'Invalid email') {
+                setFilterError('Invalid Email Address');
+            } else if (error.response.data.message === 'No data found') {
+                setFilterError('No data found')
+            } else {
+                setFilterError('')
+            };
+
+         })
+    };
+
+
+    // Reset Filter Method
+    const handleResetFilter = ()=> {
+        setFilterStatus('');
+        setFilterDate('');
+        setFilterError('');
+        setFilterCurrency('');
+        updateFilterData({
+            user_email:''
+        })
+        handlePaginatedData('e', 1);
     };
 
 
@@ -177,7 +264,7 @@ export default function AllExchangeMoneyRequest({open}){
                     {/* For small screen sizes */}
                     {isSmallScreen ? (
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <IconButton aria-label="export">
+                                <IconButton aria-label="export" onClick={handleDownloadExchange}>
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
@@ -187,7 +274,7 @@ export default function AllExchangeMoneyRequest({open}){
                             </div>
                             ) : (
                             <div>
-                                <Button sx={{ mx: 1 }}>Export</Button>
+                                <Button sx={{ mx: 1 }} onClick={handleDownloadExchange}>Export</Button>
                                 <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
                             </div>
                         )}
@@ -205,8 +292,9 @@ export default function AllExchangeMoneyRequest({open}){
                                 id="date"
                                 name="date"
                                 value={filterDate}
-                                // onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                                onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
                             >
+                                
                                 <Option value="Today">Today</Option>
                                 <Option value="Yesterday">Yesterday</Option>
                                 <Option value="ThisWeek">This Week</Option>
@@ -221,38 +309,51 @@ export default function AllExchangeMoneyRequest({open}){
                                 <Input 
                                 placeholder="User Email" 
                                 name='user_email'
-                                // value={filterData.merchant_email}
-                                // onChange={handleFilterInputChange}
+                                value={filterData.user_email}
+                                onChange={handleFilterInputChange}
                                 />
                             </FormControl>
                         </Grid>
 
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
-                                <Input 
-                                    name='Status'
-                                    // value={filterData.WithdrawalCurrency}
-                                    // onChange={handleFilterInputChange}
-                                    placeholder="Status" 
-                                    />
+                                <Select
+                                    label="status"
+                                    placeholder='Status'
+                                    id="status"
+                                    name="status"
+                                    value={filterStatus}
+                                    onChange={(e, newValue) => handleFilterStatusChange(e, newValue)}
+                                >
+                                    <Option value="Approved">Approved</Option>
+                                    <Option value="Pending">Pending</Option>
+                                    <Option value="Cancelled">Cancelled</Option>
+                                    <Option value="Hold">On Hold</Option>
+                                </Select>
                             </FormControl>
                         </Grid>
 
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
-                                <Input 
-                                    placeholder="Amount"
-                                    name='Amount'
-                                    // value={filterData.withdrawalAmount} 
-                                    // onChange={handleFilterInputChange}
-                                    />
+                                <Select
+                                    label="From Currency"
+                                    placeholder='From Currency'
+                                    id="fromCurrency"
+                                    name="fromCurrency"
+                                    value={filterCurrency}
+                                    onChange={(e, newValue) => handleFilterCurrencyChange(e, newValue)}
+                                >
+                                    {currencies.map((curr, index)=> (
+                                        <Option key={index} value={curr.name}>{curr.name}</Option>
+                                    ))}
+                                </Select>
                             </FormControl>
                         </Grid>
-                        
+        
                         <Grid item xs={6} sm={6} md={1}>
                             <FormControl fullWidth>
                                 <JoyButton 
-                                // onClick={handleFilterData}
+                                onClick={handleGetFilterData}
                                 >
                                     Submit
                                 </JoyButton>
@@ -262,7 +363,7 @@ export default function AllExchangeMoneyRequest({open}){
                         <Grid item xs={6} sm={6} md={1}>
                             <FormControl fullWidth>
                                 <JoyButton 
-                                // onClick={handleFilterData}
+                                onClick={handleResetFilter}
                                 >
                                     Reset
                                 </JoyButton>

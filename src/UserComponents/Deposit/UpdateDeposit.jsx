@@ -130,7 +130,7 @@ export default function UpdateDepositTransaction({open}) {
                 }}
                 >
                 <Typography variant="h5" gutterBottom sx={{mb:3}}>
-                    Update User Deposite
+                    Update User Deposit
                 </Typography>
 
                 <Grid container spacing={3}>

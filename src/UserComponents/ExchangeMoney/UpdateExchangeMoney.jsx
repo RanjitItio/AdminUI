@@ -16,7 +16,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 
 // Raise Exchange Money Request
-export default function UpdateExchangeMoneyRequest(){
+export default function UpdateExchangeMoneyRequest({open}){
     
     const location = useLocation();
     const navigate = useNavigate();
