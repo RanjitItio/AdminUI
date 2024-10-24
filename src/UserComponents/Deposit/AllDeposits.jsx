@@ -49,14 +49,16 @@ export default function AllDeposites({open}) {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     
     const [depositTransaction, setDepositTransaction] = useState([]);  // All Transactions
+    const [currencies, setCurrencies]       = useState([]);  // All currencies
+    const [exportData, updateExportData]    = useState([]); // Excel Data
     const [totalRows, updateTotalRows] = useState(0);     // Paginated Rows
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
+    const [filterStatus, updateFilterStatus] = useState('');  // Filter Status
+    const [filterCurrency, setFilterCurrency] = useState('');  // Filter Currency
     const [filterError, setFilterError]      = useState('');  // Error message of filter
     const [filterData, updateFilterData]     = useState({
         user_email: '',
-        status: '',
-        amount: ''
     });
 
     const counPagination = Math.floor(totalRows ? totalRows : 0);   // Total pagination count
@@ -70,6 +72,16 @@ export default function AllDeposites({open}) {
     const handleFilterDateChange = (e, newValue)=> {
         setFilterDate(newValue)
     };
+   
+    // Update filter status value
+    const handleFilterStatusChange = (e, newValue)=> {
+        updateFilterStatus(newValue)
+    };
+
+    /// Update filter selected currency name
+    const handleFilterCurrencyChange = (e, newValue)=> {
+        setFilterCurrency(newValue)
+    };
 
     // Update Filter Input field data
     const handleFilterInputChange = (e)=> {
@@ -80,6 +92,20 @@ export default function AllDeposites({open}) {
             [name]: value
         })
     };
+
+    // Fetch all the available currency from API
+    useEffect(() => {
+        axiosInstance.get(`api/v2/currency/`).then((res)=> {
+          // console.log(res.data.currencies)
+          if (res.data && res.data.currencies){
+            setCurrencies(res.data.currencies)
+          }
+  
+        }).catch((error)=> {
+        //   console.log(error.response)
+        });
+  
+      }, []);
 
 
     // Fetch all the Deposites
@@ -114,7 +140,7 @@ export default function AllDeposites({open}) {
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            saveAs(blob, 'withdrawals.xlsx');
+            saveAs(blob, 'fiatDeposit.xlsx');
         } else {
             console.log('No Data available to Download')
         }
@@ -123,11 +149,11 @@ export default function AllDeposites({open}) {
 
     // Download all Deposit transactions
     const handleDownloadDeposits = ()=> {
-        axiosInstance.get(`/api/v4/admin/merchant/pg/export/withdrawals/`).then((res)=> {
+        axiosInstance.get(`/api/v1/admin/export/deposit/transactions/`).then((res)=> {
             // console.log(res)
     
             if (res.status === 200 && res.data.success === true) {
-                updateExportData(res.data.AdminMerchantExportWithdrawalRequests);
+                updateExportData(res.data.export_deposit_transactions);
                 
                 setTimeout(() => {
                     exportToExcel();
@@ -169,18 +195,18 @@ export default function AllDeposites({open}) {
          axiosInstance.post(`/api/v1/admin/filter/fiat/deposit/`, {
             date_time: filterDate,
             email: filterData.user_email,
-            status: filterData.status,
-            amount: filterData.amount
+            status: filterStatus,
+            currency: filterCurrency
 
          }).then((res)=> {
-            console.log(res)
+            // console.log(res)
 
             if (res.status === 200 && res.data.success === true) {
                 setDepositTransaction(res.data.filter_deposit_transactions)
             }
 
          }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
 
             if (error.response.data.message === 'Invalid Email') {
                 setFilterError('Invalid Email Address')
@@ -211,19 +237,6 @@ export default function AllDeposites({open}) {
             <DrawerHeader />
 
             <Paper elevation={3} sx={{p:1, borderRadius: '20px'}}> 
-            {/* <Box 
-                sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'start',
-                    alignItems: 'center',
-                    p:2
-                    }}>
-                <Input placeholder="Type in here…" onChange={handleSearchInputChange}/>
-                <IconButton aria-label="Example" onClick={handleSearch}>
-                    <SearchIcon color='primary' />
-                </IconButton>
-                <Button sx={{mx:1}} onClick={handleDownloadDeposits}>Export</Button>
-            </Box> */}
 
                 <Box 
                     sx={{ 
@@ -249,7 +262,7 @@ export default function AllDeposites({open}) {
                     {/* For small screen sizes */}
                     {isSmallScreen ? (
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <IconButton aria-label="export">
+                                <IconButton aria-label="export" onClick={handleDownloadDeposits}>
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
@@ -259,7 +272,7 @@ export default function AllDeposites({open}) {
                             </div>
                             ) : (
                             <div>
-                                <Button sx={{ mx: 1 }}>Export</Button>
+                                <Button sx={{ mx: 1 }} onClick={handleDownloadDeposits}>Export</Button>
                                 <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
                             </div>
                         )}
@@ -301,23 +314,34 @@ export default function AllDeposites({open}) {
 
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
-                                <Input 
-                                    name='status'
-                                    value={filterData.status}
-                                    onChange={handleFilterInputChange}
-                                    placeholder="Status" 
-                                    />
+                                <Select
+                                    placeholder='Status'
+                                    id="status"
+                                    name="status"
+                                    value={filterStatus}
+                                    onChange={(e, newValue) => handleFilterStatusChange(e, newValue)}
+                                >
+                                    <Option value="Approved">Approved</Option>
+                                    <Option value="Pending">Pending</Option>
+                                    <Option value="Cancelled">Cancelled</Option>
+                                    <Option value="Hold">On Hold</Option>
+                                </Select>
                             </FormControl>
                         </Grid>
 
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
-                                <Input 
-                                    placeholder="Amount"
-                                    name='amount'
-                                    value={filterData.amount} 
-                                    onChange={handleFilterInputChange}
-                                    />
+                                <Select
+                                    placeholder='Currency'
+                                    id="currency"
+                                    name="currency"
+                                    value={filterCurrency}
+                                    onChange={(e, newValue) => handleFilterCurrencyChange(e, newValue)}
+                                >
+                                    {currencies.map((curr, index)=> (
+                                        <Option key={index} value={curr.name}>{curr.name}</Option>
+                                    ))}
+                                </Select>
                             </FormControl>
                         </Grid>
                         

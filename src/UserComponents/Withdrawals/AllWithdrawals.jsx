@@ -46,22 +46,22 @@ export default function FiatWithdrawals({open}) {
 
     const navigate      = useNavigate();
     const theme         = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));  // Screen size
     
     const [withdrawals, updateWithdrawals] = useState([]);  // All Transactions
+    const [currencies, setCurrencies]       = useState([]);  // All currencies
     const [totalRows, updateTotalRows] = useState(0);     // Paginated Rows
-    const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
+    const [filterStatus, updateFilterStatus] = useState('');  // Filter Status
+    const [filterCurrency, setFilterCurrency] = useState('');  // Filter Currency
     const [exportData, updateExportData] = useState([]); // Excel Data
     const [filterData, updateFilterData]     = useState({
         user_email: '',
-        status: '',
-        amount: ''
     });
 
-    const counPagination = Math.floor(totalRows);   // Total pagination count
+    const counPagination = Math.ceil(totalRows ? totalRows : 0);   // Total pagination count
 
     /// Open close Filter fields
     const handleToggleFilters = () => {
@@ -73,6 +73,16 @@ export default function FiatWithdrawals({open}) {
         setFilterDate(newValue);
     };
 
+    // Update filter status value
+    const handleFilterStatusChange = (e, newValue)=> {
+        updateFilterStatus(newValue)
+    };
+
+    /// Update filter selected currency name
+    const handleFilterCurrencyChange = (e, newValue)=> {
+        setFilterCurrency(newValue)
+    };
+
     // Update input field value
     const handleFilterInputChange = (e)=> {
         const { name, value } = e.target;
@@ -82,6 +92,19 @@ export default function FiatWithdrawals({open}) {
         })
     };
 
+    // Fetch all the available currency from API
+    useEffect(() => {
+        axiosInstance.get(`api/v2/currency/`).then((res)=> {
+          // console.log(res.data.currencies)
+          if (res.data && res.data.currencies){
+            setCurrencies(res.data.currencies)
+          }
+  
+        }).catch((error)=> {
+        //   console.log(error.response)
+        });
+  
+    }, []);
 
 
     // Fetch all the Withdrawals
@@ -173,11 +196,11 @@ export default function FiatWithdrawals({open}) {
         axiosInstance.post(`/api/v5/admin/filter/fiat/withdrawal/`, {
             date_time: filterDate,
             email: filterData.user_email,
-            amount: filterData.amount,
-            status: filterData.status
+            currency: filterCurrency,
+            status: filterStatus
 
         }).then((res)=> {
-            console.log(res)
+            // console.log(res)
 
             if (res.status === 200 && res.data.success === true) {
                 updateWithdrawals(res.data.all_admin_fiat_filter_withdrawals)
@@ -291,23 +314,34 @@ export default function FiatWithdrawals({open}) {
 
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
-                                    <Input 
-                                        name='status'
-                                        value={filterData.status}
-                                        onChange={handleFilterInputChange}
-                                        placeholder="Status" 
-                                        />
-                                </FormControl>
+                                    <Select
+                                        placeholder='Status'
+                                        id="status"
+                                        name="status"
+                                        value={filterStatus}
+                                        onChange={(e, newValue) => handleFilterStatusChange(e, newValue)}
+                                    >
+                                        <Option value="Approved">Approved</Option>
+                                        <Option value="Pending">Pending</Option>
+                                        <Option value="Cancelled">Cancelled</Option>
+                                        <Option value="Hold">On Hold</Option>
+                                    </Select>
+                            </FormControl>
                             </Grid>
 
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
-                                    <Input 
-                                        placeholder="Amount"
-                                        name='amount'
-                                        value={filterData.amount} 
-                                        onChange={handleFilterInputChange}
-                                        />
+                                    <Select
+                                        placeholder='Currency'
+                                        id="currency"
+                                        name="currency"
+                                        value={filterCurrency}
+                                        onChange={(e, newValue) => handleFilterCurrencyChange(e, newValue)}
+                                    >
+                                        {currencies.map((curr, index)=> (
+                                            <Option key={index} value={curr.name}>{curr.name}</Option>
+                                        ))}
+                                    </Select>
                                 </FormControl>
                             </Grid>
                             
