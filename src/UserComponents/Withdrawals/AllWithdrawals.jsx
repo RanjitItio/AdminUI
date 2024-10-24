@@ -224,6 +224,8 @@ export default function FiatWithdrawals({open}) {
      // Reset Filter Method
      const handleResetFilter = ()=> {
         setFilterDate('');
+        updateFilterStatus('');
+        setFilterCurrency('');
         updateFilterData({
             user_email:'',
             status: '',

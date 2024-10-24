@@ -161,7 +161,7 @@ export default function AllDeposites({open}) {
             };
     
           }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
     
           })
     };
@@ -222,7 +222,9 @@ export default function AllDeposites({open}) {
 
     /// Reset Filter data
     const handleResetFilter = ()=> {
-        setFilterDate('')
+        setFilterDate('');
+        updateFilterStatus('');
+        setFilterCurrency('');
         updateFilterData({
             user_email:'',
             status: '',
