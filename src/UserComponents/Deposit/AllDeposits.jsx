@@ -8,7 +8,6 @@ import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
 import Pagination from '@mui/material/Pagination';
 import Input from '@mui/joy/Input';
-import SearchIcon from '@mui/icons-material/Search';
 import Button from '../../Components/MUIBaseButton/button';
 import { useNavigate } from "react-router-dom";
 import ExcelJS from 'exceljs';
@@ -21,6 +20,8 @@ import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import {Button as JoyButton} from '@mui/joy';
 import FormControl from '@mui/material/FormControl';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import { selectClasses } from '@mui/joy/Select';
 
 
 
@@ -226,9 +227,7 @@ export default function AllDeposites({open}) {
         updateFilterStatus('');
         setFilterCurrency('');
         updateFilterData({
-            user_email:'',
-            status: '',
-            amount: ''
+            user_email:''
         })
         handlePaginatedData('e', 1)
     };
@@ -293,6 +292,15 @@ export default function AllDeposites({open}) {
                                 name="date"
                                 value={filterDate}
                                 onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                                indicator={<KeyboardArrowDown />}
+                                sx={{
+                                    [`& .${selectClasses.indicator}`]: {
+                                      transition: '0.2s',
+                                      [`&.${selectClasses.expanded}`]: {
+                                        transform: 'rotate(-180deg)',
+                                      },
+                                    },
+                                  }}
                             >
                                 <Option value="Today">Today</Option>
                                 <Option value="Yesterday">Yesterday</Option>
@@ -322,6 +330,15 @@ export default function AllDeposites({open}) {
                                     name="status"
                                     value={filterStatus}
                                     onChange={(e, newValue) => handleFilterStatusChange(e, newValue)}
+                                    indicator={<KeyboardArrowDown />}
+                                    sx={{
+                                        [`& .${selectClasses.indicator}`]: {
+                                        transition: '0.2s',
+                                        [`&.${selectClasses.expanded}`]: {
+                                            transform: 'rotate(-180deg)',
+                                        },
+                                        },
+                                    }}
                                 >
                                     <Option value="Approved">Approved</Option>
                                     <Option value="Pending">Pending</Option>
@@ -339,6 +356,15 @@ export default function AllDeposites({open}) {
                                     name="currency"
                                     value={filterCurrency}
                                     onChange={(e, newValue) => handleFilterCurrencyChange(e, newValue)}
+                                    indicator={<KeyboardArrowDown />}
+                                    sx={{
+                                        [`& .${selectClasses.indicator}`]: {
+                                        transition: '0.2s',
+                                        [`&.${selectClasses.expanded}`]: {
+                                            transform: 'rotate(-180deg)',
+                                        },
+                                        },
+                                    }}
                                 >
                                     {currencies.map((curr, index)=> (
                                         <Option key={index} value={curr.name}>{curr.name}</Option>

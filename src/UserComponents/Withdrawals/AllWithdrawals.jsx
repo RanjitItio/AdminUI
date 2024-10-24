@@ -20,6 +20,8 @@ import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import {Button as JoyButton} from '@mui/joy';
 import FormControl from '@mui/material/FormControl';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import { selectClasses } from '@mui/joy/Select';
 
 
 
@@ -227,9 +229,7 @@ export default function FiatWithdrawals({open}) {
         updateFilterStatus('');
         setFilterCurrency('');
         updateFilterData({
-            user_email:'',
-            status: '',
-            amount: ''
+            user_email:''
         })
         handlePaginatedData('e', 1)
     };
@@ -293,6 +293,15 @@ export default function FiatWithdrawals({open}) {
                                     name="date"
                                     value={filterDate}
                                     onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                                    indicator={<KeyboardArrowDown />}
+                                    sx={{
+                                        [`& .${selectClasses.indicator}`]: {
+                                        transition: '0.2s',
+                                        [`&.${selectClasses.expanded}`]: {
+                                            transform: 'rotate(-180deg)',
+                                        },
+                                        },
+                                    }}
                                 >
                                     <Option value="Today">Today</Option>
                                     <Option value="Yesterday">Yesterday</Option>
@@ -322,6 +331,15 @@ export default function FiatWithdrawals({open}) {
                                         name="status"
                                         value={filterStatus}
                                         onChange={(e, newValue) => handleFilterStatusChange(e, newValue)}
+                                        indicator={<KeyboardArrowDown />}
+                                        sx={{
+                                            [`& .${selectClasses.indicator}`]: {
+                                            transition: '0.2s',
+                                            [`&.${selectClasses.expanded}`]: {
+                                                transform: 'rotate(-180deg)',
+                                            },
+                                            },
+                                        }}
                                     >
                                         <Option value="Approved">Approved</Option>
                                         <Option value="Pending">Pending</Option>
@@ -339,6 +357,15 @@ export default function FiatWithdrawals({open}) {
                                         name="currency"
                                         value={filterCurrency}
                                         onChange={(e, newValue) => handleFilterCurrencyChange(e, newValue)}
+                                        indicator={<KeyboardArrowDown />}
+                                        sx={{
+                                            [`& .${selectClasses.indicator}`]: {
+                                            transition: '0.2s',
+                                            [`&.${selectClasses.expanded}`]: {
+                                                transform: 'rotate(-180deg)',
+                                            },
+                                            },
+                                        }}
                                     >
                                         {currencies.map((curr, index)=> (
                                             <Option key={index} value={curr.name}>{curr.name}</Option>
@@ -347,7 +374,7 @@ export default function FiatWithdrawals({open}) {
                                 </FormControl>
                             </Grid>
                             
-                            <Grid item xs={6} sm={6} md={1}>
+                            <Grid item xs={6} sm={6} md={1}>    
                                 <FormControl fullWidth>
                                     <JoyButton 
                                     onClick={handleGetFilterData}

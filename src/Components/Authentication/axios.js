@@ -39,6 +39,10 @@ axiosInstance.interceptors.response.use(
         if (error.response) {
             if (error.response.statusText === 'Unauthorized') {
                 // Avoid redirecting if the user is already on the sign-in page
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                localStorage.removeItem('token');
+
                 if (window.location.pathname !== '/signin/') {
                     window.location.href = '/signin/';
                 }
