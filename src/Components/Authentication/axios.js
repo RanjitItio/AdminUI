@@ -38,7 +38,10 @@ axiosInstance.interceptors.response.use(
 
         if (error.response) {
             if (error.response.statusText === 'Unauthorized') {
-                window.location.href = '/signin/';
+                // Avoid redirecting if the user is already on the sign-in page
+                if (window.location.pathname !== '/signin/') {
+                    window.location.href = '/signin/';
+                }
             }
             return Promise.reject(error);
         } else {
