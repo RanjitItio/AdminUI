@@ -310,7 +310,7 @@ export default function UpdateTransferTransaction({open}) {
                                 />
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
+                        {/* <Grid item xs={12} sm={6} md={4} lg={3}>
                             <TextField  
                                 id="receiverEmail" 
                                 label="Receiver Email" 
@@ -319,7 +319,7 @@ export default function UpdateTransferTransaction({open}) {
                                 name='receiverEmail'
                                 value={transactionDetail?.receiver_details?.email || ''}
                                 />
-                        </Grid>
+                        </Grid> */}
 
                         <Grid item xs={12} sm={6} md={4} lg={3}>
                             <TextField 

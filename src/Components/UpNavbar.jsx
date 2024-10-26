@@ -13,6 +13,7 @@ import Menu from '@mui/material/Menu';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Switch } from 'antd'
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -48,6 +49,7 @@ const settings = [
 // Up Navbar
 function UpperNavbar({handleDrawerOpen, open, handleMerchantUserSwitch, merchantContent}){
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -110,7 +112,7 @@ function UpperNavbar({handleDrawerOpen, open, handleMerchantUserSwitch, merchant
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting, index) => (
-                <MenuItem key={index} onClick={handleCloseUserMenu}>
+                <MenuItem key={index} onClick={()=>  {handleCloseUserMenu(); navigate(setting.url)}}>
                   <Link to={setting.url} textalign="center" style={{textDecoration: 'none'}}>{setting.text}</Link>
                 </MenuItem>
               ))}
@@ -122,7 +124,7 @@ function UpperNavbar({handleDrawerOpen, open, handleMerchantUserSwitch, merchant
       </AppBar>
     </>
   )
-}
+};
 
 
 

@@ -71,7 +71,7 @@ export default function UserTabs({open}) {
         axiosInstance.get(`api/all/groups/`).then((res)=> {
             // console.log(res.data.data)
             if (res.status === 200) {
-                updateAllGroup(res.data.data)
+               updateAllGroup(res.data.data)
             }
         }).catch((error)=> {
             // console.log(error)

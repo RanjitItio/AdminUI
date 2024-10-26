@@ -135,7 +135,7 @@ export default function AllMerchantTable({open}) {
         };
 
       }).catch((error)=> {
-        console.log(error)
+        // console.log(error)
 
         if (error.response.data.msg == 'Only admin can view all the KYC'){
             setError("Only admin can view the Users kyc")

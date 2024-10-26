@@ -327,6 +327,7 @@ if (userDetails === '') {
                     />
                 )}
 
+
                 {/* KYC Tab */}
                 {activeTab === 'kyc' && (
                     Kycdetails ? 
@@ -361,6 +362,7 @@ if (userDetails === '') {
                         />
 
                 )} */}
+                
                 {activeTab === 'keys' && (
                     <MerchantKeys
                       merchantID={Kycdetails.user_id}

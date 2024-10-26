@@ -17,7 +17,17 @@ import MenuItem from '@mui/joy/MenuItem';
 import MenuButton from '@mui/joy/MenuButton';
 import { useNavigate } from 'react-router-dom';
 import Chip from '@mui/material/Chip';
-// import UserDelete from './UserDelete';
+
+
+
+const IS_DEVELOPMENT = import.meta.env.VITE_IS_DEVELOPMENT;
+let redirectUrl = '';
+
+if (IS_DEVELOPMENT === 'True') {
+    redirectUrl = 'http://localhost:5173'
+ } else {
+    redirectUrl = 'https://react-uat.oyefin.com'
+ };
 
 
 
@@ -28,7 +38,7 @@ const blue = {
     500: '#007FFF',
     600: '#0072E5',
     700: '#0066CC',
-  };
+};
   
 
 const grey = {
@@ -42,7 +52,7 @@ const grey = {
     700: '#434D5B',
     800: '#303740',
     900: '#1C2025',
-  };
+};
 
 
 const Button = styled(BaseButton)(
@@ -187,7 +197,7 @@ export default function UsersTable({open}) {
     // Redirect to merchat home page
     useEffect(() => {
         if (accessToken && refreshToken) {
-            window.location.replace(`${redirectUrl}/admin/merchant/login/?access=${accessToken}&refresh=${refreshToken}&name=${merchantFullName}&ismerchant=${isMerchant}`);
+            window.location.replace(`${redirectUrl}/admin/user/login/?access=${accessToken}&refresh=${refreshToken}&name=${userFullName}&ismerchant=${isMerchant}`);
         };
     }, [accessToken, refreshToken])
 
@@ -225,7 +235,7 @@ export default function UsersTable({open}) {
             };
 
         }).catch((error)=> {
-            console.log(error);
+            // console.log(error);
 
         })
     };
