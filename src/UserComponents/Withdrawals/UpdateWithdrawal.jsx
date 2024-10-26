@@ -176,7 +176,7 @@ export default function UpdateFIATWithdrawals({open}) {
                             variant="outlined" 
                             fullWidth 
                             name='withdrawalFee'
-                            value={`${withdrawalDetail?.withdrawal_fee || ''} ${withdrawalDetail?.withdrawal_currency || ''}`}
+                            value={`${withdrawalDetail.withdrawal_fee ? withdrawalDetail.withdrawal_fee.toFixed(3) : 0} ${withdrawalDetail?.withdrawal_currency || ''}`}
                             />
                     </Grid>
 
@@ -212,7 +212,7 @@ export default function UpdateFIATWithdrawals({open}) {
                             variant="outlined" 
                             fullWidth 
                             name='walletBalance'
-                            value={withdrawalDetail?.wallet_balance || ''}
+                            value={withdrawalDetail.wallet_balance  ? withdrawalDetail.wallet_balance.toFixed(3) : 0}
                             />
                     </Grid>
 

@@ -228,7 +228,6 @@ export default function UsersTable({open}) {
 
         axiosInstance.get(`/api/v2/crypto/user/kyc/?limit=${limit}&offset=${offset}`).then((res)=> {
             // console.log(res);
-
             if (res.status === 200) {
                 updateKycData(res.data.all_Kyc)
                 updateUserData(res.data.all_users)
@@ -236,9 +235,9 @@ export default function UsersTable({open}) {
 
         }).catch((error)=> {
             // console.log(error);
-
         })
     };
+
 
      // Search Merchant users
      const handleSearch = ()=> {
@@ -250,7 +249,7 @@ export default function UsersTable({open}) {
             };
 
         }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
         })
     };
 

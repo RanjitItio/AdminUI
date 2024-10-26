@@ -44,20 +44,21 @@ export default function UserTabs({open}) {
         city:           Kycdetails?.city  || '',
     };
 
-    const [activeTab, setActiveTab]     = useState('profile');
-    const [allGroup, updateAllGroup]    = useState([]);  // Group data 
-    const [groupValue, setGroupValue]   = useState(userDetails?.group_name || 'NA');
-    const [kycDetail, updateKycDetail]  = useState(initialProfileData); // Kyc data
-    const [statusMessage, updateStatusMessage] = useState('');  // Status Message
-    const [error, setError]             = useState('')   // Error message
-    const [successMessage, setSuccessMessage] = useState(''); // Success Message
-    const [statusValue, setStatusValue] = useState(userDetails?.status || 'NA');
-    const [disableKycUpdateButton, setDisableKycUpdateButton] = useState(false); 
+    const [activeTab, setActiveTab]      = useState('profile');
+    const [allGroup, updateAllGroup]     = useState([]);  // Group data 
+    const [groupValue, setGroupValue]    = useState(userDetails?.group_name || 'NA');
+    const [kycDetail, updateKycDetail]   = useState(initialProfileData); // Kyc data
+    const [error, setError]              = useState('')   // Error message
+    const [statusValue, setStatusValue]  = useState(userDetails?.status || 'NA');
     const [userWallet, updateUserWallet] = useState([]);        // Wallet 
-    const [groupID, setGroupID]         = useState(userDetails?.group || 1);
+    const [groupID, setGroupID]          = useState(userDetails?.group || 1);
+    const [statusMessage, updateStatusMessage] = useState('');  // Status Message
+    const [successMessage, setSuccessMessage]  = useState(''); // Success Message
+    const [disableKycUpdateButton, setDisableKycUpdateButton] = useState(false); 
+    const [mailSendStatus, setMailSendStatus]  = useState(null); // Mail send status
 
 
-
+    
     // Update Profile data
     const handleProfileChange = (event) => {
         updateKycDetail({...kycDetail,
@@ -116,6 +117,21 @@ export default function UserTabs({open}) {
     const handleStatusValueUpdate = (event) => {
         setStatusValue(event.target.value)
     };
+
+    
+    // Update status message 
+    useEffect(() => {
+        setTimeout(() => {
+            setMailSendStatus(null)
+        }, 2000);
+
+        if (mailSendStatus) {
+            setSuccessMessage('User Data updated Successfully');
+        } else if (mailSendStatus === false) {
+            setSuccessMessage('User Data updated Successfully, Unable Send mail')
+        }
+    }, [mailSendStatus]);
+    
 
     
 // Method to update user Kyc details
@@ -191,16 +207,16 @@ const handleKYCStatusUpdate = ()=> {
           }).then((res)=> {
             // console.log(res)
             if (res.status == 200) {
-                setSuccessMessage('User Data updated Successfully')
                 setDisableKycUpdateButton(false);
+                setMailSendStatus(res.data.mail_send)
 
                 setTimeout(() => {
                     navigate('/admin/users/data/')
-                }, 1000);
+                }, 2000);
             }
 
           }).catch((error)=> {
-            console.log(error.response)
+            // console.log(error.response)
       
           if (error.response.data.msg == 'Unable to locate kyc'){
               setError("Unknowc kyc error")

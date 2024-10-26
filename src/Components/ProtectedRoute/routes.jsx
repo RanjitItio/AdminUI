@@ -8,6 +8,7 @@ import { ProtectedRoute } from "./protectedroutes";
 import { AdditionalAuthenticatedRoutes } from "../../UserComponents/ProtectedRoute/routes";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { useMediaQuery, createTheme } from '@mui/material';
 
 
 
@@ -79,13 +80,16 @@ const AddFees = React.lazy(()=> import('../Fee/AddFees'));
 
 // All the paths
 const AuthRoutes = () => {
-    const [open, setOpen] = React.useState(false);
-    const additionalAuthenticatedRoutes = AdditionalAuthenticatedRoutes(open);
+    const theme       = createTheme(); 
+    const isSmOrBelow = useMediaQuery(theme.breakpoints.down('sm'));
+    const [open, setOpen] = React.useState(!isSmOrBelow);
+
+    const additionalAuthenticatedRoutes = AdditionalAuthenticatedRoutes(open);  // UserComponent routes open state
 
     // Set the Leftbar open for large screen
     useEffect(() => {
       const setBar = ()=> {
-        if (window.matchMedia('(min-width: 768px)').matches) {
+        if (window.matchMedia('(min-width: 800px)').matches) {
           setOpen(true)
         } else {
           setOpen(false)
@@ -103,17 +107,18 @@ const AuthRoutes = () => {
     
     }, []);
     
-
+    
+    /// Open the sidebar
     const handleDrawerOpen = () => {
         setOpen(true);
     };
 
+    // Close the sidebar
     const handleDrawerClose = () => {
         setOpen(false);
     };
 
     const { token } = useAuth();
-  
     
     const routesForPublic = [
       {
