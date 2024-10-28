@@ -246,7 +246,7 @@ export default function UpdateFIATWithdrawals({open}) {
                             variant="outlined"
                             fullWidth 
                             name='creditedAmount'
-                            value={`${withdrawalDetail?.credit_amount.toFixed(4) || 0} ${withdrawalDetail?.credit_currency || ''}`}
+                            value={`${withdrawalDetail.credit_amount ? withdrawalDetail.credit_amount.toFixed(4) : 0} ${withdrawalDetail?.credit_currency || ''}`}
                             />
                     </Grid>
 
