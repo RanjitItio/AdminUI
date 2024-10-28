@@ -488,7 +488,7 @@ export default function UpdateTransferTransaction({open}) {
                             sx={{mx:2}} 
                             variant="contained" 
                             endIcon={<CancelIcon color='error'/>}
-                            // onClick={handleCancelButton}
+                            onClick={()=> navigate('/admin/transfers/')}
                             >
                             Cancel
                         </Button>

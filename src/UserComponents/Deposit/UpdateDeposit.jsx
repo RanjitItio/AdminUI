@@ -280,7 +280,7 @@ export default function UpdateDepositTransaction({open}) {
                             sx={{mx:2}} 
                             variant="contained" 
                             endIcon={<CancelIcon color='error'/>}
-                            // onClick={handleCancelButton}
+                            onClick={()=> navigate('/admin/deposits/')}
                             >
                             Cancel
                         </Button>
