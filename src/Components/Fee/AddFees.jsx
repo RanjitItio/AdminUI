@@ -5,11 +5,12 @@ import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import BackupIcon from '@mui/icons-material/Backup';
 import CancelIcon from '@mui/icons-material/Cancel';
-import Select from '@mui/joy/Select';
+import Select, { selectClasses } from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import axiosInstance from '../Authentication/axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Input from '@mui/joy/Input';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 
 
 
@@ -43,10 +44,26 @@ export default function AddFees({open}) {
     const handleFormDataChange = (e, newValue)=> {
         const {name, value} = e.target;
 
-        updateFormData({
-            ...formData,
-            [name]: newValue || value
-        })
+        if (value === '') {
+            setError('')
+            updateFormData({
+                ...formData,
+                [name]: newValue || value
+            })
+
+        } else if (Number(value) === 0 || Number(value) < 0) {
+            setError('Fee should be greater than 0')
+
+        } else if (value.length > 8) {
+            setError('Fee must be less than 8 digit')
+
+        } else if (/^\d*\.?\d*$/.test(value) || value === '' || Number(value) > 0) {
+            setError('')
+            updateFormData({
+                ...formData,
+                [name]: newValue || value
+            })
+        }
     };
 
 
@@ -142,13 +159,23 @@ export default function AddFees({open}) {
                         <Select
                             placeholder="Select Fee Name"
                             required
-                            sx={{ minWidth: 200 }}
                             name="fee_name"
                             value={feeName}
                             onChange={(e, newValue) => handleChangeFeeName(e, newValue)}
+                            indicator={<KeyboardArrowDown />}
+                            sx={{
+                                [`& .${selectClasses.indicator}`]: {
+                                  transition: '0.2s',
+                                  [`&.${selectClasses.expanded}`]: {
+                                    transform: 'rotate(-180deg)',
+                                  },
+                                },
+                              }}
                             >
                             <Option value="Crypto Buy">Crypto Buy</Option>
                             <Option value="Crypto Sell">Crypto Sell</Option>
+                            <Option value="Crypto Swap">Crypto Swap</Option>
+                            <Option value="Crypto Exchange">Crypto Exchange</Option>
                             <Option value="Fiat Deposit">Fiat Deposit</Option>
                             <Option value="Fiat Transfer">Fiat Transfer</Option>
                             <Option value="Fiat Withdrawal">Fiat Withdrawal</Option>
@@ -162,19 +189,28 @@ export default function AddFees({open}) {
                             name="fee_type"
                             value={feeType}
                             required
-                            sx={{ minWidth: 200 }}
                             onChange={(e, newValue) => handleChangeFeeType(e, newValue)}
+                            indicator={<KeyboardArrowDown />}
+                            sx={{
+                                [`& .${selectClasses.indicator}`]: {
+                                  transition: '0.2s',
+                                  [`&.${selectClasses.expanded}`]: {
+                                    transform: 'rotate(-180deg)',
+                                  },
+                                },
+                              }}
                             >
                             <Option value="Percentage">Percentage</Option>
                             <Option value="Fixed">Fixed</Option>
                         </Select>
                     </Grid>
 
+
                     {taxrate && 
                         <Grid item xs={12} sm={6} md={6}>
                             <Input 
                                 placeholder="Tax Rate" 
-                                type='number' 
+                                value={formData.tax_rate}
                                 name='tax_rate'
                                 onChange={handleFormDataChange}
                                 />
@@ -185,8 +221,8 @@ export default function AddFees({open}) {
                         <Grid item xs={12} sm={6} md={6}>
                             <Input 
                                 placeholder="Fixed Value" 
-                                type='number'
                                 name='fixed_value' 
+                                value={formData.fixed_value}
                                 onChange={handleFormDataChange}
                                 />
                         </Grid>

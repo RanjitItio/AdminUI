@@ -5,11 +5,13 @@ import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import BackupIcon from '@mui/icons-material/Backup';
 import CancelIcon from '@mui/icons-material/Cancel';
-import Select from '@mui/joy/Select';
+import Select, { selectClasses } from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import axiosInstance from '../Authentication/axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Input from '@mui/joy/Input';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+
 
 
   // Update Fees
@@ -69,20 +71,30 @@ export default function UpdateFees({open}) {
 
 
     // Update Input Field data
-    const handleUpdateFormData = (e)=> {
+    const handleUpdateFormData = (e, newValue)=> {
         const { name, value } = e.target;
 
-        if (/^\d+$/.test(value) || value === '') {
-            setError(''); 
-
+        if (value === '') {
+            setError('')
             updateFormData({
-                ...formData, 
-                [name]: value === '' ? '' : value
-            });
-        } else {
-            setError('Please type a valid integer');
+                ...formData,
+                [name]: newValue || value
+            })
+
+        } else if (Number(value) === 0 || Number(value) < 0) {
+            setError('Fee should be greater than 0')
+
+        } else if (value.length > 8) {
+            setError('Fee must be less than 8 digit')
+
+        } else if (/^\d*\.?\d*$/.test(value) || value === '' || Number(value) > 0) {
+            setError('')
+            updateFormData({
+                ...formData,
+                [name]: newValue || value
+            })
+
         }
-       
     };
 
     // const handleFeeValueChange = ()=> {
@@ -191,12 +203,22 @@ export default function UpdateFees({open}) {
                             placeholder="Select Fee Name"
                             name="fee_name"
                             required
-                            sx={{ minWidth: 200 }}
                             value={feeName}
                             onChange={handleChangeFeeName}
+                            indicator={<KeyboardArrowDown />}
+                            sx={{
+                                [`& .${selectClasses.indicator}`]: {
+                                  transition: '0.2s',
+                                  [`&.${selectClasses.expanded}`]: {
+                                    transform: 'rotate(-180deg)',
+                                  },
+                                },
+                              }}
                             >
                             <Option value="Crypto Buy">Crypto Buy</Option>
                             <Option value="Crypto Sell">Crypto Sell</Option>
+                            <Option value="Crypto Swap">Crypto Swap</Option>
+                            <Option value="Crypto Exchange">Crypto Exchange</Option>
                             <Option value="Fiat Deposit">Fiat Deposit</Option>
                             <Option value="Fiat Transfer">Fiat Transfer</Option>
                             <Option value="Fiat Withdrawal">Fiat Withdrawal</Option>
@@ -209,9 +231,17 @@ export default function UpdateFees({open}) {
                             placeholder="Select Fee Type"
                             name="fee_type"
                             required
-                            sx={{ minWidth: 200 }}
+                            indicator={<KeyboardArrowDown />}
                             value={feeType}
                             onChange={handleChangeFeeType}
+                            sx={{
+                                [`& .${selectClasses.indicator}`]: {
+                                  transition: '0.2s',
+                                  [`&.${selectClasses.expanded}`]: {
+                                    transform: 'rotate(-180deg)',
+                                  },
+                                },
+                              }}
                             >
                             <Option value="Percentage">Percentage</Option>
                             <Option value="Fixed">Fixed</Option>
@@ -221,7 +251,6 @@ export default function UpdateFees({open}) {
                     {taxrate && 
                         <Grid item xs={12} sm={6} md={6}>
                             <Input 
-                                type='number'
                                 placeholder="Tax Rate" 
                                 name='tax_rate'
                                 value={formData?.tax_rate || ''}
@@ -230,11 +259,9 @@ export default function UpdateFees({open}) {
                         </Grid>
                     }
 
-
                     {!taxrate && 
                         <Grid item xs={12} sm={6} md={6}>
                             <Input 
-                                type='number'
                                 placeholder="Fixed Value" 
                                 name='fixed_value'
                                 value={formData?.fixed_value || ''}
