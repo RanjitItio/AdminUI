@@ -402,7 +402,7 @@ export default function AllCryptoTransactions({open}) {
                                     <TableCell align="center"><b>User</b></TableCell>
                                     <TableCell align="center"><b>Email</b></TableCell>
                                     <TableCell align="center"><b>Crypto</b></TableCell>
-                                    <TableCell align="center"><b>Payment Mode</b></TableCell>
+                                    {/* <TableCell align="center"><b>Payment Mode</b></TableCell> */}
                                     <TableCell align="center"><b>Transaction Type</b></TableCell>
                                     <TableCell align="center"><b>Amount</b></TableCell>
                                     <TableCell align="center"><b>Status</b></TableCell>
@@ -448,9 +448,9 @@ export default function AllCryptoTransactions({open}) {
                                         </TableCell>
 
                                         {/* Payment Mode Column */}
-                                        <TableCell  scope="row" align='center'>
+                                        {/* <TableCell  scope="row" align='center'>
                                             {transaction?.payment_mode}
-                                        </TableCell>
+                                        </TableCell> */}
 
                                         {/* Transaction Type Column */}
                                         <TableCell component="th" scope="row" align="center">
