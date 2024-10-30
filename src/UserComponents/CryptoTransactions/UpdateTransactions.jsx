@@ -9,7 +9,6 @@ import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import axiosInstance from '../../Components/Authentication/axios';
 import { useLocation, useNavigate } from 'react-router-dom';
-import CircularProgress from '@mui/material/CircularProgress';
 
 
 
@@ -25,7 +24,7 @@ export default function UpdateCryptoTransaction({open}) {
     const [successMessage, SetSuccessMessage] = useState('');  // Success message
     const [statusValue, updateStatusValue]    = useState(Cryptotransaction?.status || '');  // Selected status
     const [error, setError]                   = useState('');  // Error Message
-    const [disableSubmit, setDisableSubmit]   = useState(false)
+    const [disableSubmit, setDisableSubmit]   = useState(false) // Disable Button
 
 
     // Update status
@@ -34,92 +33,92 @@ export default function UpdateCryptoTransaction({open}) {
     };
 
 
-      // Update Transaction Status
-      const handleTransactionStatusUpdate = () => {
-            setDisableSubmit(true);
+    // Update Transaction Status
+    const handleTransactionStatusUpdate = () => {
+        setDisableSubmit(true);
 
-           if (Cryptotransaction.type === 'Buy') {
-                axiosInstance.put(`/api/v3/admin/crypto/buy/`, {
-                    crypto_buy_id: Cryptotransaction.id,
-                    status: statusValue
+        if (Cryptotransaction.type === 'Buy') {
+            axiosInstance.put(`/api/v3/admin/crypto/buy/`, {
+                crypto_buy_id: Cryptotransaction.id,
+                status: statusValue
 
-                }).then((res)=> {
-                    // console.log(res);
+            }).then((res)=> {
+                // console.log(res);
 
-                    if (res.status === 200 && res.data.success === true) {
-                        setDisableSubmit(false)
-                        SetSuccessMessage('Updated Successfully')
-    
-                        setTimeout(() => {
-                            window.location.href = '/admin/user/crypto/transactions/'
-                        }, 2000);
-                    }
-
-                }).catch((error)=> {
-                    // console.log(error)
+                if (res.status === 200 && res.data.success === true) {
+                    setDisableSubmit(false)
+                    SetSuccessMessage('Updated Successfully')
 
                     setTimeout(() => {
-                        setError('')
-                    }, 2500);
+                        window.location.href = '/admin/user/crypto/transactions/'
+                    }, 2000);
+                }
 
-                    if (error.response.data.message === 'Unauthorized') {
-                        window.location.href = '/signin/'
-                    } else if (error.response.data.message === 'Invalid Transaction') {
-                        setError('Invalid Transaction please try again')
-                    } else if (error.response.data.message === 'Invalid Crypto Wallet') {
-                        setError('User crypto wallet not found')
-                    } else if (error.response.data.message === 'Invalid FIAT wallet') {
-                        setError('User FIAT wallet not found')
-                    } else if (error.response.data.message === 'Insufficient funds') {
-                        setError('Insufficient funds in Wallet')
-                    } else if (error.response.data.message === 'Already approved') {
-                        setError('Transaction already approved')
-                    } else {
-                        setError('')
-                    }
-                });
+            }).catch((error)=> {
+                // console.log(error)
 
-           } else if (Cryptotransaction.type === 'Sell') {
-                axiosInstance.put(`/api/v3/admin/crypto/sell/`, {
-                    crypto_sell_id: Cryptotransaction.id,
-                    status: statusValue
+                setTimeout(() => {
+                    setError('')
+                }, 2500);
 
-                }).then((res)=> {
-                    // console.log(res);
+                if (error.response.data.message === 'Unauthorized') {
+                    window.location.href = '/signin/'
+                } else if (error.response.data.message === 'Invalid Transaction') {
+                    setError('Invalid Transaction please try again')
+                } else if (error.response.data.message === 'Invalid Crypto Wallet') {
+                    setError('User crypto wallet not found')
+                } else if (error.response.data.message === 'Invalid FIAT wallet') {
+                    setError('User FIAT wallet not found')
+                } else if (error.response.data.message === 'Insufficient funds') {
+                    setError('Insufficient funds in Wallet')
+                } else if (error.response.data.message === 'Already approved') {
+                    setError('Transaction already approved')
+                } else {
+                    setError('')
+                }
+            });
 
-                    if (res.status === 200 && res.data.success === true) {
-                        SetSuccessMessage('Updated Successfully')
-                        setDisableSubmit(false)
+        } else if (Cryptotransaction.type === 'Sell') {
+            axiosInstance.put(`/api/v3/admin/crypto/sell/`, {
+                crypto_sell_id: Cryptotransaction.id,
+                status: statusValue
 
-                        setTimeout(() => {
-                            window.location.href = '/admin/user/crypto/transactions/'
-                        }, 2000);
-                    };
+            }).then((res)=> {
+                // console.log(res);
 
-                }).catch((error)=> {
-                    // console.log(error)
+                if (res.status === 200 && res.data.success === true) {
+                    SetSuccessMessage('Updated Successfully')
+                    setDisableSubmit(false)
+
                     setTimeout(() => {
-                        setError('')
-                    }, 2500);
+                        window.location.href = '/admin/user/crypto/transactions/'
+                    }, 2000);
+                };
 
-                    if (error.response.data.message === 'Unauthorized') {
-                        window.location.href === '/signin/'
-                    } else if (error.response.data.message === 'Invalid Transaction') {
-                        setError('Invalid Transaction')
-                    } else if (error.response.data.message === 'Invalid Crypto Wallet') {
-                        setError('User crypto wallet not found')
-                    } else if (error.response.data.message === 'Invalid FIAT wallet') {
-                        setError('User FIAT wallet not found')
-                    } else if (error.response.data.message === 'Insufficient funds') {
-                        setError('Insufficient funds')
-                    } else if (error.response.data.message === 'Already approved') {
-                        setError('Transaction already approved')
-                    } else {
-                        setError('')
-                    }
-                });
-           }
-      };
+            }).catch((error)=> {
+                // console.log(error)
+                setTimeout(() => {
+                    setError('')
+                }, 2500);
+
+                if (error.response.data.message === 'Unauthorized') {
+                    window.location.href === '/signin/'
+                } else if (error.response.data.message === 'Invalid Transaction') {
+                    setError('Invalid Transaction')
+                } else if (error.response.data.message === 'Invalid Crypto Wallet') {
+                    setError('User crypto wallet not found')
+                } else if (error.response.data.message === 'Invalid FIAT wallet') {
+                    setError('User FIAT wallet not found')
+                } else if (error.response.data.message === 'Insufficient funds') {
+                    setError('Insufficient funds')
+                } else if (error.response.data.message === 'Already approved') {
+                    setError('Transaction already approved')
+                } else {
+                    setError('')
+                }
+            });
+        }
+    };
 
 
     // If data not available

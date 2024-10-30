@@ -2,10 +2,10 @@ import React, { Suspense } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 
 
-const UserDashBoard = React.lazy(()=> import('../Dashboard/Dashboard'));
-const UsersTable    = React.lazy(()=> import('../Users/Users'));
-const UserTabs      = React.lazy(()=> import('../Users/UserTabs'));
-const AllDeposites  = React.lazy(()=> import('../Deposit/AllDeposits'));
+const UserDashBoard              = React.lazy(()=> import('../Dashboard/Dashboard'));
+const UsersTable                 = React.lazy(()=> import('../Users/Users'));
+const UserTabs                   = React.lazy(()=> import('../Users/UserTabs'));
+const AllDeposites               = React.lazy(()=> import('../Deposit/AllDeposits'));
 const UpdateDepositTransaction   = React.lazy(()=> import('../Deposit/UpdateDeposit'));
 const AllTransferTransactions    = React.lazy(()=> import('../Transfer/AllTransfers'));
 const UpdateTransferTransaction  = React.lazy(()=> import('../Transfer/UpdateTransfer'));
@@ -18,6 +18,9 @@ const UserWalletRequests         = React.lazy(()=> import('../CryptoWallet/Walle
 const UpdateCryptoWallet         = React.lazy(()=> import('../CryptoWallet/UpdateWallet'));
 const AllCryptoTransactions      = React.lazy(()=> import('../CryptoTransactions/AllTransactions'));
 const UpdateCryptoTransaction    = React.lazy(()=> import('../CryptoTransactions/UpdateTransactions'));
+const AllCryptoSwapTransaction   = React.lazy(()=> import('../CryptoSwap/AllSwap'));
+const AdminupdateCryptoSwap      = React.lazy(()=> import('../CryptoSwap/UpdateSwap'));
+
 
 
 
@@ -150,6 +153,22 @@ export const AdditionalAuthenticatedRoutes = (open)=> {
       element: (
         <Suspense fallback={<CircularProgress />}>
             <UpdateCryptoTransaction open={open} />
+        </Suspense>
+      )
+    },
+    {
+      path: '/admin/user/crypto/swap/',
+      element: (
+        <Suspense fallback={<CircularProgress />}>
+            <AllCryptoSwapTransaction open={open} />
+        </Suspense>
+      )
+    },
+    {
+      path: '/admin/user/update/crypto/swap/',
+      element: (
+        <Suspense fallback={<CircularProgress />}>
+            <AdminupdateCryptoSwap open={open} />
         </Suspense>
       )
     },

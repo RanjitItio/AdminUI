@@ -34,6 +34,7 @@ import { ConfirmationNumberOutlined } from '@mui/icons-material';
 import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
 import MoneyIcon from '@mui/icons-material/Money';
 import SellIcon from '@mui/icons-material/Sell';
+import SwapVerticalCircleIcon from '@mui/icons-material/SwapVerticalCircle';
 
 
 
@@ -68,6 +69,7 @@ const UserNavContent = [
 
   { text: 'Crypto Transactions', subItems: [
       {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/user/crypto/transactions/'},
+      {text: 'Crypto Swap', icon: <SwapVerticalCircleIcon />, url: '/admin/user/crypto/swap/'},
     ],
     icon: <CurrencyBitcoinIcon />
   },
