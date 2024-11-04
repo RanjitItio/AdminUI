@@ -161,7 +161,7 @@ export default function AdminupdateCryptoSwap({open}) {
                                 variant="outlined" 
                                 fullWidth 
                                 name='to_crypto'
-                                value={`${Cryptotransaction?.to_crypto || ''} ${Cryptotransaction?.credit_quantity || ''}`}
+                                value={`${Cryptotransaction.to_crypto ? parseFloat(Cryptotransaction.to_crypto).toFixed(8) : 0} ${Cryptotransaction?.credit_quantity || ''}`}
                                 />
                         </Grid>
 
@@ -173,7 +173,7 @@ export default function AdminupdateCryptoSwap({open}) {
                                 variant="outlined" 
                                 fullWidth 
                                 name='fee'
-                                value={`${Cryptotransaction?.fee_value || ''} ${Cryptotransaction?.from_crypto || ''}`}
+                                value={`${Cryptotransaction.fee_value ? parseFloat(Cryptotransaction.fee_value).toFixed(5) : 0} ${Cryptotransaction?.from_crypto || ''}`}
                                 />
                         </Grid>
 
