@@ -58,7 +58,8 @@ export default function UpdateCryptoTransaction({open}) {
                 // console.log(error)
 
                 setTimeout(() => {
-                    setError('')
+                    setError('');
+                    setDisableSubmit(false);
                 }, 2500);
 
                 if (error.response.data.message === 'Unauthorized') {
@@ -98,7 +99,8 @@ export default function UpdateCryptoTransaction({open}) {
             }).catch((error)=> {
                 // console.log(error)
                 setTimeout(() => {
-                    setError('')
+                    setError('');
+                    setDisableSubmit(false);
                 }, 2500);
 
                 if (error.response.data.message === 'Unauthorized') {
