@@ -20,6 +20,8 @@ const AllCryptoTransactions      = React.lazy(()=> import('../CryptoTransactions
 const UpdateCryptoTransaction    = React.lazy(()=> import('../CryptoTransactions/UpdateTransactions'));
 const AllCryptoSwapTransaction   = React.lazy(()=> import('../CryptoSwap/AllSwap'));
 const AdminupdateCryptoSwap      = React.lazy(()=> import('../CryptoSwap/UpdateSwap'));
+const AllCryptoExchangeTable     = React.lazy(()=> import('../CryptoExchange/AllCryptoExchanges'));
+const AdminUpdateCryptoExchange  = React.lazy(()=> import('../CryptoExchange/UpdateCryptoExchange'));
 
 
 
@@ -169,6 +171,22 @@ export const AdditionalAuthenticatedRoutes = (open)=> {
       element: (
         <Suspense fallback={<CircularProgress />}>
             <AdminupdateCryptoSwap open={open} />
+        </Suspense>
+      )
+    },
+    {
+      path: '/admin/user/crypto/exchange/',
+      element: (
+        <Suspense fallback={<CircularProgress />}>
+            <AllCryptoExchangeTable open={open} />
+        </Suspense>
+      )
+    },
+    {
+      path: '/admin/user/update/crypto/exchange/',
+      element: (
+        <Suspense fallback={<CircularProgress />}>
+            <AdminUpdateCryptoExchange open={open} />
         </Suspense>
       )
     },
