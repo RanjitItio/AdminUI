@@ -293,9 +293,35 @@ export default function AllCryptoExchangeTable({open}) {
         return (
             <Main open={open}>
                 <DrawerHeader/>
-                    <IconButton style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
-                        <ClearIcon fontSize="2rem" />
-                    </IconButton>
+                <TableContainer>
+                    <Box sx={{ maxHeight: '90rem', overflow: 'auto' }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead sx={{ position: 'sticky', zIndex: 1, top: 0, backgroundColor: '#e2f4fb' }}>
+                                <TableRow>
+                                    <TableCell align="center"><b>Date</b></TableCell>
+                                    <TableCell align="center"><b>User</b></TableCell>
+                                    <TableCell align="center"><b>Email</b></TableCell>
+                                    <TableCell align="center"><b>From Crypto</b></TableCell>
+                                    <TableCell align="center"><b>FIAT Amount</b></TableCell>
+                                    <TableCell align="center"><b>Amount</b></TableCell>
+                                    <TableCell align="center"><b>Status</b></TableCell>
+                                    <TableCell align="center"><b>Edit</b></TableCell>
+                                </TableRow>
+                            </TableHead>
+
+                            <TableBody sx={{ height: '40vh' }}>
+                                <TableRow>
+                                    <TableCell colSpan={8}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                                            <ClearIcon fontSize="large" />
+                                        </Box>
+                                        <p style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>Nothing to Show</p>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </Box>
+                </TableContainer>                  
             </Main>
         )
     };
