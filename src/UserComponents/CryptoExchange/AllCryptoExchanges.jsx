@@ -16,13 +16,20 @@ import { useTheme } from '@mui/material/styles';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useMediaQuery } from '@mui/material';
-import Select from '@mui/joy/Select';
+import Select, { selectClasses } from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import {Button as JoyButton} from '@mui/joy';
 import FormControl from '@mui/material/FormControl';
 import Tooltip from '@mui/material/Tooltip';
 import ClearIcon from '@mui/icons-material/Clear';
 import CircularProgress from '@mui/material/CircularProgress';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import { DatePicker } from 'antd';
+import dayjs from 'dayjs';
+
+
+const { RangePicker } = DatePicker;
+const dateFormat = 'YYYY-MM-DD';
 
 
 
@@ -107,23 +114,55 @@ export default function AllCryptoExchangeTable({open}) {
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
     const [loader, setLoader]                = useState(true);
+    const [LgStartDateRange, setLgStartDateRange]   = useState('');  // Large Screen Start date
+    const [LgEndDateRange, setLgEndDateRange]       = useState('');  // Large Screen End Date
+    const [ShStartDateRange, setShStartDateRange]   = useState('');  // Small screen Start date
+    const [ShEndDateRange, setShEndDateRange]       = useState('');  // Small Screen End date
+    const [filterCrypto, setFilterCrypto]           = useState('');  // Filter Selected Crypto
+    const [filterStatus, setFilterStatus]           = useState('');  // Filter Selected Status
     const [filterData, updateFilterData]     = useState({
-        user_email: '',
-        crypto_name: '',
-        status: ''
-    });
+        user_email: ''
+    }); ////
 
     const counPagination = Math.ceil(totalRows);   // Total pagination count
+
 
     /// Open close Filter fields
     const handleToggleFilters = () => {
         setShowFilters(!showFilters);
     };
 
-    // Get Filter Data
+    // Get Filter Selected Date
     const handleFilterDateChange = (e, newValue)=> {
         setFilterDate(newValue);
     };
+
+    //// Get Filter Selected Crypto
+    const handleFilterCryptoChange = (e, newValue)=> {
+        setFilterCrypto(newValue)
+    };
+
+    //// Get Filter Selected Status
+    const handleFilterStatusChange = (e, newValue)=> {
+        setFilterStatus(newValue)
+    };
+
+    /// Date Range Selected in Large Screen
+    const handelLargeScreenCustomDateRange = (date,dateString)=> {
+        setLgStartDateRange(dateString[0])
+        setLgEndDateRange(dateString[1])
+    };
+
+    /// Small Screen Start date range
+    const handleSmallScreenStartDateRange = (date,dateString)=> {
+        setShStartDateRange(dateString)
+    };
+
+    /// Small Screen End Date Range
+    const handleSmallScreenEndDateRange = (date,dateString)=> {
+        setShEndDateRange(dateString)
+    };
+
 
     // Get Filter Input data
     const handleFilterInputDataChange = (e)=> {
@@ -139,10 +178,15 @@ export default function AllCryptoExchangeTable({open}) {
     // Reset Filter Method
     const handleResetFilter = ()=> {
         setFilterDate('');
+        setLgStartDateRange('');
+        setLgEndDateRange('');
+        setShStartDateRange('');
+        setShEndDateRange('');
+        setFilterError('');
+        setFilterCrypto('');
+        setFilterStatus('');
         updateFilterData({
-            user_email:'',
-            crypto_name: '',
-            status: ''
+            user_email:''
         })
         handlePaginatedData('e', 1)
     };
@@ -239,20 +283,52 @@ export default function AllCryptoExchangeTable({open}) {
 
     // Get filtered data
     const handleFilterData = ()=> {
-        axiosInstance.post(`/api/v3/admin/crypto/transactions/`, {
-            date_range: filterDate,
-            user_email: filterData.user_email,
-            crypto_name: filterData.crypto_name,
-            status: filterData.status
+        if (isSmallScreen && filterDate === 'CustomRange') {
+            if (!ShStartDateRange) {
+                setFilterError('Please Select Start Date');
+
+            } else if (!ShEndDateRange) {
+                setFilterError('Please Select End Date');
+
+            } else {
+                setFilterError('');
+                GetFilterData(ShStartDateRange, ShEndDateRange);
+            }
+
+        } else if (!isSmallScreen && filterDate === 'CustomRange') {
+            if (!LgStartDateRange) {
+                setFilterError('Please Select Date Range');
+
+            } else if (!LgEndDateRange) {
+                setFilterError('Please Select Date Range');
+
+            } else {
+                setFilterError('');
+                GetFilterData(LgStartDateRange, LgEndDateRange);
+            }
+
+        } else {
+            setFilterError('');
+            GetFilterData();
+        }
+    };
+
+    
+    //// Call API to get filter data
+    const GetFilterData = (startDate, endDate)=> {
+        axiosInstance.post(`/api/v6/admin/filter/crypto/transactions/`, {
+            dateTime: filterDate,
+            email:  filterData.user_email,
+            crypto: filterCrypto,
+            status: filterStatus,
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
 
         }).then((res)=> {
             // console.log(res)
             
             if (res.status === 200) {
-                const sortedTransaction = res.data.filtered_data.sort((a,b)=> {
-                    return new Date(b.created_at) - new Date(a.created_at)
-                })
-                // updateCryptoTransactions(sortedTransaction)
+                updateCryptoExchangeTransactions(res.data.filtered_crypto_exchange_transaction)
             }
 
         }).catch((error)=> {
@@ -385,14 +461,37 @@ export default function AllCryptoExchangeTable({open}) {
                                         name="date"
                                         value={filterDate}
                                         onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                                        indicator={<KeyboardArrowDown />}
+                                        sx={{
+                                            [`& .${selectClasses.indicator}`]: {
+                                              transition: '0.2s',
+                                              [`&.${selectClasses.expanded}`]: {
+                                                transform: 'rotate(-180deg)',
+                                              },
+                                            },
+                                          }}
                                     >
                                         <Option value="Today">Today</Option>
                                         <Option value="Yesterday">Yesterday</Option>
                                         <Option value="ThisWeek">This Week</Option>
                                         <Option value="ThisMonth">This Month</Option>
                                         <Option value="PreviousMonth">Previous Month</Option>
+                                        <Option value="CustomRange">Custom Range</Option>
                                     </Select>
                                 </FormControl>
+
+                                {filterDate === "CustomRange" && (
+                                    isSmallScreen ? (
+                                        <>
+                                            <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenStartDateRange} />
+                                            <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenEndDateRange} />
+                                        </>
+                                    ) : (
+                                        <RangePicker 
+                                            style={{ width: '100%', marginTop:5 }} onChange={handelLargeScreenCustomDateRange} 
+                                            />
+                                    )
+                                )}
                             </Grid>
 
                             <Grid item xs={12} sm={6} md={2.5}>
@@ -408,23 +507,58 @@ export default function AllCryptoExchangeTable({open}) {
 
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
-                                    <Input 
-                                        name='crypto_name'
-                                        value={filterData.crypto_name}
-                                        onChange={handleFilterInputDataChange}
-                                        placeholder="Crypto Name" 
-                                        />
+                                    <Select
+                                        label="Crypto"
+                                        placeholder='Crypto'
+                                        id="crypto"
+                                        name="crypto"
+                                        value={filterCrypto}
+                                        onChange={(e, newValue) => handleFilterCryptoChange(e, newValue)}
+                                        indicator={<KeyboardArrowDown />}
+                                        sx={{
+                                            [`& .${selectClasses.indicator}`]: {
+                                              transition: '0.2s',
+                                              [`&.${selectClasses.expanded}`]: {
+                                                transform: 'rotate(-180deg)',
+                                              },
+                                            },
+                                          }}
+                                    >
+                                        <Option value="BTC">BTC</Option>
+                                        <Option value="ETH">ETH</Option>
+                                        <Option value="SOL">SOL</Option>
+                                        <Option value="XRP">XRP</Option>
+                                        <Option value="LTC">LTC</Option>
+                                        <Option value="BNB">BNB</Option>
+                                        <Option value="DOGE">DOGE</Option>
+                                    </Select>
+                                    
                                 </FormControl>
                             </Grid>
 
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
-                                    <Input 
-                                        placeholder="Status"
-                                        name='status'
-                                        value={filterData.status} 
-                                        onChange={handleFilterInputDataChange}
-                                        />
+                                    <Select
+                                        placeholder='Status'
+                                        id="status"
+                                        name="status"
+                                        value={filterStatus}
+                                        onChange={(e, newValue) => handleFilterStatusChange(e, newValue)}
+                                        indicator={<KeyboardArrowDown />}
+                                        sx={{
+                                            [`& .${selectClasses.indicator}`]: {
+                                              transition: '0.2s',
+                                              [`&.${selectClasses.expanded}`]: {
+                                                transform: 'rotate(-180deg)',
+                                              },
+                                            },
+                                          }}
+                                    >
+                                        <Option value="Pending">Pending</Option>
+                                        <Option value="Approved">Approved</Option>
+                                        <Option value="Cancelled">Cancelled</Option>
+                                        <Option value="Hold">On Hold</Option>
+                                    </Select>
                                 </FormControl>
                             </Grid>
                             
