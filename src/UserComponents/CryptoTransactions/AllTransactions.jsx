@@ -477,7 +477,6 @@ export default function AllCryptoTransactions({open}) {
 
 
                             <Grid item xs={12} sm={6} md={2.5}>
-                                <FormControl fullWidth>
                                     <FormControl fullWidth>
                                         <Select
                                             placeholder='Status'
@@ -501,7 +500,6 @@ export default function AllCryptoTransactions({open}) {
                                             <Option value="Hold">On Hold</Option>
                                         </Select>
                                     </FormControl>
-                                </FormControl>
                             </Grid>
                             
 

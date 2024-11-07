@@ -16,11 +16,16 @@ import { useTheme } from '@mui/material/styles';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useMediaQuery } from '@mui/material';
-import Select from '@mui/joy/Select';
+import Select, { selectClasses }  from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import {Button as JoyButton} from '@mui/joy';
 import FormControl from '@mui/material/FormControl';
 import Tooltip from '@mui/material/Tooltip';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import { DatePicker } from 'antd';
+
+
+const { RangePicker } = DatePicker;
 
 
 
@@ -99,10 +104,14 @@ export default function AllCryptoSwapTransaction({open}) {
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
+    const [filterCrypto, setFilterCrypto]    = useState('');  // Filter Selected Crypto
+    const [filterStatus, setFilterStatus]    = useState('');  // Filter Selected Status
+    const [LgStartDateRange, setLgStartDateRange]   = useState('');  // Large Screen Start date
+    const [LgEndDateRange, setLgEndDateRange]       = useState('');  // Large Screen End Date
+    const [ShStartDateRange, setShStartDateRange]   = useState('');  // Small screen Start date
+    const [ShEndDateRange, setShEndDateRange]       = useState('');  // Small Screen End date
     const [filterData, updateFilterData]     = useState({
-        user_email: '',
-        crypto_name: '',
-        status: ''
+        user_email: ''
     });
 
     const counPagination = Math.ceil(totalRows);   // Total pagination count
@@ -118,6 +127,37 @@ export default function AllCryptoSwapTransaction({open}) {
         setFilterDate(newValue);
     };
 
+    //// Get Filter Selected Crypto
+    const handleFilterCryptoChange = (e, newValue)=> {
+        setFilterCrypto(newValue)
+    };
+
+
+     //// Get Filter Selected Status
+     const handleFilterStatusChange = (e, newValue)=> {
+        setFilterStatus(newValue)
+    };
+
+
+    /// Date Range Selected in Large Screen
+    const handelLargeScreenCustomDateRange = (date, dateString)=> {
+        setLgStartDateRange(dateString[0])
+        setLgEndDateRange(dateString[1])
+    };
+
+
+    /// Small Screen Start date range
+    const handleSmallScreenStartDateRange = (date, dateString)=> {
+        setShStartDateRange(dateString)
+    };
+
+
+    /// Small Screen End Date Range
+    const handleSmallScreenEndDateRange = (date, dateString)=> {
+        setShEndDateRange(dateString)
+    };
+
+
     // Get Filter Input data
     const handleFilterInputDataChange = (e)=> {
         const {name, value} = e.target;
@@ -132,16 +172,16 @@ export default function AllCryptoSwapTransaction({open}) {
     // Reset Filter Method
     const handleResetFilter = ()=> {
         setFilterDate('');
+        setFilterCrypto('');
+        setFilterStatus('');
         updateFilterData({
             user_email:'',
-            crypto_name: '',
-            status: ''
         })
-        handlePaginatedData('e', 1)
+        handlePaginatedData('e', 1);
     };
 
 
-    // Fetch all the Crypto Transactions
+    // Fetch all the Crypto Swap Transactions
     useEffect(() => {
         axiosInstance.get(`/api/v5/admin/crypto/swap/`).then((res)=> {
           // console.log(res)
@@ -226,42 +266,76 @@ export default function AllCryptoSwapTransaction({open}) {
     };
 
 
+
     // Get filtered data
     const handleFilterData = ()=> {
-        axiosInstance.post(`/api/v3/admin/crypto/transactions/`, {
-            date_range: filterDate,
-            user_email: filterData.user_email,
-            crypto_name: filterData.crypto_name,
-            status: filterData.status
+        if (isSmallScreen && filterDate === 'CustomRange') {
+            if (!ShStartDateRange) {
+                setFilterError('Please Select Start Date');
 
-        }).then((res)=> {
-            // console.log(res)
-            
-            if (res.status === 200) {
-                const sortedTransaction = res.data.filtered_data.sort((a,b)=> {
-                    return new Date(b.created_at) - new Date(a.created_at)
-                })
-                // updateCryptoTransactions(sortedTransaction)
+            } else if (!ShEndDateRange) {
+                setFilterError('Please Select End Date');
+
+            } else {
+                setFilterError('');
+                GetFilterData(ShStartDateRange, ShEndDateRange);
             }
 
-        }).catch((error)=> {
-            // console.log(error)
+        } else if (!isSmallScreen && filterDate === 'CustomRange') {
+            if (!LgStartDateRange) {
+                setFilterError('Please Select Date Range');
 
-            setTimeout(() => {
-                setFilterError('')
-            }, 2000);
+            } else if (!LgEndDateRange) {
+                setFilterError('Please Select Date Range');
 
-            if (error.response.data.message === 'No data found') {
-                setFilterError('No data found')
-            } else if (error.response.data.message === 'Invalid Email') {
-                setFilterError('Invalid Email Address')
-            } else if (error.response.data.message === 'Unauthorized') {
-                window.location.href = '/signin/'
             } else {
-                setFilterError('')
-            };
-        })
+                setFilterError('');
+                GetFilterData(LgStartDateRange, LgEndDateRange);
+            }
+
+        } else {
+            setFilterError('');
+            GetFilterData();
+        }
     };
+
+
+
+     //// API Call to get Filter Data
+     const GetFilterData = (startDate, endDate)=> {
+        axiosInstance.post(`/api/v5/admin/filter/crypto/swap/`, {
+            dateRange: filterDate,
+            email: filterData.user_email,
+            crypto: filterCrypto,
+            status: filterStatus,
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
+
+      }).then((res)=> {
+        //   console.log(res)
+
+          if (res.status === 200 && res.data.success === true) {
+                updateCryptoSwapTransactions(res.data.admin_filter_swap_data)
+          };
+
+      }).catch((error)=> {
+          // console.log(error)
+
+          setTimeout(() => {
+              setFilterError('');
+          }, 2000);
+
+          if (error.response.data.message === 'No data found') {
+              setFilterError('No data found')
+          } else if (error.response.data.message === 'Invalid Email') {
+              setFilterError('Invalid Email Address')
+          } else if (error.response.data.message === 'Unauthorized') {
+              window.location.href = '/signin/'
+          } else {
+              setFilterError('')
+          };
+      })
+  };
 
 
     return (
@@ -308,6 +382,7 @@ export default function AllCryptoSwapTransaction({open}) {
                         )}
                     </Box>
 
+
                     {/* Hidden Filter fields */}
                     {showFilters && (
                         <>
@@ -321,15 +396,39 @@ export default function AllCryptoSwapTransaction({open}) {
                                         name="date"
                                         value={filterDate}
                                         onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                                        indicator={<KeyboardArrowDown />}
+                                        sx={{
+                                            [`& .${selectClasses.indicator}`]: {
+                                            transition: '0.2s',
+                                            [`&.${selectClasses.expanded}`]: {
+                                                transform: 'rotate(-180deg)',
+                                            },
+                                            },
+                                        }}
                                     >
                                         <Option value="Today">Today</Option>
                                         <Option value="Yesterday">Yesterday</Option>
                                         <Option value="ThisWeek">This Week</Option>
                                         <Option value="ThisMonth">This Month</Option>
                                         <Option value="PreviousMonth">Previous Month</Option>
+                                        <Option value="CustomRange">Custom Range</Option>
                                     </Select>
                                 </FormControl>
+
+                                {filterDate === "CustomRange" && (
+                                    isSmallScreen ? (
+                                        <>
+                                            <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenStartDateRange} />
+                                            <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenEndDateRange} />
+                                        </>
+                                    ) : (
+                                        <RangePicker 
+                                            style={{ width: '100%', marginTop:5 }} onChange={handelLargeScreenCustomDateRange} 
+                                            />
+                                    )
+                                )}
                             </Grid>
+
 
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
@@ -342,27 +441,65 @@ export default function AllCryptoSwapTransaction({open}) {
                                 </FormControl>
                             </Grid>
 
-                            <Grid item xs={12} sm={6} md={2.5}>
-                                <FormControl fullWidth>
-                                    <Input 
-                                        name='crypto_name'
-                                        value={filterData.crypto_name}
-                                        onChange={handleFilterInputDataChange}
-                                        placeholder="Crypto Name" 
-                                        />
-                                </FormControl>
-                            </Grid>
 
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
-                                    <Input 
-                                        placeholder="Status"
-                                        name='status'
-                                        value={filterData.status} 
-                                        onChange={handleFilterInputDataChange}
-                                        />
+                                    <Select
+                                        label="Crypto"
+                                        placeholder='Crypto'
+                                        id="crypto"
+                                        name="crypto"
+                                        value={filterCrypto}
+                                        onChange={(e, newValue) => handleFilterCryptoChange(e, newValue)}
+                                        indicator={<KeyboardArrowDown />}
+                                        sx={{
+                                            [`& .${selectClasses.indicator}`]: {
+                                              transition: '0.2s',
+                                              [`&.${selectClasses.expanded}`]: {
+                                                transform: 'rotate(-180deg)',
+                                              },
+                                            },
+                                          }}
+                                    >
+                                        <Option value="BTC">BTC</Option>
+                                        <Option value="ETH">ETH</Option>
+                                        <Option value="SOL">SOL</Option>
+                                        <Option value="XRP">XRP</Option>
+                                        <Option value="LTC">LTC</Option>
+                                        <Option value="BNB">BNB</Option>
+                                        <Option value="DOGE">DOGE</Option>
+                                    </Select>
+                                    
                                 </FormControl>
                             </Grid>
+
+
+                            <Grid item xs={12} sm={6} md={2.5}>
+                                <FormControl fullWidth>
+                                    <Select
+                                        placeholder='Status'
+                                        id="status"
+                                        name="status"
+                                        value={filterStatus}
+                                        onChange={(e, newValue) => handleFilterStatusChange(e, newValue)}
+                                        indicator={<KeyboardArrowDown />}
+                                        sx={{
+                                            [`& .${selectClasses.indicator}`]: {
+                                            transition: '0.2s',
+                                            [`&.${selectClasses.expanded}`]: {
+                                                transform: 'rotate(-180deg)',
+                                            },
+                                            },
+                                        }}
+                                    >
+                                        <Option value="Pending">Pending</Option>
+                                        <Option value="Approved">Approved</Option>
+                                        <Option value="Cancelled">Cancelled</Option>
+                                        <Option value="Hold">On Hold</Option>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+
                             
                             <Grid item xs={6} sm={6} md={1}>
                                 <FormControl fullWidth>
