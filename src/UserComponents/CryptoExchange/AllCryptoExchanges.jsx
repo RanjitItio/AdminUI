@@ -25,11 +25,10 @@ import ClearIcon from '@mui/icons-material/Clear';
 import CircularProgress from '@mui/material/CircularProgress';
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { DatePicker } from 'antd';
-import dayjs from 'dayjs';
 
 
 const { RangePicker } = DatePicker;
-const dateFormat = 'YYYY-MM-DD';
+
 
 
 
@@ -48,6 +47,7 @@ const getStatusColor = (status)=> {
             return 'primary'
     }
 };
+
 
 
 
@@ -79,6 +79,8 @@ const getCryptoIcons = (icon)=> {
             '';
     }
 };
+
+
 
 //// Currency 
 const getCurrencyIcon = (currency)=> { 
@@ -585,7 +587,6 @@ export default function AllCryptoExchangeTable({open}) {
                         <small style={{color:'red'}}>{filterError && filterError}</small>
                     </>
                 )}
-
 
                 <TableContainer>
                     <Box sx={{ maxHeight: '90rem', overflow: 'auto' }}>

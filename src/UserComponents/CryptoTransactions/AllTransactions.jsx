@@ -16,11 +16,16 @@ import { useTheme } from '@mui/material/styles';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useMediaQuery } from '@mui/material';
-import Select from '@mui/joy/Select';
+import Select, { selectClasses } from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import {Button as JoyButton} from '@mui/joy';
 import FormControl from '@mui/material/FormControl';
 import Tooltip from '@mui/material/Tooltip';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import { DatePicker } from 'antd';
+
+
+const { RangePicker } = DatePicker;
 
 
 
@@ -97,10 +102,14 @@ export default function AllCryptoTransactions({open}) {
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
+    const [LgStartDateRange, setLgStartDateRange]   = useState('');  // Large Screen Start date
+    const [LgEndDateRange, setLgEndDateRange]       = useState('');  // Large Screen End Date
+    const [ShStartDateRange, setShStartDateRange]   = useState('');  // Small screen Start date
+    const [ShEndDateRange, setShEndDateRange]       = useState('');  // Small Screen End date
+    const [filterCrypto, setFilterCrypto]           = useState('');  // Filter Selected Crypto
+    const [filterStatus, setFilterStatus]           = useState('');  // Filter Selected Status
     const [filterData, updateFilterData]     = useState({
-        user_email: '',
-        crypto_name: '',
-        status: ''
+        user_email: ''
     });
 
     const counPagination = Math.ceil(totalRows);   // Total pagination count
@@ -114,6 +123,34 @@ export default function AllCryptoTransactions({open}) {
     // Get Filter Data
     const handleFilterDateChange = (e, newValue)=> {
         setFilterDate(newValue);
+    };
+
+     //// Get Filter Selected Crypto
+     const handleFilterCryptoChange = (e, newValue)=> {
+        setFilterCrypto(newValue)
+    };
+
+
+     //// Get Filter Selected Status
+     const handleFilterStatusChange = (e, newValue)=> {
+        setFilterStatus(newValue)
+    };
+
+
+    /// Date Range Selected in Large Screen
+    const handelLargeScreenCustomDateRange = (date,dateString)=> {
+        setLgStartDateRange(dateString[0])
+        setLgEndDateRange(dateString[1])
+    };
+
+    /// Small Screen Start date range
+    const handleSmallScreenStartDateRange = (date,dateString)=> {
+        setShStartDateRange(dateString)
+    };
+
+    /// Small Screen End Date Range
+    const handleSmallScreenEndDateRange = (date,dateString)=> {
+        setShEndDateRange(dateString)
     };
 
     // Get Filter Input data
@@ -130,10 +167,10 @@ export default function AllCryptoTransactions({open}) {
     // Reset Filter Method
     const handleResetFilter = ()=> {
         setFilterDate('');
+        setFilterCrypto('');
+        setFilterStatus('');
         updateFilterData({
-            user_email:'',
-            crypto_name: '',
-            status: ''
+            user_email:''
         })
         handlePaginatedData('e', 1)
     };
@@ -199,7 +236,7 @@ export default function AllCryptoTransactions({open}) {
             };
     
           }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
     
           })
     };
@@ -207,17 +244,18 @@ export default function AllCryptoTransactions({open}) {
 
     // Get the paginated data
     const handlePaginatedData = (e, value)=> {
-        let limit = 10;
+        let limit = 5;
         let offset = (value - 1) * limit;
 
-        axiosInstance.get(`/api/v5/admin/fiat/withdrawals/?limit=${limit}&offset=${offset}`).then((res)=> {
+        axiosInstance.get(`/api/v3/admin/crypto/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
             // console.log(res)
-            if (res.status === 200 && res.data.success === true) {
-                updateWithdrawals(res.data.all_admin_fiat_withdrawals)
-            };
+            const sortedTransaction = res.data.crypto_transactions.sort((a,b)=> {
+                return new Date(b.created_at) - new Date(a.created_at)
+            })
+            updateCryptoTransactions(sortedTransaction)
 
         }).catch((error)=> {
-            console.log(error);
+            // console.log(error);
 
         })
     };
@@ -231,15 +269,51 @@ export default function AllCryptoTransactions({open}) {
 
     // Get filtered data
     const handleFilterData = ()=> {
-        axiosInstance.post(`/api/v3/admin/crypto/transactions/`, {
+        if (isSmallScreen && filterDate === 'CustomRange') {
+            if (!ShStartDateRange) {
+                setFilterError('Please Select Start Date');
+
+            } else if (!ShEndDateRange) {
+                setFilterError('Please Select End Date');
+
+            } else {
+                setFilterError('');
+                GetFilterData(ShStartDateRange, ShEndDateRange);
+            }
+
+        } else if (!isSmallScreen && filterDate === 'CustomRange') {
+            if (!LgStartDateRange) {
+                setFilterError('Please Select Date Range');
+
+            } else if (!LgEndDateRange) {
+                setFilterError('Please Select Date Range');
+
+            } else {
+                setFilterError('');
+                GetFilterData(LgStartDateRange, LgEndDateRange);
+            }
+
+        } else {
+            setFilterError('');
+            GetFilterData();
+        }
+    };
+
+
+
+    //// API Call to get Filter Data
+    const GetFilterData = (startDate, endDate)=> {
+          axiosInstance.post(`/api/v3/admin/crypto/transactions/`, {
             date_range: filterDate,
             user_email: filterData.user_email,
-            crypto_name: filterData.crypto_name,
-            status: filterData.status
+            crypto_name: filterCrypto,
+            status: filterStatus,
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
 
         }).then((res)=> {
-            console.log(res)
-            
+            // console.log(res)
+
             if (res.status === 200) {
                 const sortedTransaction = res.data.filtered_data.sort((a,b)=> {
                     return new Date(b.created_at) - new Date(a.created_at)
@@ -248,10 +322,10 @@ export default function AllCryptoTransactions({open}) {
             }
 
         }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
 
             setTimeout(() => {
-                setFilterError('')
+                setFilterError('');
             }, 2000);
 
             if (error.response.data.message === 'No data found') {
@@ -268,6 +342,7 @@ export default function AllCryptoTransactions({open}) {
 
 
 
+    
     return (
        <Main open={open}>
             <DrawerHeader/>
@@ -325,14 +400,37 @@ export default function AllCryptoTransactions({open}) {
                                         name="date"
                                         value={filterDate}
                                         onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                                        indicator={<KeyboardArrowDown />}
+                                        sx={{
+                                            [`& .${selectClasses.indicator}`]: {
+                                              transition: '0.2s',
+                                              [`&.${selectClasses.expanded}`]: {
+                                                transform: 'rotate(-180deg)',
+                                              },
+                                            },
+                                          }}
                                     >
                                         <Option value="Today">Today</Option>
                                         <Option value="Yesterday">Yesterday</Option>
                                         <Option value="ThisWeek">This Week</Option>
                                         <Option value="ThisMonth">This Month</Option>
                                         <Option value="PreviousMonth">Previous Month</Option>
+                                        <Option value="CustomRange">Custom Range</Option>
                                     </Select>
                                 </FormControl>
+
+                                {filterDate === "CustomRange" && (
+                                    isSmallScreen ? (
+                                        <>
+                                            <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenStartDateRange} />
+                                            <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenEndDateRange} />
+                                        </>
+                                    ) : (
+                                        <RangePicker 
+                                            style={{ width: '100%', marginTop:5 }} onChange={handelLargeScreenCustomDateRange} 
+                                            />
+                                    )
+                                )}
                             </Grid>
 
                             <Grid item xs={12} sm={6} md={2.5}>
@@ -348,26 +446,65 @@ export default function AllCryptoTransactions({open}) {
 
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
-                                    <Input 
-                                        name='crypto_name'
-                                        value={filterData.crypto_name}
-                                        onChange={handleFilterInputDataChange}
-                                        placeholder="Crypto Name" 
-                                        />
+                                    <Select
+                                        label="Crypto"
+                                        placeholder='Crypto'
+                                        id="crypto"
+                                        name="crypto"
+                                        value={filterCrypto}
+                                        onChange={(e, newValue) => handleFilterCryptoChange(e, newValue)}
+                                        indicator={<KeyboardArrowDown />}
+                                        sx={{
+                                            [`& .${selectClasses.indicator}`]: {
+                                              transition: '0.2s',
+                                              [`&.${selectClasses.expanded}`]: {
+                                                transform: 'rotate(-180deg)',
+                                              },
+                                            },
+                                          }}
+                                    >
+                                        <Option value="BTC">BTC</Option>
+                                        <Option value="ETH">ETH</Option>
+                                        <Option value="SOL">SOL</Option>
+                                        <Option value="XRP">XRP</Option>
+                                        <Option value="LTC">LTC</Option>
+                                        <Option value="BNB">BNB</Option>
+                                        <Option value="DOGE">DOGE</Option>
+                                    </Select>
+                                    
                                 </FormControl>
                             </Grid>
 
+
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
-                                    <Input 
-                                        placeholder="Status"
-                                        name='status'
-                                        value={filterData.status} 
-                                        onChange={handleFilterInputDataChange}
-                                        />
+                                    <FormControl fullWidth>
+                                        <Select
+                                            placeholder='Status'
+                                            id="status"
+                                            name="status"
+                                            value={filterStatus}
+                                            onChange={(e, newValue) => handleFilterStatusChange(e, newValue)}
+                                            indicator={<KeyboardArrowDown />}
+                                            sx={{
+                                                [`& .${selectClasses.indicator}`]: {
+                                                transition: '0.2s',
+                                                [`&.${selectClasses.expanded}`]: {
+                                                    transform: 'rotate(-180deg)',
+                                                },
+                                                },
+                                            }}
+                                        >
+                                            <Option value="Pending">Pending</Option>
+                                            <Option value="Approved">Approved</Option>
+                                            <Option value="Cancelled">Cancelled</Option>
+                                            <Option value="Hold">On Hold</Option>
+                                        </Select>
+                                    </FormControl>
                                 </FormControl>
                             </Grid>
                             
+
                             <Grid item xs={6} sm={6} md={1}>
                                 <FormControl fullWidth>
                                     <JoyButton 
@@ -402,7 +539,6 @@ export default function AllCryptoTransactions({open}) {
                                     <TableCell align="center"><b>User</b></TableCell>
                                     <TableCell align="center"><b>Email</b></TableCell>
                                     <TableCell align="center"><b>Crypto</b></TableCell>
-                                    {/* <TableCell align="center"><b>Payment Mode</b></TableCell> */}
                                     <TableCell align="center"><b>Transaction Type</b></TableCell>
                                     <TableCell align="center"><b>Amount</b></TableCell>
                                     <TableCell align="center"><b>Status</b></TableCell>
@@ -446,11 +582,6 @@ export default function AllCryptoTransactions({open}) {
                                                 <img src={getCryptoIcons(transaction?.crypto_name || '')} alt="Crypto Image" style={{width:'30px', heigh:'30px'}} />
                                             </Tooltip>
                                         </TableCell>
-
-                                        {/* Payment Mode Column */}
-                                        {/* <TableCell  scope="row" align='center'>
-                                            {transaction?.payment_mode}
-                                        </TableCell> */}
 
                                         {/* Transaction Type Column */}
                                         <TableCell component="th" scope="row" align="center">
