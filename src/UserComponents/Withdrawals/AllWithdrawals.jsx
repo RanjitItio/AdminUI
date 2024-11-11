@@ -22,6 +22,10 @@ import {Button as JoyButton} from '@mui/joy';
 import FormControl from '@mui/material/FormControl';
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { selectClasses } from '@mui/joy/Select';
+import { DatePicker } from 'antd';
+
+
+const { RangePicker } = DatePicker;
 
 
 
@@ -58,32 +62,37 @@ export default function FiatWithdrawals({open}) {
     const [filterError, setFilterError]      = useState('');  // Error message of filter
     const [filterStatus, updateFilterStatus] = useState('');  // Filter Status
     const [filterCurrency, setFilterCurrency] = useState('');  // Filter Currency
-    const [exportData, updateExportData] = useState([]); // Excel Data
+    const [exportData, updateExportData]          = useState([]); // Excel Data
+    const [filterActive, setFilterActive]         = useState(false); /// Filter active state
+    const [LgStartDateRange, setLgStartDateRange] = useState('');  // Large Screen Start date
+    const [LgEndDateRange, setLgEndDateRange]     = useState('');  // Large Screen End Date
+    const [ShStartDateRange, setShStartDateRange] = useState('');  // Small screen Start date
+    const [ShEndDateRange, setShEndDateRange]     = useState('');  // Small Screen End date
     const [filterData, updateFilterData]     = useState({
         user_email: '',
     });
 
-    const counPagination = Math.ceil(totalRows ? totalRows : 0);   // Total pagination count
+    const counPagination = Math.floor(totalRows ? totalRows : 0);   // Total pagination count
 
-    /// Open close Filter fields
-    const handleToggleFilters = () => {
-        setShowFilters(!showFilters);
+    
+    /// Filter Date Range Selected in Large Screen
+    const handelLargeScreenCustomDateRange = (date, dateString)=> {
+        setLgStartDateRange(dateString[0])
+        setLgEndDateRange(dateString[1])
     };
 
-    // Update date value
-    const handleFilterDateChange = (e, newValue)=> {
-        setFilterDate(newValue);
+
+    /// Filter Small Screen Start date range
+    const handleSmallScreenStartDateRange = (date, dateString)=> {
+        setShStartDateRange(dateString)
     };
 
-    // Update filter status value
-    const handleFilterStatusChange = (e, newValue)=> {
-        updateFilterStatus(newValue)
+
+    /// Filter Small Screen End Date Range
+    const handleSmallScreenEndDateRange = (date, dateString)=> {
+        setShEndDateRange(dateString)
     };
 
-    /// Update filter selected currency name
-    const handleFilterCurrencyChange = (e, newValue)=> {
-        setFilterCurrency(newValue)
-    };
 
     // Update input field value
     const handleFilterInputChange = (e)=> {
@@ -174,17 +183,52 @@ export default function FiatWithdrawals({open}) {
         let limit = 10;
         let offset = (value - 1) * limit;
 
-        axiosInstance.get(`/api/v5/admin/fiat/withdrawals/?limit=${limit}&offset=${offset}`).then((res)=> {
-            // console.log(res)
-            if (res.status === 200 && res.data.success === true) {
-                updateWithdrawals(res.data.all_admin_fiat_withdrawals)
-            };
+        if (filterActive) {
+            if (isSmallScreen && filterDate === 'CustomRange') {
+                if (!ShStartDateRange) {
+                    setFilterError('Please Select Start Date');
+    
+                } else if (!ShEndDateRange) {
+                    setFilterError('Please Select End Date');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(ShStartDateRange, ShEndDateRange, limit, offset);
+                }
+    
+            } else if (!isSmallScreen && filterDate === 'CustomRange') {
+                if (!LgStartDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else if (!LgEndDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+                }
+    
+            } else {
+                setFilterError('');
+                GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+            }
 
-        }).catch((error)=> {
-            // console.log(error);
+        } else {
 
-        })
+            axiosInstance.get(`/api/v5/admin/fiat/withdrawals/?limit=${limit}&offset=${offset}`).then((res)=> {
+                // console.log(res)
+                if (res.status === 200 && res.data.success === true) {
+                    updateWithdrawals(res.data.all_admin_fiat_withdrawals);
+                    updateTotalRows(res.data.total_row_count);
+                };
+    
+            }).catch((error)=> {
+                // console.log(error);
+    
+            })
+        }
     };
+
 
 
     // Method to redirect the user to Edit page
@@ -195,21 +239,91 @@ export default function FiatWithdrawals({open}) {
     
     /// Get Filtered Data
     const handleGetFilterData = ()=> {
+        if (isSmallScreen && filterDate === 'CustomRange') {
+            if (!ShStartDateRange) {
+                setFilterError('Please Select Start Date');
+    
+            } else if (!ShEndDateRange) {
+                setFilterError('Please Select End Date');
+    
+            } else {
+                setFilterError('');
+                GetFilteredData(ShStartDateRange, ShEndDateRange);
+            }
+    
+        } else if (!isSmallScreen && filterDate === 'CustomRange') {
+            if (!LgStartDateRange) {
+                setFilterError('Please Select Date Range');
+    
+            } else if (!LgEndDateRange) {
+                setFilterError('Please Select Date Range');
+    
+            } else {
+                setFilterError('');
+                GetFilteredData(LgStartDateRange, LgEndDateRange);
+            }
+    
+        } else {
+            setFilterError('');
+            GetFilteredData();
+        }
+    };
+
+    
+    //// Get filtered data from API
+    const GetFilteredData = (startDate, endDate)=> {
         axiosInstance.post(`/api/v5/admin/filter/fiat/withdrawal/`, {
             date_time: filterDate,
             email: filterData.user_email,
             currency: filterCurrency,
-            status: filterStatus
+            status: filterStatus,
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
 
         }).then((res)=> {
-            // console.log(res)
-
+            // console.log(res);
             if (res.status === 200 && res.data.success === true) {
                 updateWithdrawals(res.data.all_admin_fiat_filter_withdrawals)
+                updateTotalRows(res.data.paginated_count);
+                setFilterActive(true);
             }
 
         }).catch((error)=> {
+            // console.log(error);
+            if (error.response.data.message === 'Invalid Email') {
+                setFilterError('Invalid Email Address')
+            } else if (error.response.data.message === 'No Withdrawal found') {
+                setFilterError('No data found')
+            }
 
+            setTimeout(() => {
+                setFilterError('')
+            }, 1500);
+        })
+    };
+
+
+    
+    //// Get filtered paginated data from API
+    const GetFilteredPaginatedData = (startDate, endDate, limit, offset)=> {
+        axiosInstance.post(`/api/v5/admin/filter/fiat/withdrawal/?limit=${limit}&offset=${offset}`, {
+            date_time: filterDate,
+            email: filterData.user_email,
+            currency: filterCurrency,
+            status: filterStatus,
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
+
+        }).then((res)=> {
+            // console.log(res);
+            if (res.status === 200 && res.data.success === true) {
+                updateWithdrawals(res.data.all_admin_fiat_filter_withdrawals)
+                updateTotalRows(res.data.paginated_count);
+                setFilterActive(true);
+            }
+
+        }).catch((error)=> {
+            // console.log(error);
             if (error.response.data.message === 'Invalid Email') {
                 setFilterError('Invalid Email Address')
             } else if (error.response.data.message === 'No Withdrawal found') {
@@ -231,8 +345,16 @@ export default function FiatWithdrawals({open}) {
         updateFilterData({
             user_email:''
         })
-        handlePaginatedData('e', 1)
+        setFilterActive(false);
     };
+
+
+    //// Call default pagination after filter mode off
+     useEffect(() => {
+        if (!filterActive) {
+            handlePaginatedData('e', 1);
+        }
+    }, [!filterActive]);
 
 
 
@@ -268,14 +390,14 @@ export default function FiatWithdrawals({open}) {
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
-                                <IconButton aria-label="filter" onClick={handleToggleFilters}>
+                                <IconButton aria-label="filter" onClick={()=> setShowFilters(!showFilters)}>
                                     <FilterAltIcon color='primary' />
                                 </IconButton>
                             </div>
                             ) : (
                             <div>
                                 <Button sx={{ mx: 1 }} onClick={handleDownloadWithdrawals}>Export</Button>
-                                <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
+                                <Button sx={{ mx: 1 }} onClick={()=> setShowFilters(!showFilters)} >Filter</Button>
                             </div>
                         )}
                     </Box>
@@ -286,30 +408,44 @@ export default function FiatWithdrawals({open}) {
                         <Grid container p={2} justifyContent="flex-end" spacing={2}>
                             <Grid item xs={12} sm={6} md={2.5}>
                                 <FormControl fullWidth>
-                                <Select
-                                    label="date"
-                                    placeholder='Date'
-                                    id="date"
-                                    name="date"
-                                    value={filterDate}
-                                    onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
-                                    indicator={<KeyboardArrowDown />}
-                                    sx={{
-                                        [`& .${selectClasses.indicator}`]: {
-                                        transition: '0.2s',
-                                        [`&.${selectClasses.expanded}`]: {
-                                            transform: 'rotate(-180deg)',
-                                        },
-                                        },
-                                    }}
-                                >
-                                    <Option value="Today">Today</Option>
-                                    <Option value="Yesterday">Yesterday</Option>
-                                    <Option value="ThisWeek">This Week</Option>
-                                    <Option value="ThisMonth">This Month</Option>
-                                    <Option value="PreviousMonth">Previous Month</Option>
-                                </Select>
+                                    <Select
+                                        label="date"
+                                        placeholder='Date'
+                                        id="date"
+                                        name="date"
+                                        value={filterDate}
+                                        onChange={(e, newValue) => setFilterDate(newValue)}
+                                        indicator={<KeyboardArrowDown />}
+                                        sx={{
+                                            [`& .${selectClasses.indicator}`]: {
+                                            transition: '0.2s',
+                                            [`&.${selectClasses.expanded}`]: {
+                                                transform: 'rotate(-180deg)',
+                                            },
+                                            },
+                                        }}
+                                    >
+                                        <Option value="Today">Today</Option>
+                                        <Option value="Yesterday">Yesterday</Option>
+                                        <Option value="ThisWeek">This Week</Option>
+                                        <Option value="ThisMonth">This Month</Option>
+                                        <Option value="PreviousMonth">Previous Month</Option>
+                                        <Option value="CustomRange">Custom Range</Option>
+                                    </Select>
                                 </FormControl>
+
+                                {filterDate === "CustomRange" && (
+                                    isSmallScreen ? (
+                                        <>
+                                            <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenStartDateRange} />
+                                            <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenEndDateRange} />
+                                        </>
+                                    ) : (
+                                        <RangePicker 
+                                            style={{ width: '100%', marginTop:5 }} onChange={handelLargeScreenCustomDateRange} 
+                                            />
+                                    )
+                                )}
                             </Grid>
 
                             <Grid item xs={12} sm={6} md={2.5}>
@@ -330,7 +466,7 @@ export default function FiatWithdrawals({open}) {
                                         id="status"
                                         name="status"
                                         value={filterStatus}
-                                        onChange={(e, newValue) => handleFilterStatusChange(e, newValue)}
+                                        onChange={(e, newValue) => updateFilterStatus(newValue)}
                                         indicator={<KeyboardArrowDown />}
                                         sx={{
                                             [`& .${selectClasses.indicator}`]: {
@@ -356,7 +492,7 @@ export default function FiatWithdrawals({open}) {
                                         id="currency"
                                         name="currency"
                                         value={filterCurrency}
-                                        onChange={(e, newValue) => handleFilterCurrencyChange(e, newValue)}
+                                        onChange={(e, newValue) => setFilterCurrency(newValue)}
                                         indicator={<KeyboardArrowDown />}
                                         sx={{
                                             [`& .${selectClasses.indicator}`]: {
