@@ -22,6 +22,10 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { selectClasses } from '@mui/joy/Select';
+import { DatePicker } from 'antd';
+
+
+const { RangePicker } = DatePicker;
 
 
 
@@ -58,7 +62,13 @@ export default function AllTransferTransactions({open}) {
     const [filterError, setFilterError]     = useState('');  // Error message of filter
     const [filterStatus, setFilterStatus]   = useState('');  // Filter statue
     const [filterCurrency, setFilterCurrency] = useState('');
-    const [currencies, setCurrencies]       = useState([]);  // All Currencies
+    const [currencies, setCurrencies]         = useState([]);  // All Currencies
+
+    const [filterActive, setFilterActive]         = useState(false); /// Filter active state
+    const [LgStartDateRange, setLgStartDateRange] = useState('');  // Large Screen Start date
+    const [LgEndDateRange, setLgEndDateRange]     = useState('');  // Large Screen End Date
+    const [ShStartDateRange, setShStartDateRange] = useState('');  // Small screen Start date
+    const [ShEndDateRange, setShEndDateRange]     = useState('');  // Small Screen End date
     const [filterData, updateFilterData]    = useState({
         user_email: ''
     });
@@ -66,23 +76,22 @@ export default function AllTransferTransactions({open}) {
     const counPagination = Math.ceil(totalRows);   // Total pagination count
 
     
-    /// Open close Filter fields
-    const handleToggleFilters = () => {
-        setShowFilters(!showFilters);
+    /// Filter Date Range Selected in Large Screen
+    const handelLargeScreenCustomDateRange = (date, dateString)=> {
+        setLgStartDateRange(dateString[0])
+        setLgEndDateRange(dateString[1])
     };
 
-    // Get Selected date of Filter
-    const handleFilterDateChange = (e, newValue)=> {
-        setFilterDate(newValue)
+
+    /// Filter Small Screen Start date range
+    const handleSmallScreenStartDateRange = (date, dateString)=> {
+        setShStartDateRange(dateString)
     };
 
-    // Update Filter Status method
-    const handleFilterStatusChange = (e, newValue)=> {
-        setFilterStatus(newValue);
-    };
 
-    const handleFilterCurrencyChange = (e, newValue)=> {
-        setFilterCurrency(newValue)
+    /// Filter Small Screen End Date Range
+    const handleSmallScreenEndDateRange = (date, dateString)=> {
+        setShEndDateRange(dateString)
     };
 
 
@@ -176,16 +185,49 @@ export default function AllTransferTransactions({open}) {
         let limit = 10;
         let offset = (value - 1) * limit;
 
-        axiosInstance.get(`/api/v1/admin/transfer/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
-            // console.log(res)
-            if (res.status === 200 && res.data.success === true) {
-                setTransferTransaction(res.data.transfer_transactions)
-            };
+        if (filterActive) {
+            if (isSmallScreen && filterDate === 'CustomRange') {
+                if (!ShStartDateRange) {
+                    setFilterError('Please Select Start Date');
+    
+                } else if (!ShEndDateRange) {
+                    setFilterError('Please Select End Date');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(ShStartDateRange, ShEndDateRange, limit, offset);
+                }
+    
+            } else if (!isSmallScreen && filterDate === 'CustomRange') {
+                if (!LgStartDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else if (!LgEndDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+                }
+    
+            } else {
+                setFilterError('');
+                GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+            }
 
-        }).catch((error)=> {
-            console.log(error);
+        } else {
 
-        })
+            axiosInstance.get(`/api/v1/admin/transfer/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
+                // console.log(res)
+                if (res.status === 200 && res.data.success === true) {
+                    setTransferTransaction(res.data.transfer_transactions);
+                    updateTotalRows(res.data.total_row_count);
+                };
+    
+            }).catch((error)=> {
+                // console.log(error);
+            })
+        }
     };
 
 
@@ -197,38 +239,114 @@ export default function AllTransferTransactions({open}) {
 
     /// Get filter data
     const handleGetFilterData = ()=> {
+        if (isSmallScreen && filterDate === 'CustomRange') {
+            if (!ShStartDateRange) {
+                setFilterError('Please Select Start Date');
+    
+            } else if (!ShEndDateRange) {
+                setFilterError('Please Select End Date');
+    
+            } else {
+                setFilterError('');
+                GetFilteredData(ShStartDateRange, ShEndDateRange);
+            }
+    
+        } else if (!isSmallScreen && filterDate === 'CustomRange') {
+            if (!LgStartDateRange) {
+                setFilterError('Please Select Date Range');
+    
+            } else if (!LgEndDateRange) {
+                setFilterError('Please Select Date Range');
+    
+            } else {
+                setFilterError('');
+                GetFilteredData(LgStartDateRange, LgEndDateRange);
+            }
+    
+        } else {
+            setFilterError('');
+            GetFilteredData();
+        }
+   };
+
+   
+    //// Get filtered data from API
+    const GetFilteredData = (startDate, endDate)=> {
         axiosInstance.post(`/api/v4/admin/filter/transfer/transaction/`, {
-           date_time: filterDate,
-           email: filterData.user_email,
-           status: filterStatus,
-           currency: filterCurrency
+            date_time: filterDate,
+            email: filterData.user_email,
+            status: filterStatus,
+            currency: filterCurrency,
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
 
         }).then((res)=> {
-        //    console.log(res);
-           if (res.status === 200 && res.data.success === true) {
+            // console.log(res);
+            if (res.status === 200 && res.data.success === true) {
                 setTransferTransaction(res.data.filtered_transaction_data)
-           }
+                updateTotalRows(res.data.paginated_count);
+                setFilterActive(true);
+            }
 
         }).catch((error)=> {
-           // console.log(error);
-
-           setTimeout(() => {
-               setFilterError('');
-           }, 2000);
-
-           if (error.response.data.message === 'Invalid email') {
-               setFilterError('Invalid Email Address');
-           } else if (error.response.data.message === 'No transaction found') {
-               setFilterError('No data found')
-           } else if (error.response.data.message === 'Currency not available') {
-               setFilterError('Invalid Currency')
-           } else if (error.response.data.message === 'User not available') {
-               setFilterError('Invalid User')
-           } else {
-               setFilterError('')
-           };
+            // console.log(error);
+            setTimeout(() => {
+                setFilterError('');
+            }, 2000);
+ 
+            if (error.response.data.message === 'Invalid email') {
+                setFilterError('Invalid Email Address');
+            } else if (error.response.data.message === 'No transaction found') {
+                setFilterError('No data found')
+            } else if (error.response.data.message === 'Currency not available') {
+                setFilterError('Invalid Currency')
+            } else if (error.response.data.message === 'User not available') {
+                setFilterError('Invalid User')
+            } else {
+                setFilterError('')
+            };
         })
-   };
+    };
+
+
+    
+    //// Get filtered paginated data from API
+    const GetFilteredPaginatedData = (startDate, endDate, limit, offset)=> {
+        axiosInstance.post(`/api/v4/admin/filter/transfer/transaction/?limit=${limit}&offset=${offset}`, {
+            date_time: filterDate,
+            email: filterData.user_email,
+            status: filterStatus,
+            currency: filterCurrency,
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
+
+        }).then((res)=> {
+            // console.log(res);
+            if (res.status === 200 && res.data.success === true) {
+                setTransferTransaction(res.data.filtered_transaction_data)
+                updateTotalRows(res.data.paginated_count);
+                setFilterActive(true);
+            }
+
+        }).catch((error)=> {
+            // console.log(error);
+            setTimeout(() => {
+                setFilterError('');
+            }, 2000);
+ 
+            if (error.response.data.message === 'Invalid email') {
+                setFilterError('Invalid Email Address');
+            } else if (error.response.data.message === 'No transaction found') {
+                setFilterError('No data found')
+            } else if (error.response.data.message === 'Currency not available') {
+                setFilterError('Invalid Currency')
+            } else if (error.response.data.message === 'User not available') {
+                setFilterError('Invalid User')
+            } else {
+                setFilterError('')
+            };
+        })
+    };
 
 
    // Reset Filter Method
@@ -240,8 +358,16 @@ export default function AllTransferTransactions({open}) {
        updateFilterData({
            user_email:''
        })
-       handlePaginatedData('e', 1);
+       setFilterActive(false);
    };
+
+
+    //// Call default pagination after filter mode off
+    useEffect(() => {
+        if (!filterActive) {
+            handlePaginatedData('e', 1);
+        }
+    }, [!filterActive]);
 
 
 
@@ -278,14 +404,14 @@ export default function AllTransferTransactions({open}) {
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
-                                <IconButton aria-label="filter" onClick={handleToggleFilters}>
+                                <IconButton aria-label="filter" onClick={()=> setShowFilters(!showFilters)}>
                                     <FilterAltIcon color='primary' />
                                 </IconButton>
                             </div>
                             ) : (
                             <div>
                                 <Button sx={{ mx: 1 }} onClick={handleDownloadTransferTransactions}>Export</Button>
-                                <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
+                                <Button sx={{ mx: 1 }} onClick={()=> setShowFilters(!showFilters)} >Filter</Button>
                             </div>
                         )}
                 </Box>
@@ -296,31 +422,43 @@ export default function AllTransferTransactions({open}) {
                     <Grid container p={2} justifyContent="flex-end" spacing={2}>
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl >
-                            <Select
-                                label="date"
-                                placeholder='Date'
-                                id="date"
-                                name="date"
-                                value={filterDate}
-                                onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
-                                indicator={<KeyboardArrowDown />}
-                                sx={{
-                                    [`& .${selectClasses.indicator}`]: {
-                                      transition: '0.2s',
-                                      [`&.${selectClasses.expanded}`]: {
-                                        transform: 'rotate(-180deg)',
-                                      },
-                                    },
-                                  }}
-                            >
-                                
-                                <Option value="Today">Today</Option>
-                                <Option value="Yesterday">Yesterday</Option>
-                                <Option value="ThisWeek">This Week</Option>
-                                <Option value="ThisMonth">This Month</Option>
-                                <Option value="PreviousMonth">Previous Month</Option>
-                            </Select>
+                                <Select
+                                    label="date"
+                                    placeholder='Date'
+                                    id="date"
+                                    name="date"
+                                    value={filterDate}
+                                    onChange={(e, newValue) => setFilterDate(newValue)}
+                                    indicator={<KeyboardArrowDown />}
+                                    sx={{
+                                        [`& .${selectClasses.indicator}`]: {
+                                        transition: '0.2s',
+                                        [`&.${selectClasses.expanded}`]: {
+                                            transform: 'rotate(-180deg)',
+                                        },
+                                        },
+                                    }}
+                                >
+                                    <Option value="Today">Today</Option>
+                                    <Option value="Yesterday">Yesterday</Option>
+                                    <Option value="ThisWeek">This Week</Option>
+                                    <Option value="ThisMonth">This Month</Option>
+                                    <Option value="PreviousMonth">Previous Month</Option>
+                                    <Option value="CustomRange">Custom Range</Option>
+                                </Select>
                             </FormControl>
+                            {filterDate === "CustomRange" && (
+                                isSmallScreen ? (
+                                    <>
+                                        <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenStartDateRange} />
+                                        <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenEndDateRange} />
+                                    </>
+                                ) : (
+                                    <RangePicker 
+                                        style={{ width: '100%', marginTop:5 }} onChange={handelLargeScreenCustomDateRange} 
+                                        />
+                                )
+                            )}
                         </Grid>
 
                         <Grid item xs={12} sm={6} md={2.5}>
@@ -340,7 +478,7 @@ export default function AllTransferTransactions({open}) {
                                     id="status"
                                     name="status"
                                     value={filterStatus}
-                                    onChange={(e, newValue) => handleFilterStatusChange(e, newValue)}
+                                    onChange={(e, newValue) => setFilterStatus(newValue)}
                                     indicator={<KeyboardArrowDown />}
                                     sx={{
                                         [`& .${selectClasses.indicator}`]: {
@@ -367,7 +505,7 @@ export default function AllTransferTransactions({open}) {
                                     id="Currency"
                                     name="Currency"
                                     value={filterCurrency}
-                                    onChange={(e, newValue) => handleFilterCurrencyChange(e, newValue)}
+                                    onChange={(e, newValue) => setFilterCurrency(newValue)}
                                     indicator={<KeyboardArrowDown />}
                                     sx={{
                                         [`& .${selectClasses.indicator}`]: {
