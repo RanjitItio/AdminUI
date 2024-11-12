@@ -112,6 +112,7 @@ export default function AllCryptoExchangeTable({open}) {
     const [cryptoExchangeTransactions, updateCryptoExchangeTransactions] = useState([]);  // All Transactions
     const [totalRows, updateTotalRows]       = useState(0);     // Paginated Rows
     const [exportData, updateExportData]     = useState([]);
+
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
@@ -122,6 +123,7 @@ export default function AllCryptoExchangeTable({open}) {
     const [ShEndDateRange, setShEndDateRange]       = useState('');  // Small Screen End date
     const [filterCrypto, setFilterCrypto]           = useState('');  // Filter Selected Crypto
     const [filterStatus, setFilterStatus]           = useState('');  // Filter Selected Status
+    const [filterActive, setFilterActive]           = useState(false); /// Filter active state
     const [filterData, updateFilterData]     = useState({
         user_email: ''
     }); ////
@@ -174,23 +176,6 @@ export default function AllCryptoExchangeTable({open}) {
             ...filterData,
             [name]: value
         })
-    };
-
-
-    // Reset Filter Method
-    const handleResetFilter = ()=> {
-        setFilterDate('');
-        setLgStartDateRange('');
-        setLgEndDateRange('');
-        setShStartDateRange('');
-        setShEndDateRange('');
-        setFilterError('');
-        setFilterCrypto('');
-        setFilterStatus('');
-        updateFilterData({
-            user_email:''
-        })
-        handlePaginatedData('e', 1)
     };
 
 
@@ -264,15 +249,47 @@ export default function AllCryptoExchangeTable({open}) {
         let limit = 10;
         let offset = (value - 1) * limit;
 
-        axiosInstance.get(`/api/v6/admin/crypto/exchange/?limit=${limit}&offset=${offset}`).then((res)=> {
-            // console.log(res)
-            if (res.status === 200 && res.data.success === true) {
-                updateCryptoExchangeTransactions(res.data.admin_user_crypto_exchange_data)
-            };
+        if (filterActive) {
+            if (isSmallScreen && filterDate === 'CustomRange') {
+                if (!ShStartDateRange) {
+                    setFilterError('Please Select Start Date');
+    
+                } else if (!ShEndDateRange) {
+                    setFilterError('Please Select End Date');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(ShStartDateRange, ShEndDateRange, limit, offset);
+                }
+    
+            } else if (!isSmallScreen && filterDate === 'CustomRange') {
+                if (!LgStartDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else if (!LgEndDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+                }
+    
+            } else {
+                setFilterError('');
+                GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+            }
 
-        }).catch((error)=> {
-            // console.log(error);
-        })
+        } else {
+            axiosInstance.get(`/api/v6/admin/crypto/exchange/?limit=${limit}&offset=${offset}`).then((res)=> {
+                // console.log(res)
+                if (res.status === 200 && res.data.success === true) {
+                    updateCryptoExchangeTransactions(res.data.admin_user_crypto_exchange_data)
+                };
+    
+            }).catch((error)=> {
+                // console.log(error);
+            })
+        }
     };
 
 
@@ -280,8 +297,8 @@ export default function AllCryptoExchangeTable({open}) {
     const handleEditClicked = (transaction)=> {
         navigate('/admin/user/update/crypto/exchange/', {state: {transaction: transaction}})
     };
-
-
+    
+    
 
     // Get filtered data
     const handleFilterData = ()=> {
@@ -318,7 +335,7 @@ export default function AllCryptoExchangeTable({open}) {
     
     //// Call API to get filter data
     const GetFilterData = (startDate, endDate)=> {
-        axiosInstance.post(`/api/v6/admin/filter/crypto/transactions/`, {
+        axiosInstance.post(`/api/v6/admin/filter/crypto/exchange/transactions/`, {
             dateTime: filterDate,
             email:  filterData.user_email,
             crypto: filterCrypto,
@@ -330,7 +347,9 @@ export default function AllCryptoExchangeTable({open}) {
             // console.log(res)
             
             if (res.status === 200) {
-                updateCryptoExchangeTransactions(res.data.filtered_crypto_exchange_transaction)
+                updateCryptoExchangeTransactions(res.data.filtered_crypto_exchange_transaction);
+                updateTotalRows(res.data.paginated_count);
+                setFilterActive(true);
             }
 
         }).catch((error)=> {
@@ -351,6 +370,70 @@ export default function AllCryptoExchangeTable({open}) {
             };
         })
     };
+
+
+    
+  //// Get filtered paginated data from API
+  const GetFilteredPaginatedData = (startDate, endDate, limit, offset)=> {
+        axiosInstance.post(`/api/v6/admin/filter/crypto/exchange/transactions/?limit=${limit}&offset=${offset}`, {
+            dateTime: filterDate,
+            email:  filterData.user_email,
+            crypto: filterCrypto,
+            status: filterStatus,
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
+
+        }).then((res)=> {
+            // console.log(res);
+            if (res.status === 200 && res.data.success === true) {
+                updateCryptoExchangeTransactions(res.data.filtered_crypto_exchange_transaction);
+                updateTotalRows(res.data.paginated_count);
+                setFilterActive(true);
+            }
+
+        }).catch((error)=> {
+            // console.log(error);
+            setTimeout(() => {
+                setFilterError('')
+            }, 2000);
+
+            if (error.response.data.message === 'No data found') {
+                setFilterError('No data found')
+            } else if (error.response.data.message === 'Invalid Email') {
+                setFilterError('Invalid Email Address')
+            } else if (error.response.data.message === 'Unauthorized') {
+                window.location.href = '/signin/'
+            } else {
+                setFilterError('')
+            };
+        })
+    };
+
+
+     // Reset Filter Method
+     const handleResetFilter = ()=> {
+        setFilterActive(false);
+        setFilterDate('');
+        setLgStartDateRange('');
+        setLgEndDateRange('');
+        setShStartDateRange('');
+        setShEndDateRange('');
+        setFilterError('');
+        setFilterCrypto('');
+        setFilterStatus('');
+        updateFilterData({
+            user_email:''
+        })
+    };
+
+    //// Call default pagination after filter mode off
+    useEffect(() => {
+        if (!filterActive) {
+            handlePaginatedData('e', 1);
+        }
+    }, [!filterActive]);
+
+
 
     /// Loader
     if (loader) {

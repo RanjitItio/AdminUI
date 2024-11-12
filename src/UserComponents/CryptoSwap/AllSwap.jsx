@@ -101,6 +101,7 @@ export default function AllCryptoSwapTransaction({open}) {
     const [cryptoSwapTransactions, updateCryptoSwapTransactions] = useState([]);  // All Transactions
     const [totalRows, updateTotalRows]       = useState(0);     // Paginated Rows
     const [exportData, updateExportData]     = useState([]);
+
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
@@ -110,33 +111,12 @@ export default function AllCryptoSwapTransaction({open}) {
     const [LgEndDateRange, setLgEndDateRange]       = useState('');  // Large Screen End Date
     const [ShStartDateRange, setShStartDateRange]   = useState('');  // Small screen Start date
     const [ShEndDateRange, setShEndDateRange]       = useState('');  // Small Screen End date
+    const [filterActive, setFilterActive]         = useState(false); /// Filter active state
     const [filterData, updateFilterData]     = useState({
         user_email: ''
     });
 
     const counPagination = Math.ceil(totalRows);   // Total pagination count
-
-    /// Open close Filter fields
-    const handleToggleFilters = () => {
-        setShowFilters(!showFilters);
-    };
-
-
-    // Get Filter Data
-    const handleFilterDateChange = (e, newValue)=> {
-        setFilterDate(newValue);
-    };
-
-    //// Get Filter Selected Crypto
-    const handleFilterCryptoChange = (e, newValue)=> {
-        setFilterCrypto(newValue)
-    };
-
-
-     //// Get Filter Selected Status
-     const handleFilterStatusChange = (e, newValue)=> {
-        setFilterStatus(newValue)
-    };
 
 
     /// Date Range Selected in Large Screen
@@ -169,17 +149,6 @@ export default function AllCryptoSwapTransaction({open}) {
     };
 
 
-    // Reset Filter Method
-    const handleResetFilter = ()=> {
-        setFilterDate('');
-        setFilterCrypto('');
-        setFilterStatus('');
-        updateFilterData({
-            user_email:'',
-        })
-        handlePaginatedData('e', 1);
-    };
-
 
     // Fetch all the Crypto Swap Transactions
     useEffect(() => {
@@ -187,7 +156,7 @@ export default function AllCryptoSwapTransaction({open}) {
           // console.log(res)
           if (res.status === 200 && res.data.success === true) {
                 updateCryptoSwapTransactions(res.data.admin_swap_data)
-                updateTotalRows(res.data.pagination_count)
+                updateTotalRows(res.data.pagination_count);
         }
   
         }).catch((error)=> {
@@ -248,15 +217,48 @@ export default function AllCryptoSwapTransaction({open}) {
         let limit = 10;
         let offset = (value - 1) * limit;
 
-        axiosInstance.get(`/api/v5/admin/crypto/swap/?limit=${limit}&offset=${offset}`).then((res)=> {
-            // console.log(res)
-            if (res.status === 200 && res.data.success === true) {
-                updateCryptoSwapTransactions(res.data.admin_swap_data)
-            };
+        if (filterActive) {
+            if (isSmallScreen && filterDate === 'CustomRange') {
+                if (!ShStartDateRange) {
+                    setFilterError('Please Select Start Date');
+    
+                } else if (!ShEndDateRange) {
+                    setFilterError('Please Select End Date');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(ShStartDateRange, ShEndDateRange, limit, offset);
+                }
+    
+            } else if (!isSmallScreen && filterDate === 'CustomRange') {
+                if (!LgStartDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else if (!LgEndDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+                }
+    
+            } else {
+                setFilterError('');
+                GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+            }
 
-        }).catch((error)=> {
-            // console.log(error);
-        })
+        } else {
+            axiosInstance.get(`/api/v5/admin/crypto/swap/?limit=${limit}&offset=${offset}`).then((res)=> {
+                // console.log(res)
+                if (res.status === 200 && res.data.success === true) {
+                    updateCryptoSwapTransactions(res.data.admin_swap_data)
+                    updateTotalRows(res.data.pagination_count)
+                };
+    
+            }).catch((error)=> {
+                // console.log(error);
+            })
+        };
     };
 
 
@@ -315,7 +317,9 @@ export default function AllCryptoSwapTransaction({open}) {
         //   console.log(res)
 
           if (res.status === 200 && res.data.success === true) {
-                updateCryptoSwapTransactions(res.data.admin_filter_swap_data)
+                updateCryptoSwapTransactions(res.data.admin_filter_swap_data);
+                updateTotalRows(res.data.paginated_count);
+                setFilterActive(true);
           };
 
       }).catch((error)=> {
@@ -336,6 +340,69 @@ export default function AllCryptoSwapTransaction({open}) {
           };
       })
   };
+
+
+  //// Get filtered paginated data from API
+  const GetFilteredPaginatedData = (startDate, endDate, limit, offset)=> {
+    axiosInstance.post(`/api/v5/admin/filter/crypto/swap/?limit=${limit}&offset=${offset}`, {
+        dateRange: filterDate,
+        email: filterData.user_email,
+        crypto: filterCrypto,
+        status: filterStatus,
+        start_date: startDate ? startDate : LgStartDateRange,
+        end_date: endDate ? endDate : LgEndDateRange
+
+    }).then((res)=> {
+        // console.log(res);
+        if (res.status === 200 && res.data.success === true) {
+            updateCryptoSwapTransactions(res.data.admin_filter_swap_data);
+            updateTotalRows(res.data.paginated_count);
+            setFilterActive(true);
+        }
+
+    }).catch((error)=> {
+        // console.log(error);
+        setTimeout(() => {
+            setFilterError('');
+        }, 2000);
+
+        if (error.response.data.message === 'No data found') {
+            setFilterError('No data found')
+        } else if (error.response.data.message === 'Invalid Email') {
+            setFilterError('Invalid Email Address')
+        } else if (error.response.data.message === 'Unauthorized') {
+            window.location.href = '/signin/'
+        } else {
+            setFilterError('')
+        };
+    })
+};
+
+
+   // Reset Filter Method
+   const handleResetFilter = ()=> {
+        setFilterDate('');
+        setFilterCrypto('');
+        setFilterStatus('');
+        updateFilterData({
+            user_email:'',
+        })
+        setFilterActive(false);
+        setLgStartDateRange('');
+        setLgEndDateRange('');
+        setShStartDateRange('');
+        setShEndDateRange('');
+    };
+
+
+    //// Call default pagination after filter mode off
+    useEffect(() => {
+        if (!filterActive) {
+            handlePaginatedData('e', 1);
+        }
+    }, [!filterActive]);
+
+
 
 
     return (
@@ -370,14 +437,14 @@ export default function AllCryptoSwapTransaction({open}) {
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
-                                <IconButton aria-label="filter" onClick={handleToggleFilters}>
+                                <IconButton aria-label="filter" onClick={()=> setShowFilters(!showFilters)}>
                                     <FilterAltIcon color='primary' />
                                 </IconButton>
                             </div>
                             ) : (
                             <div>
                                 <Button sx={{ mx: 1 }} onClick={handleDownloadCryptoTransactions}>Export</Button>
-                                <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
+                                <Button sx={{ mx: 1 }} onClick={()=> setShowFilters(!showFilters)} >Filter</Button>
                             </div>
                         )}
                     </Box>
@@ -395,7 +462,7 @@ export default function AllCryptoSwapTransaction({open}) {
                                         id="date"
                                         name="date"
                                         value={filterDate}
-                                        onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                                        onChange={(e, newValue) => setFilterDate(newValue)}
                                         indicator={<KeyboardArrowDown />}
                                         sx={{
                                             [`& .${selectClasses.indicator}`]: {
@@ -450,7 +517,7 @@ export default function AllCryptoSwapTransaction({open}) {
                                         id="crypto"
                                         name="crypto"
                                         value={filterCrypto}
-                                        onChange={(e, newValue) => handleFilterCryptoChange(e, newValue)}
+                                        onChange={(e, newValue) => setFilterCrypto(newValue)}
                                         indicator={<KeyboardArrowDown />}
                                         sx={{
                                             [`& .${selectClasses.indicator}`]: {
@@ -481,7 +548,7 @@ export default function AllCryptoSwapTransaction({open}) {
                                         id="status"
                                         name="status"
                                         value={filterStatus}
-                                        onChange={(e, newValue) => handleFilterStatusChange(e, newValue)}
+                                        onChange={(e, newValue) => setFilterStatus(newValue)}
                                         indicator={<KeyboardArrowDown />}
                                         sx={{
                                             [`& .${selectClasses.indicator}`]: {
