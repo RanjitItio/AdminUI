@@ -207,23 +207,25 @@ export default function MerchantPGTransactionUpdate({open}) {
                 console.log(error)
 
                 if (error.response.data.message === 'Transaction already updated') {
-                    setError('Transaction has been updated, Can not perform this action')
+                    setError('Transaction has been updated, Can not perform this action');
                 } else if (error.response.data.message == 'Provide transaction Fee') {
-                    setError('Please assign transaction fee')
+                    setError('Please assign transaction fee');
                 } else if (error.response.data.message == 'Can not add amount into frozen balance') {
-                    setError('Amount not available to add in Frozen balance')
+                    setError('Amount not available to add in Frozen balance');
                 } else if (error.response.data.message == 'Amount has been credited to Mature fund') {
-                    setError('Amount has been credited to Mature fund')
+                    setError('Amount has been credited to Mature fund');
                 } else if (error.response.data.message == 'Can not perform this action') {
-                    setError('Can not reverse the transaction')
+                    setError('Can not reverse the transaction');
                 } else if (error.response.data.message === 'Already added balance to Fronzen fund') {
-                    setError('Transaction amount already added into frozen balance')
+                    setError('Transaction amount already added into frozen balance');
                 } else if (error.response.data.message === 'Can not hold failed transaction') {
-                    setError('Can not Freeze Failed Transaction')
+                    setError('Can not Freeze Failed Transaction');
                 } else if (error.response.data.message === 'Can not hold pending transaction') {
-                    setError('Can not Freeze Pending Transaction')
+                    setError('Can not Freeze Pending Transaction');
+                } else if (error.response.data.message === 'Insufficient Immature Balance') {
+                    setError('Insufficient Immature Account Balance');
                 } else {
-                    setError('')
+                    setError('');
                 };
             })
         }
