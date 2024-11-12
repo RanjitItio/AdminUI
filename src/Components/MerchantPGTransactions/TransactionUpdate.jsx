@@ -224,6 +224,8 @@ export default function MerchantPGTransactionUpdate({open}) {
                     setError('Can not Freeze Pending Transaction');
                 } else if (error.response.data.message === 'Insufficient Immature Balance') {
                     setError('Insufficient Immature Account Balance');
+                } else if (error.response.data.message === 'Insufficient Frozen balance') {
+                    setError('Insufficient Frozen balance')
                 } else {
                     setError('');
                 };
