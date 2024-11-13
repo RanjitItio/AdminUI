@@ -17,16 +17,20 @@ import { useTheme } from '@mui/material/styles';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useMediaQuery } from '@mui/material';
-import Select from '@mui/joy/Select';
+import Select, { selectClasses } from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import {Button as JoyButton} from '@mui/joy';
 import FormControl from '@mui/material/FormControl';
+import { DatePicker } from 'antd';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+
+
+const { RangePicker } = DatePicker;
 
 
 
 
-
-// Get all the merchant Refunds
+//// Get all the merchant Refunds
 export default function MerchantRefunds({open}) {
     const navigate = useNavigate();
     const theme    = useTheme();
@@ -35,10 +39,16 @@ export default function MerchantRefunds({open}) {
     const [merchantRefunds, updateMerchantRefunds] = useState([]); // Refund Transactions
     const [totalRowCount, setTotalRowCount]        = useState(0);
     const [exportData, updateExportData] = useState([]); // Excel Data
-    const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
-    const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
-    const [filterDate, setFilterDate]        = useState('');  // Filter date state field
-    const [filterError, setFilterError]      = useState('');  // Error message of filter
+
+    const [showFilters, setShowFilters]           = useState(false);  // Filter fileds state
+    const [filterDate, setFilterDate]             = useState('');  // Filter date state field
+    const [filterError, setFilterError]           = useState('');  // Error message of filter
+    const [LgStartDateRange, setLgStartDateRange] = useState('');  // Large Screen Start date
+    const [LgEndDateRange, setLgEndDateRange]     = useState('');  // Large Screen End Date
+    const [ShStartDateRange, setShStartDateRange] = useState('');  // Small screen Start date
+    const [ShEndDateRange, setShEndDateRange]     = useState('');  // Small Screen End date
+    const [filterCurrency, setFilterCurrency]     = useState('') // Filter Currency
+    const [filterActive, setFilterActive]         = useState(false);      //// Filter Active Status
     const [filterData, updateFilterData]     = useState({
         merchant_email: '',
         refundCurrency: '',
@@ -47,10 +57,25 @@ export default function MerchantRefunds({open}) {
 
     let countPagination = Math.ceil(totalRowCount); 
 
-    /// Open close Filter fields
-    const handleToggleFilters = () => {
-        setShowFilters(!showFilters);
+    
+    /// Filter Date Range Selected in Large Screen
+    const handelLargeScreenCustomDateRange = (date, dateString)=> {
+        setLgStartDateRange(dateString[0])
+        setLgEndDateRange(dateString[1])
     };
+
+
+    /// Filter Small Screen Start date range
+    const handleSmallScreenStartDateRange = (date, dateString)=> {
+        setShStartDateRange(dateString)
+    };
+
+
+    /// Filter Small Screen End Date Range
+    const handleSmallScreenEndDateRange = (date, dateString)=> {
+        setShEndDateRange(dateString)
+    };
+
 
     // Update Filter fields data
     const handleUpdateFilterInput = (e)=> {
@@ -60,11 +85,6 @@ export default function MerchantRefunds({open}) {
             ...filterData,
             [name]: value
         })
-    };
-
-    // Update selected date of Filters
-    const handleFilterDateChange = (e, newValue) => {
-        setFilterDate(newValue)
     };
 
 
@@ -79,10 +99,11 @@ export default function MerchantRefunds({open}) {
         }
 
       }).catch((error)=> {
-        console.log(error)
+        // console.log(error)
 
       })
     }, []);
+
 
     // Method to redirect to Update page
     const handleRedirectUpdateRefund = (refunds)=> {
@@ -94,18 +115,51 @@ export default function MerchantRefunds({open}) {
         let limit = 10;
         let offset = (value - 1) * limit;
 
-        axiosInstance.get(`api/v6/admin/merchant/refunds/?limit=${limit}&offset=${offset}`).then((res)=> {
-            // console.log(res)
-            if (res.status === 200 && res.data.success === true) {
-                updateMerchantRefunds(res.data.admin_merchant_refunds)
-                setTotalRowCount(res.data.total_count)
-            };
+        if (filterActive) {
+            if (isSmallScreen && filterDate === 'CustomRange') {
+                if (!ShStartDateRange) {
+                    setFilterError('Please Select Start Date');
+    
+                } else if (!ShEndDateRange) {
+                    setFilterError('Please Select End Date');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(ShStartDateRange, ShEndDateRange, limit, offset);
+                }
+    
+            } else if (!isSmallScreen && filterDate === 'CustomRange') {
+                if (!LgStartDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else if (!LgEndDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+                }
+    
+            } else {
+                setFilterError('');
+                GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+            }
 
-        }).catch((error)=> {
-            console.log(error);
-
-        })
+        } else {
+            axiosInstance.get(`api/v6/admin/merchant/refunds/?limit=${limit}&offset=${offset}`).then((res)=> {
+                // console.log(res)
+                if (res.status === 200 && res.data.success === true) {
+                    updateMerchantRefunds(res.data.admin_merchant_refunds)
+                    setTotalRowCount(res.data.total_count)
+                };
+    
+            }).catch((error)=> {
+                console.log(error);
+    
+            })
+        }
     };
+
 
     // Change status color according to the transaction status
     const getStatusColor = (status)=> {
@@ -161,61 +215,70 @@ export default function MerchantRefunds({open}) {
             };
     
           }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
           })
-    };
-
-    // Search Refund Transactions
-    const handleSearch = ()=> {
-        axiosInstance.get(`api/v6/admin/merchant/refund/search/?query=${searchQuery}`).then((res)=> {
-            // console.log(res)
-
-            if (res.status === 200 && res.data.success === true) {
-                updateMerchantRefunds(res.data.searched_merchant_refund)
-            }
-
-        }).catch((error)=> {
-            console.log(error)
-
-        })
-    };
-
-
-    // Input Search values
-    const handleSearchInputChange = (e)=> {
-        updateSearchQuery(e.target.value);
-    };
-
-    // Reset Filter Inputs Method
-    const handleResetFilter = ()=> {
-        setFilterDate('');
-        updateFilterData({
-            merchant_email: '',
-            refundCurrency: '',
-            refundAmount: ''
-        })
-        handlePaginatedData('e', 1);
     };
 
 
 
     // Get all the Filtered data
     const handleGetFilterData = ()=> {
+        if (isSmallScreen && filterDate === 'CustomRange') {
+            if (!ShStartDateRange) {
+                setFilterError('Please Select Start Date');
+
+            } else if (!ShEndDateRange) {
+                setFilterError('Please Select End Date');
+
+            } else {
+                setFilterError('');
+                GetFilteredData(ShStartDateRange, ShEndDateRange);
+            }
+
+        } else if (!isSmallScreen && filterDate === 'CustomRange') {
+            if (!LgStartDateRange) {
+                setFilterError('Please Select Date Range');
+
+            } else if (!LgEndDateRange) {
+                setFilterError('Please Select Date Range');
+
+            } else {
+                setFilterError('');
+                GetFilteredData(LgStartDateRange, LgEndDateRange);
+            }
+
+        } else {
+            setFilterError('')
+            GetFilteredData()
+        }
+    };
+
+
+    //// Get filtered data from API
+    const GetFilteredData = (startDate, endDate)=> {
         axiosInstance.post(`/api/v6/admin/filter/merchant/refunds/`, {
             date: filterDate,
             email: filterData.merchant_email,
-            currency: filterData.refundCurrency,
-            amount: filterData.refundAmount
+            currency: filterCurrency,
+            amount: filterData.refundAmount,
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
 
         }).then((res)=> {
-            // console.log(res)
-
+            // console.log(res);
             if (res.status === 200 && res.data.success === true) {
                 updateMerchantRefunds(res.data.admin_merchant_filter_refunds)
                 setFilterError('')
-            }   
+                setTotalRowCount(res.data.paginated_count)
+                setFilterActive(true)
+            }
+
         }).catch((error)=> {
-            // console.log(error)
+            // console.log(error);
+
+            setTimeout(() => {
+                setFilterError('');
+            }, 2000);
 
             if (error.response.data.message === 'No transaction found') {
                 setFilterError('No data found')
@@ -228,6 +291,70 @@ export default function MerchantRefunds({open}) {
             };
         })
     };
+
+
+    
+    //// Get filtered data from API
+    const GetFilteredPaginatedData = (startDate, endDate, limit, offset)=> {
+        axiosInstance.post(`/api/v6/admin/filter/merchant/refunds/?limit=${limit}&offset=${offset}`, {
+            date: filterDate,
+            email: filterData.merchant_email,
+            currency: filterCurrency,
+            amount: parseFloat(filterData.refundAmount),
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
+
+        }).then((res)=> {
+            // console.log(res);
+            if (res.status === 200 && res.data.success === true) {
+                updateMerchantRefunds(res.data.admin_merchant_filter_refunds)
+                setFilterError('')
+                setTotalRowCount(res.data.paginated_count)
+                setFilterActive(true)
+            }
+
+        }).catch((error)=> {
+            // console.log(error);
+            setTimeout(() => {
+                setFilterError('');
+            }, 2000);
+
+            if (error.response.data.message === 'No transaction found') {
+                setFilterError('No data found')
+            } else if (error.response.data.message === 'Invalid email address') {
+                setFilterError('Invalid email address')
+            } else if (error.response.data.message === 'Invalid Currency') {
+                setFilterError('Invalid Currency')
+            } else {
+                setFilterError('');
+            };
+        })
+    };
+
+    
+    // Reset Filter Inputs Method
+    const handleResetFilter = ()=> {
+        setFilterDate('');
+        setFilterCurrency('');
+        updateFilterData({
+            merchant_email: '',
+            refundAmount: ''
+        })
+
+        setFilterActive(false);
+        setLgStartDateRange('');
+        setLgEndDateRange('');
+        setShStartDateRange('');
+        setShEndDateRange('');
+    };
+
+
+     //// Call default pagination after filter mode off
+     useEffect(() => {
+        if (!filterActive) {
+            handlePaginatedData('e', 1);
+        }
+    }, [!filterActive]);
 
 
     return (
@@ -272,14 +399,14 @@ export default function MerchantRefunds({open}) {
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
-                                <IconButton aria-label="filter" onClick={handleToggleFilters}>
+                                <IconButton aria-label="filter" onClick={()=> setShowFilters(!showFilters)}>
                                     <FilterAltIcon color='primary' />
                                 </IconButton>
                             </div>
                             ) : (
                             <div>
                                 <Button sx={{ mx: 1 }} onClick={handleDownloadRefunds}>Export</Button>
-                                <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
+                                <Button sx={{ mx: 1 }} onClick={()=> setShowFilters(!showFilters)} >Filter</Button>
                             </div>
                         )}
                 </Box>
@@ -290,21 +417,44 @@ export default function MerchantRefunds({open}) {
                     <Grid container p={2} justifyContent="flex-end" spacing={2}>
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
-                            <Select
-                                label="date"
-                                placeholder='Date'
-                                id="date"
-                                name="date"
-                                value={filterDate}
-                                onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
-                            >
-                                <Option value="Today">Today</Option>
-                                <Option value="Yesterday">Yesterday</Option>
-                                <Option value="ThisWeek">This Week</Option>
-                                <Option value="ThisMonth">This Month</Option>
-                                <Option value="PreviousMonth">Previous Month</Option>
-                            </Select>
+                                <Select
+                                    label="date"
+                                    placeholder='Date'
+                                    id="date"
+                                    name="date"
+                                    value={filterDate}
+                                    onChange={(e, newValue) => setFilterDate(newValue)}
+                                    indicator={<KeyboardArrowDown />}
+                                    sx={{
+                                        [`& .${selectClasses.indicator}`]: {
+                                        transition: '0.2s',
+                                        [`&.${selectClasses.expanded}`]: {
+                                            transform: 'rotate(-180deg)',
+                                        },
+                                        },
+                                    }}
+                                >
+                                    <Option value="Today">Today</Option>
+                                    <Option value="Yesterday">Yesterday</Option>
+                                    <Option value="ThisWeek">This Week</Option>
+                                    <Option value="ThisMonth">This Month</Option>
+                                    <Option value="PreviousMonth">Previous Month</Option>
+                                    <Option value="CustomRange">Custom Range</Option>
+                                </Select>
                             </FormControl>
+
+                            {filterDate === "CustomRange" && (
+                                isSmallScreen ? (
+                                    <>
+                                        <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenStartDateRange} />
+                                        <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenEndDateRange} />
+                                    </>
+                                ) : (
+                                    <RangePicker 
+                                        style={{ width: '100%', marginTop:5 }} onChange={handelLargeScreenCustomDateRange} 
+                                        />
+                                )
+                            )}
                         </Grid>
 
                         <Grid item xs={12} sm={6} md={2.5}>
@@ -320,12 +470,26 @@ export default function MerchantRefunds({open}) {
 
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
-                                <Input 
-                                    name='refundCurrency'
-                                    value={filterData.refundCurrency}
-                                    onChange={handleUpdateFilterInput}
-                                    placeholder="Refund Currency" 
-                                    />
+                                <Select
+                                    placeholder='Refund Currency'
+                                    id="refundCurrency"
+                                    name="refundCurrency"
+                                    value={filterCurrency}
+                                    onChange={(e, newValue) => setFilterCurrency(newValue)}
+                                    indicator={<KeyboardArrowDown />}
+                                    sx={{
+                                        [`& .${selectClasses.indicator}`]: {
+                                        transition: '0.2s',
+                                        [`&.${selectClasses.expanded}`]: {
+                                            transform: 'rotate(-180deg)',
+                                        },
+                                        },
+                                    }}
+                                >
+                                    <Option value="USD">USD</Option>
+                                    <Option value="INR">INR</Option>
+                                    <Option value="EUR">EUR</Option>
+                                </Select>
                             </FormControl>
                         </Grid>
 
