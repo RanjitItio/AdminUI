@@ -15,29 +15,38 @@ import { useTheme } from '@mui/material/styles';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useMediaQuery } from '@mui/material';
-import Select from '@mui/joy/Select';
+import Select, { selectClasses } from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import {Button as JoyButton} from '@mui/joy';
 import FormControl from '@mui/material/FormControl';
+import { DatePicker } from 'antd';
 
+
+const { RangePicker } = DatePicker;
 
 
 
 
 // All Merchant created Business table
 export default function MerchantBusinessTable({open}) {
-    const navigate = useNavigate();
-    const theme    = useTheme();
+    const navigate      = useNavigate();
+    const theme         = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [merchantBusinessData, updateMerchantBusinessData] = useState([]);  // Busienss Data
     const [totalRows, updateTotalRows] = useState(0); // Total business rows
-    const [searchedText, updateSearchedText] = useState('');  // Searched Data
     const [exportData, updateExportData] = useState([]); // Excel Data
 
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
+    const [LgStartDateRange, setLgStartDateRange] = useState('');  // Large Screen Start date
+    const [LgEndDateRange, setLgEndDateRange]     = useState('');  // Large Screen End Date
+    const [ShStartDateRange, setShStartDateRange] = useState('');  // Small screen Start date
+    const [ShEndDateRange, setShEndDateRange]     = useState('');  // Small Screen End date
+    const [filterStatus, setFilterStatus]         = useState(''); // Filter Status
+    const [filterActive, setFilterActive]         = useState(false);      //// Filter Active Status
     const [filterData, updateFilterData]     = useState({
         status: '',
         merchantName: '',
@@ -46,14 +55,23 @@ export default function MerchantBusinessTable({open}) {
 
     const countPagination = Math.ceil(totalRows);
 
-    /// Open close Filter fields
-    const handleToggleFilters = () => {
-        setShowFilters(!showFilters);
+
+    /// Filter Date Range Selected in Large Screen
+    const handelLargeScreenCustomDateRange = (date, dateString)=> {
+        setLgStartDateRange(dateString[0])
+        setLgEndDateRange(dateString[1])
     };
 
-    /// Get selected date range
-    const handleFilterDateChange = (e, newValue)=> {
-        setFilterDate(newValue)
+
+    /// Filter Small Screen Start date range
+    const handleSmallScreenStartDateRange = (date, dateString)=> {
+        setShStartDateRange(dateString)
+    };
+
+
+    /// Filter Small Screen End Date Range
+    const handleSmallScreenEndDateRange = (date, dateString)=> {
+        setShEndDateRange(dateString)
     };
 
 
@@ -69,7 +87,6 @@ export default function MerchantBusinessTable({open}) {
 
     // Fetch all the available businesses of merchant
     useEffect(() => {
-
         axiosInstance.get(`api/admin/all/merchant/`).then((res)=> {
             // console.log(res.data.data)
             if (res.data.data) {
@@ -79,8 +96,7 @@ export default function MerchantBusinessTable({open}) {
             }
 
         }).catch((error)=> {
-            console.log(error.response)
-
+            // console.log(error.response)
         })
     }, []);
 
@@ -97,6 +113,7 @@ export default function MerchantBusinessTable({open}) {
         }
       };
 
+    
 
     /// Method to handle Edit button click event
     const handleMerchantEdit = (merchant, user, group, currency)=> {
@@ -108,27 +125,6 @@ export default function MerchantBusinessTable({open}) {
         navigate('/admin/merchant/details/', {state: {merchant: merchant_detail, user: user_details, group: group_details, currency: currency_details}})
     };
 
-    
-    // Input search field
-    const handleSearchedText = (e)=> {
-            updateSearchedText(e.target.value);
-    };
-
-
-    // Fetch searched data
-    const handleSearchedData = ()=> {
-        axiosInstance.get(`api/v2/admin/search/merchant/?query=${searchedText}`).then((res)=> {
-            console.log(res);
-
-            if (res.status === 200 && res.data.data) {
-                updateMerchantBusinessData(res.data.data)
-            };
-
-        }).catch((error)=> {
-            console.log(error);
-
-        })
-    };
 
 
     // Get all the pagination data
@@ -136,16 +132,48 @@ export default function MerchantBusinessTable({open}) {
         let limit = 15;
         let offset = (value - 1) * limit;
 
-        axiosInstance.get(`api/admin/all/merchant/?limit=${limit}&offset=${offset}`).then((res)=> {
-            // console.log(res)
-            if (res.status === 200 && res.data.data) {
-                updateMerchantBusinessData(res.data.data)
-            };
+        if (filterActive) {
+            if (isSmallScreen && filterDate === 'CustomRange') {
+                if (!ShStartDateRange) {
+                    setFilterError('Please Select Start Date');
+    
+                } else if (!ShEndDateRange) {
+                    setFilterError('Please Select End Date');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(ShStartDateRange, ShEndDateRange, limit, offset);
+                }
+    
+            } else if (!isSmallScreen && filterDate === 'CustomRange') {
+                if (!LgStartDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else if (!LgEndDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+                }
+    
+            } else {
+                setFilterError('');
+                GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+            }
 
-        }).catch((error)=> {
-            console.log(error);
+        } else {
+            axiosInstance.get(`api/admin/all/merchant/?limit=${limit}&offset=${offset}`).then((res)=> {
+                // console.log(res)
+                if (res.status === 200 && res.data.data) {
+                    updateMerchantBusinessData(res.data.data)
+                    updateTotalRows(res.data.total_business_count)
+                }
 
-        })
+            }).catch((error)=> {
+                // console.log(error);
+            })
+        }
     };
 
 
@@ -171,6 +199,7 @@ export default function MerchantBusinessTable({open}) {
         }
     };
 
+
     // Download all withdrawal requests
     const handleDownloadBusiness = ()=> {
         axiosInstance.get(`/api/v2/admin/export/business/`).then((res)=> {
@@ -185,41 +214,111 @@ export default function MerchantBusinessTable({open}) {
             };
     
           }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
 
           })
-    };
-
-    // Reset Filter inputs
-    const handelFilterReset = ()=> {
-        setFilterDate('');
-        updateFilterData({
-            status: '',
-            merchantName: '',
-            business_name: ''
-        })
-        handlePaginationData('e', 1);
     };
 
 
     // Get Filter data
     const handleFilterData = ()=> {
+        if (isSmallScreen && filterDate === 'CustomRange') {
+            if (!ShStartDateRange) {
+                setFilterError('Please Select Start Date');
+
+            } else if (!ShEndDateRange) {
+                setFilterError('Please Select End Date');
+
+            } else {
+                setFilterError('');
+                GetFilteredData(ShStartDateRange, ShEndDateRange);
+            }
+
+        } else if (!isSmallScreen && filterDate === 'CustomRange') {
+            if (!LgStartDateRange) {
+                setFilterError('Please Select Date Range');
+
+            } else if (!LgEndDateRange) {
+                setFilterError('Please Select Date Range');
+
+            } else {
+                setFilterError('');
+                GetFilteredData(LgStartDateRange, LgEndDateRange);
+            }
+
+        } else {
+            setFilterError('');
+            GetFilteredData();
+        }
+    };
+
+
+
+    //// Get filtered data from API
+    const GetFilteredData = (startDate, endDate)=> {
         axiosInstance.post(`/api/v2/admin/filter/merchant/business/`, {
             date: filterDate,
             merchant_name: filterData.merchantName,
             business_name: filterData.business_name,
-            status: filterData.status
+            status: filterStatus,
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
 
         }).then((res)=> {
-            // console.log(res)
-
+            // console.log(res);
             if (res.status === 200 && res.data.success === true) {
                 updateMerchantBusinessData(res.data.filtered_business)
-                setFilterError('')
+                setFilterError('');
+                setFilterActive(true);
+                updateTotalRows(res.data.paginated_count)
             }
 
         }).catch((error)=> {
-            // console.log(error)
+            // console.log(error);
+
+            setTimeout(() => {
+                setFilterError('');
+            }, 2000);
+
+            if (error.response.data.message === 'Invalid merchant name') {
+                setFilterError('Invalid Merchant Name')
+            } else if (error.response.data.message === 'No business found') {
+                setFilterError('No data found')
+            } else if (error.response.data.message === 'No data found') {
+                setFilterError('No data found')
+            } else {
+                setFilterError('')
+            };
+
+        })
+    };
+
+
+    
+    //// Get filtered data from API
+    const GetFilteredPaginatedData = (startDate, endDate, limit, offset)=> {
+        axiosInstance.post(`/api/v2/admin/filter/merchant/business/?limit=${limit}&offset=${offset}`, {
+            date: filterDate,
+            merchant_name: filterData.merchantName,
+            business_name: filterData.business_name,
+            status: filterStatus,
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
+
+        }).then((res)=> {
+            // console.log(res);
+            if (res.status === 200 && res.data.success === true) {
+                updateMerchantBusinessData(res.data.filtered_business)
+                setFilterError('');
+                setFilterActive(true);
+                updateTotalRows(res.data.paginated_count)
+            }
+
+        }).catch((error)=> {
+            // console.log(error);
+            setTimeout(() => {
+                setFilterError('');
+            }, 2000);
 
             if (error.response.data.message === 'Invalid merchant name') {
                 setFilterError('Invalid Merchant Name')
@@ -232,6 +331,30 @@ export default function MerchantBusinessTable({open}) {
             };
         })
     };
+
+
+    // Reset Filter inputs
+    const handelFilterReset = ()=> {
+        setFilterActive(false);
+        setFilterDate('');
+        setFilterStatus('');
+        updateFilterData({
+            merchantName: '',
+            business_name: ''
+        })
+        setLgStartDateRange('');
+        setLgEndDateRange('');
+        setShStartDateRange('');
+        setShEndDateRange('');
+    };
+
+
+     //// Call default pagination after filter mode off
+    useEffect(() => {
+        if (!filterActive) {
+            handlePaginationData('e', 1);
+        }
+    }, [!filterActive]);
 
 
 
@@ -267,38 +390,62 @@ export default function MerchantBusinessTable({open}) {
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
-                                <IconButton aria-label="filter" onClick={handleToggleFilters}>
+                                <IconButton aria-label="filter" onClick={()=> setShowFilters(!showFilters)}>
                                     <FilterAltIcon color='primary' />
                                 </IconButton>
                             </div>
                             ) : (
                             <div>
                                 <Button sx={{ mx: 1 }} onClick={handleDownloadBusiness}>Export</Button>
-                                <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
+                                <Button sx={{ mx: 1 }} onClick={()=> setShowFilters(!showFilters)} >Filter</Button>
                             </div>
                     )}
                 </Box>
+
                 {/* Hidden Filter fields */}
                 {showFilters && (
                     <>
                     <Grid container p={2} justifyContent="flex-end" spacing={2}>
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
-                            <Select
-                                label="date"
-                                placeholder='Date'
-                                id="date"
-                                name="date"
-                                value={filterDate}
-                                onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
-                            >
-                                <Option value="Today">Today</Option>
-                                <Option value="Yesterday">Yesterday</Option>
-                                <Option value="ThisWeek">This Week</Option>
-                                <Option value="ThisMonth">This Month</Option>
-                                <Option value="PreviousMonth">Previous Month</Option>
-                            </Select>
+                                <Select
+                                    label="date"
+                                    placeholder='Date'
+                                    id="date"
+                                    name="date"
+                                    value={filterDate}
+                                    onChange={(e, newValue) => setFilterDate(newValue)}
+                                    indicator={<KeyboardArrowDown />}
+                                    sx={{
+                                        [`& .${selectClasses.indicator}`]: {
+                                        transition: '0.2s',
+                                        [`&.${selectClasses.expanded}`]: {
+                                            transform: 'rotate(-180deg)',
+                                        },
+                                        },
+                                    }}
+                                >
+                                    <Option value="Today">Today</Option>
+                                    <Option value="Yesterday">Yesterday</Option>
+                                    <Option value="ThisWeek">This Week</Option>
+                                    <Option value="ThisMonth">This Month</Option>
+                                    <Option value="PreviousMonth">Previous Month</Option>
+                                    <Option value="CustomRange">Custom Range</Option>
+                                </Select>
                             </FormControl>
+
+                            {filterDate === "CustomRange" && (
+                                isSmallScreen ? (
+                                    <>
+                                        <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenStartDateRange} />
+                                        <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenEndDateRange} />
+                                    </>
+                                ) : (
+                                    <RangePicker 
+                                        style={{ width: '100%', marginTop:5 }} onChange={handelLargeScreenCustomDateRange} 
+                                        />
+                                )
+                            )}
                         </Grid>
 
                         <Grid item xs={12} sm={6} md={2.5}>
@@ -325,12 +472,24 @@ export default function MerchantBusinessTable({open}) {
 
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
-                                <Input 
+                                <Select
                                     placeholder="Status"
-                                    name='status'
-                                    value={filterData.status} 
-                                    onChange={handleFilterInputChange}
-                                    />
+                                    indicator={<KeyboardArrowDown />}
+                                    value={filterStatus}
+                                    onChange={(e, newValue)=> {setFilterStatus(newValue)}}
+                                    sx={{
+                                        [`& .${selectClasses.indicator}`]: {
+                                        transition: '0.2s',
+                                        [`&.${selectClasses.expanded}`]: {
+                                            transform: 'rotate(-180deg)',
+                                        },
+                                        },
+                                    }}
+                                    >
+                                    <Option value="Approved">Approved</Option>
+                                    <Option value="Moderation">Moderation</Option>
+                                    <Option value="Rejected">Rejected</Option>
+                                </Select>
                             </FormControl>
                         </Grid>
                         

@@ -258,10 +258,10 @@ export default function AllCryptoSwapTransaction({open}) {
             }).catch((error)=> {
                 // console.log(error);
             })
-        };
+        }
     };
-
-
+    
+    
     // Method to redirect the user to Edit page
     const handleEditClicked = (transaction)=> {
         navigate('/admin/user/update/crypto/swap/', {state: {transaction: transaction}})

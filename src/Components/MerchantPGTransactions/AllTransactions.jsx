@@ -19,10 +19,15 @@ import { useTheme } from '@mui/material/styles';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useMediaQuery } from '@mui/material';
-import Select from '@mui/joy/Select';
+import Select,  { selectClasses } from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import {Button as JoyButton} from '@mui/joy';
 import FormControl from '@mui/material/FormControl';
+import { DatePicker } from 'antd';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+
+
+const { RangePicker } = DatePicker;
 
 
 
@@ -43,6 +48,11 @@ export default function AllMerchantPGTransactions({open}) {
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
+    const [LgStartDateRange, setLgStartDateRange] = useState('');  // Large Screen Start date
+    const [LgEndDateRange, setLgEndDateRange]     = useState('');  // Large Screen End Date
+    const [ShStartDateRange, setShStartDateRange] = useState('');  // Small screen Start date
+    const [ShEndDateRange, setShEndDateRange]     = useState('');  // Small Screen End date
+    const [filterActive, setFilterActive]         = useState(false);      //// Filter Active Status
     const [filterData, updateFilterData]     = useState({
         transaction_id: '',
         transaction_amount: '',
@@ -52,15 +62,26 @@ export default function AllMerchantPGTransactions({open}) {
 
     const countPagination = Math.ceil(totalRows);
 
-     /// Open close Filter fields
-    const handleToggleFilters = () => {
-        setShowFilters(!showFilters);
+
+    /// Filter Date Range Selected in Large Screen
+    const handelLargeScreenCustomDateRange = (date, dateString)=> {
+        setLgStartDateRange(dateString[0])
+        setLgEndDateRange(dateString[1])
     };
 
-    /// Get selected date range
-    const handleFilterDateChange = (e, newValue)=> {
-        setFilterDate(newValue)
+
+    /// Filter Small Screen Start date range
+    const handleSmallScreenStartDateRange = (date, dateString)=> {
+        setShStartDateRange(dateString)
     };
+    
+
+
+    /// Filter Small Screen End Date Range
+    const handleSmallScreenEndDateRange = (date, dateString)=> {
+        setShEndDateRange(dateString)
+    };
+
 
     // Get Filter Input field values
     const handleFilterInputChange = (e)=> {
@@ -71,42 +92,8 @@ export default function AllMerchantPGTransactions({open}) {
         })
     };
 
-    // Method to get Search input value
-     const handleUpdateSearchedText = (e)=> {
-        updateSearchedText(e.target.value);
-     };
-
-     // Method to get searched data
-     const handleSearchedData = ()=> {
-        if(modeName === 'Production Mode') {
-            // Fetch Production Data
-            axiosInstance.get(`api/v2/admin/merchant/pg/prod/search/transactions/?query=${searchedText}`).then((res)=> {
-                // console.log(res)
-                if (res.status === 200) {
-                    updateTransactionData(res.data.admin_merchant_searched_prod_transactions)
-                }
-
-            }).catch((error)=> {
-                console.log(error)
-
-            })
-
-        } else if (modeName === 'Test Mode') {
-            // Fetch Sandbox data
-            axiosInstance.get(`api/v2/admin/merchant/pg/sb/search/transactions/?query=${searchedText}`).then((res)=> {
-                // console.log(res)
-                if (res.status === 200) {
-                    updateTransactionData(res.data.admin_merchant_searched_sb_transactions)
-                };
-
-            }).catch((error)=> {
-                console.log(error)
-
-            })
-        }
-     };
-
      
+
     // Call API to fetch all production Transactions
     useEffect(()=> {
         axiosInstance.get(`api/v2/admin/merchant/pg/transactions/`).then((res)=> {
@@ -142,7 +129,7 @@ export default function AllMerchantPGTransactions({open}) {
                 };
     
             }).catch((error)=> {
-                console.log(error)
+                // console.log(error)
                 
             })
          } else if (value === true) {
@@ -157,11 +144,12 @@ export default function AllMerchantPGTransactions({open}) {
                 };
     
             }).catch((error)=> {
-                console.log(error)
+                // console.log(error)
                 
             })
          }
     };
+
 
     // Change status color according to the transaction status
     const getStatusColor = (status)=> {
@@ -247,91 +235,254 @@ export default function AllMerchantPGTransactions({open}) {
 
     // Fetch all paginated data
     const handlePaginatedData = (e, value)=> {
-        let limit = 15;
+        let limit = 10;
         let offset = (value - 1) * limit;
 
-        // Download Production Transaction Data
-        if (modeName === 'Production Mode') {
-            axiosInstance.get(`api/v2/admin/merchant/pg/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
-                // console.log(res)
-                if (res.status === 200 && res.data.success === true) {
-                    updateTransactionData(res.data.AdminmerchantPGTransactions)
-                };
+        // if (modeName === 'Production Mode') {
+        //     axiosInstance.get(`api/v2/admin/merchant/pg/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
+        //         // console.log(res)
+        //         if (res.status === 200 && res.data.success === true) {
+        //             updateTransactionData(res.data.AdminmerchantPGTransactions)
+        //             updateTotalRows(res.data.total_row_count)
+        //         };
 
-            }).catch((error)=> {
-                console.log(error);
+        //     }).catch((error)=> {
+        //         // console.log(error);
 
-            })
-        } else if (modeName === 'Test Mode') {
-            axiosInstance.get(`api/v2/admin/merchant/pg/sandbox/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
-                // console.log(res)
-                if (res.status === 200 && res.data.success === true) {
-                    updateTransactionData(res.data.AdminmerchantPGSandboxTransactions)
-                };
+        //     })
+        // } else if (modeName === 'Test Mode') {
+        //     axiosInstance.get(`api/v2/admin/merchant/pg/sandbox/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
+        //         // console.log(res)
+        //         if (res.status === 200 && res.data.success === true) {
+        //             updateTransactionData(res.data.AdminmerchantPGSandboxTransactions)
+        //         };
 
-            }).catch((error)=> {
-                console.log(error);
+        //     }).catch((error)=> {
+        //         console.log(error);
 
-            })
+        //     })
+        // }
+
+        if (filterActive) {
+            if (isSmallScreen && filterDate === 'CustomRange') {
+                if (!ShStartDateRange) {
+                    setFilterError('Please Select Start Date');
+    
+                } else if (!ShEndDateRange) {
+                    setFilterError('Please Select End Date');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(ShStartDateRange, ShEndDateRange, limit, offset);
+                }
+    
+            } else if (!isSmallScreen && filterDate === 'CustomRange') {
+                if (!LgStartDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else if (!LgEndDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+                }
+    
+            } else {
+                setFilterError('');
+                GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+            }
+            
+        } else {
+            
+            if (modeName === 'Production Mode') {
+                axiosInstance.get(`api/v2/admin/merchant/pg/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
+                    // console.log(res)
+                    if (res.status === 200 && res.data.success === true) {
+                        updateTransactionData(res.data.AdminmerchantPGTransactions)
+                        updateTotalRows(res.data.total_row_count)
+                    };
+
+                }).catch((error)=> {
+                    // console.log(error);
+
+                })
+            } else if (modeName === 'Test Mode') {
+                axiosInstance.get(`api/v2/admin/merchant/pg/sandbox/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
+                    // console.log(res)
+                    if (res.status === 200 && res.data.success === true) {
+                        updateTransactionData(res.data.AdminmerchantPGSandboxTransactions)
+                        updateTotalRows(res.data.total_row_count)
+                    };
+
+                }).catch((error)=> {
+                    // console.log(error);
+                })
+            }
         }
     };
 
-    // Reset Filter Method
-    const handleResetFilter = ()=> {
-        setFilterDate('');
-        updateFilterData({
-            transaction_id: '',
-            transaction_amount: '',
-            business_name: ''
-        })
-        handlePaginatedData('e', 1);
-    };
+
 
     // Get Filter data
     const handleFilterData = ()=> {
+        if (isSmallScreen && filterDate === 'CustomRange') {
+            if (!ShStartDateRange) {
+                setFilterError('Please Select Start Date');
+
+            } else if (!ShEndDateRange) {
+                setFilterError('Please Select End Date');
+
+            } else {
+                setFilterError('');
+                GetFilteredData(ShStartDateRange, ShEndDateRange);
+            }
+
+        } else if (!isSmallScreen && filterDate === 'CustomRange') {
+            if (!LgStartDateRange) {
+                setFilterError('Please Select Date Range');
+
+            } else if (!LgEndDateRange) {
+                setFilterError('Please Select Date Range');
+
+            } else {
+                setFilterError('');
+                GetFilteredData(LgStartDateRange, LgEndDateRange);
+            }
+
+        } else {
+            setFilterError('')
+            GetFilteredData()
+        }
+    };
+
+
+    //// Get filtered data from API
+    const GetFilteredData = (startDate, endDate)=> {
         if(modeName === 'Production Mode') {
 
             axiosInstance.post(`/api/v2/admin/filter/merchant/transaction/`, {
                 date: filterDate,
                 transaction_id: filterData.transaction_id,
                 transaction_amount: filterData.transaction_amount,
-                business_name: filterData.business_name
+                business_name: filterData.business_name,
+                start_date: startDate ? startDate : LgStartDateRange,
+                end_date: endDate ? endDate : LgEndDateRange
+
+            }).then((res)=> {
+                // console.log(res);
+                if (res.status === 200 && res.data.success === true) {
+                    updateTransactionData(res.data.AdminmerchantPGTransactions);
+                    setFilterError('');
+                    updateTotalRows(res.data.paginated_count)
+                    setFilterActive(true)
+                }
+    
+            }).catch((error)=> {
+                // console.log(error);
+    
+                setTimeout(() => {
+                    setFilterError('');
+                }, 2000);
+    
+                if (error.response.data.message === 'No transaction found') {
+                    setFilterError('No data found');
+                } else {
+                    setFilterError('');
+                };
+            })
+
+        } else if (modeName === 'Test Mode') {
+            axiosInstance.post(`/api/v2/admin/merchant/filter/sandbox/transaction/`, {
+                date: filterDate,
+                transaction_id: filterData.transaction_id,
+                transaction_amount: filterData.transaction_amount,
+                business_name: filterData.business_name,
+                start_date: startDate ? startDate : LgStartDateRange,
+                end_date: endDate ? endDate : LgEndDateRange
 
             }).then((res)=> {
                 // console.log(res)
-
                 if (res.status === 200 && res.data.success === true) {
-                    updateTransactionData(res.data.AdminmerchantPGTransactions)
-                    setFilterError('')
-                }   
+                    updateTransactionData(res.data.AdminmerchantPGSandboxTransactions);
+                    setFilterError('');
+                    setFilterActive(true)
+                    updateTotalRows(res.data.paginated_count)
+                }
+
             }).catch((error)=> {
-                console.log(error)
+                // console.log(error)
+                setTimeout(() => {
+                    setFilterError('');
+                }, 2000);
 
                 if (error.response.data.message === 'No transaction found') {
                     setFilterError('No data found')
                 } else {
                     setFilterError('')
+                }
+            });
+        }
+    };
+
+
+    
+    //// Get filtered data from API
+    const GetFilteredPaginatedData = (startDate, endDate, limit, offset)=> {
+        if(modeName === 'Production Mode') {
+            axiosInstance.post(`/api/v2/admin/filter/merchant/transaction/?limit=${limit}&offset=${offset}`, {
+                date: filterDate,
+                transaction_id: filterData.transaction_id,
+                transaction_amount: filterData.transaction_amount,
+                business_name: filterData.business_name,
+                start_date: startDate ? startDate : LgStartDateRange,
+                end_date: endDate ? endDate : LgEndDateRange
+
+            }).then((res)=> {
+                // console.log(res);
+                if (res.status === 200 && res.data.success === true) {
+                    updateTransactionData(res.data.AdminmerchantPGTransactions);
+                    setFilterError('');
+                    updateTotalRows(res.data.paginated_count)
+                    setFilterActive(true)
+                }
+    
+            }).catch((error)=> {
+                // console.log(error);
+                setTimeout(() => {
+                    setFilterError('');
+                }, 2000);
+    
+                if (error.response.data.message === 'No transaction found') {
+                    setFilterError('No data found');
+                } else {
+                    setFilterError('');
                 };
             })
 
-            // For Sandbox mode filter Data
-        } else if (modeName === 'Test Mode') { 
-            
+        } else if (modeName === 'Test Mode') {
             axiosInstance.post(`/api/v2/admin/merchant/filter/sandbox/transaction/`, {
                 date: filterDate,
                 transaction_id: filterData.transaction_id,
                 transaction_amount: filterData.transaction_amount,
-                business_name: filterData.business_name
+                business_name: filterData.business_name,
+                start_date: startDate ? startDate : LgStartDateRange,
+                end_date: endDate ? endDate : LgEndDateRange
 
             }).then((res)=> {
                 // console.log(res)
-
                 if (res.status === 200 && res.data.success === true) {
-                    updateTransactionData(res.data.AdminmerchantPGSandboxTransactions)
-                    setFilterError('')
-                }   
+                    updateTransactionData(res.data.AdminmerchantPGSandboxTransactions);
+                    setFilterError('');
+                    setFilterActive(true)
+                    updateTotalRows(res.data.paginated_count)
+                }
+
             }).catch((error)=> {
-                console.log(error)
+                // console.log(error)
+                setTimeout(() => {
+                    setFilterError('');
+                }, 2000);
 
                 if (error.response.data.message === 'No transaction found') {
                     setFilterError('No data found')
@@ -339,8 +490,33 @@ export default function AllMerchantPGTransactions({open}) {
                     setFilterError('')
                 };
             });
-        };
+        }
     };
+
+
+    // Reset Filter Method
+    const handleResetFilter = ()=> {
+        setFilterDate('');
+        setFilterError('')
+        updateFilterData({
+            transaction_id: '',
+            transaction_amount: '',
+            business_name: ''
+        })
+
+        setFilterActive(false);
+        setLgStartDateRange('');
+        setLgEndDateRange('');
+        setShStartDateRange('');
+        setShEndDateRange('');
+    };
+
+     //// Call default pagination after filter mode off
+     useEffect(() => {
+        if (!filterActive) {
+            handlePaginatedData('e', 1);
+        }
+    }, [!filterActive]);
 
 
     return (
@@ -369,31 +545,25 @@ export default function AllMerchantPGTransactions({open}) {
                             <b>All Merchant Transactions</b>
                         </Typography>
 
-                        {/* <div style={{ display: 'flex', alignItems: 'center', marginBottom: isSmallScreen ? '16px' : '0'}}>
-                            <Input placeholder="Type in here…" onChange={handleUpdateSearchedText} />
-
-                            <IconButton aria-label="Example" onClick={handleSearchedData}>
-                                <SearchIcon color='primary' />
-                            </IconButton>
-                        </div> */}
+                       
 
                 {/* For small screen sizes */}
                 {isSmallScreen ? (
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <IconButton aria-label="export" onClick={handleExportClicked}>
-                                <FileDownloadIcon color='primary' />
-                            </IconButton>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <IconButton aria-label="export" onClick={handleExportClicked}>
+                            <FileDownloadIcon color='primary' />
+                        </IconButton>
 
-                            <IconButton aria-label="filter" onClick={handleToggleFilters}>
-                                <FilterAltIcon color='primary' />
-                            </IconButton>
-                        </div>
-                        ) : (
-                        <div>
-                            <Button sx={{ mx: 1 }} onClick={handleExportClicked}>Export</Button>
-                            <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
-                        </div>
-                    )}
+                        <IconButton aria-label="filter" onClick={()=> setShowFilters(!showFilters)}>
+                            <FilterAltIcon color='primary' />
+                        </IconButton>
+                    </div>
+                    ) : (
+                    <div>
+                        <Button sx={{ mx: 1 }} onClick={handleExportClicked}>Export</Button>
+                        <Button sx={{ mx: 1 }} onClick={()=> setShowFilters(!showFilters)}>Filter</Button>
+                    </div>
+                )}
             </Box>
 
             {/* Hidden Filter fields */}
@@ -402,21 +572,44 @@ export default function AllMerchantPGTransactions({open}) {
                 <Grid container p={2} justifyContent="flex-end" spacing={2}>
                     <Grid item xs={12} sm={6} md={2.5}>
                         <FormControl fullWidth>
-                        <Select
-                            label="date"
-                            placeholder='Date'
-                            id="date"
-                            name="date"
-                            value={filterDate}
-                            onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
-                        >
-                            <Option value="Today">Today</Option>
-                            <Option value="Yesterday">Yesterday</Option>
-                            <Option value="ThisWeek">This Week</Option>
-                            <Option value="ThisMonth">This Month</Option>
-                            <Option value="PreviousMonth">Previous Month</Option>
-                        </Select>
+                            <Select
+                                label="date"
+                                placeholder='Date'
+                                id="date"
+                                name="date"
+                                value={filterDate}
+                                onChange={(e, newValue) => setFilterDate(newValue)}
+                                indicator={<KeyboardArrowDown />}
+                                sx={{
+                                    [`& .${selectClasses.indicator}`]: {
+                                    transition: '0.2s',
+                                    [`&.${selectClasses.expanded}`]: {
+                                        transform: 'rotate(-180deg)',
+                                    },
+                                    },
+                                }}
+                            >
+                                <Option value="Today">Today</Option>
+                                <Option value="Yesterday">Yesterday</Option>
+                                <Option value="ThisWeek">This Week</Option>
+                                <Option value="ThisMonth">This Month</Option>
+                                <Option value="PreviousMonth">Previous Month</Option>
+                                <Option value="CustomRange">Custom Range</Option>
+                            </Select>
                         </FormControl>
+
+                        {filterDate === "CustomRange" && (
+                            isSmallScreen ? (
+                                <>
+                                    <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenStartDateRange} />
+                                    <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenEndDateRange} />
+                                </>
+                            ) : (
+                                <RangePicker 
+                                    style={{ width: '100%', marginTop:5 }} onChange={handelLargeScreenCustomDateRange} 
+                                    />
+                            )
+                        )}
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={2.5}>

@@ -425,16 +425,17 @@ export default function AllCryptoExchangeTable({open}) {
             user_email:''
         })
     };
-
+    
+    
     //// Call default pagination after filter mode off
     useEffect(() => {
         if (!filterActive) {
             handlePaginatedData('e', 1);
         }
     }, [!filterActive]);
-
-
-
+    
+    
+    
     /// Loader
     if (loader) {
         return (
