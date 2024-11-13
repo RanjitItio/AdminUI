@@ -17,10 +17,15 @@ import { useTheme } from '@mui/material/styles';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useMediaQuery } from '@mui/material';
-import Select from '@mui/joy/Select';
+import Select, { selectClasses } from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import {Button as JoyButton} from '@mui/joy';
 import FormControl from '@mui/material/FormControl';
+import { DatePicker } from 'antd';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+
+
+const { RangePicker } = DatePicker;
 
 
 
@@ -37,26 +42,41 @@ export default function AllMerchantPGWithdrawals({open}) {
     const [searchQuery, updateSearchQuery] = useState('');  // Search Query state
     const [exportData, updateExportData] = useState([]); // Excel Data
     const [totalRows, updateTotalRows]   = useState(0);  // Paginated value
+
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
+    const [filterStatus, setFilterStatus]    = useState('');  // Filter status state
+    const [LgStartDateRange, setLgStartDateRange] = useState('');  // Large Screen Start date
+    const [LgEndDateRange, setLgEndDateRange]     = useState('');  // Large Screen End Date
+    const [ShStartDateRange, setShStartDateRange] = useState('');  // Small screen Start date
+    const [ShEndDateRange, setShEndDateRange]     = useState('');  // Small Screen End date
+    const [filterActive, setFilterActive]         = useState(false);      //// Filter Active Status
     const [filterData, updateFilterData]     = useState({
         merchant_email: '',
-        status: '',
         withdrawalAmount: ''
     });  // Filter filed data state
 
     const counPagination = Math.floor(totalRows);   // Total pagination count
 
-
-     /// Open close Filter fields
-     const handleToggleFilters = () => {
-        setShowFilters(!showFilters);
+    
+    /// Filter Date Range Selected in Large Screen
+    const handelLargeScreenCustomDateRange = (date, dateString)=> {
+        setLgStartDateRange(dateString[0])
+        setLgEndDateRange(dateString[1])
     };
 
-     /// Get selected date range
-     const handleFilterDateChange = (e, newValue)=> {
-        setFilterDate(newValue)
+
+    /// Filter Small Screen Start date range
+    const handleSmallScreenStartDateRange = (date, dateString)=> {
+        setShStartDateRange(dateString)
+    };
+    
+
+
+    /// Filter Small Screen End Date Range
+    const handleSmallScreenEndDateRange = (date, dateString)=> {
+        setShEndDateRange(dateString)
     };
 
 
@@ -80,7 +100,7 @@ export default function AllMerchantPGWithdrawals({open}) {
         };
 
       }).catch((error)=> {
-        console.log(error)
+        // console.log(error)
 
       })
     }, []);
@@ -109,26 +129,6 @@ export default function AllMerchantPGWithdrawals({open}) {
     };
 
 
-    // Search Withdrawal Transactions
-    const handleSearch = ()=> {
-        axiosInstance.get(`api/v4/admin/merchant/withdrawal/search/?query=${searchQuery}`).then((res)=> {
-            // console.log(res)
-
-            if (res.status === 200 && res.data.success === true) {
-                updateMerchantWithdrawals(res.data.merchant_withdrawal_search)
-            }
-
-        }).catch((error)=> {
-            console.log(error)
-
-        })
-    };
-
-
-    // Input Search values
-    const handleSearchInputChange = (e)=> {
-        updateSearchQuery(e.target.value);
-    };
 
 
     // Export to Excel
@@ -179,50 +179,109 @@ export default function AllMerchantPGWithdrawals({open}) {
         let limit = 10;
         let offset = (value - 1) * limit;
 
-        axiosInstance.get(`api/v4/admin/merchant/pg/withdrawals/?limit=${limit}&offset=${offset}`).then((res)=> {
-            // console.log(res)
-            if (res.status === 200 && res.data.success === true) {
-                updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
-            };
+        if (filterActive) {
+            if (isSmallScreen && filterDate === 'CustomRange') {
+                if (!ShStartDateRange) {
+                    setFilterError('Please Select Start Date');
+    
+                } else if (!ShEndDateRange) {
+                    setFilterError('Please Select End Date');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(ShStartDateRange, ShEndDateRange, limit, offset);
+                }
+    
+            } else if (!isSmallScreen && filterDate === 'CustomRange') {
+                if (!LgStartDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else if (!LgEndDateRange) {
+                    setFilterError('Please Select Date Range');
+    
+                } else {
+                    setFilterError('');
+                    GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+                }
+    
+            } else {
+                setFilterError('');
+                GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
+            }
 
-        }).catch((error)=> {
-            console.log(error);
-
-        })
-    };
-
-
-    // Reset Filter Method
-    const handleResetFilter = ()=> {
-        setFilterDate('');
-        updateFilterData({
-            merchant_email:'',
-            WithdrawalCurrency: '',
-            withdrawalAmount: ''
-        })
-        handlePaginatedData('e', 1)
+        } else {
+            axiosInstance.get(`api/v4/admin/merchant/pg/withdrawals/?limit=${limit}&offset=${offset}`).then((res)=> {
+                // console.log(res)
+                if (res.status === 200 && res.data.success === true) {
+                    updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
+                    updateTotalRows(res.data.total_row_count)
+                };
+    
+            }).catch((error)=> {
+                // console.log(error);
+            });
+        }
     };
 
 
     // Get Filter data
     const handleFilterData = ()=> {
+        if (isSmallScreen && filterDate === 'CustomRange') {
+            if (!ShStartDateRange) {
+                setFilterError('Please Select Start Date');
 
+            } else if (!ShEndDateRange) {
+                setFilterError('Please Select End Date');
+
+            } else {
+                setFilterError('');
+                GetFilteredData(ShStartDateRange, ShEndDateRange);
+            }
+
+        } else if (!isSmallScreen && filterDate === 'CustomRange') {
+            if (!LgStartDateRange) {
+                setFilterError('Please Select Date Range');
+
+            } else if (!LgEndDateRange) {
+                setFilterError('Please Select Date Range');
+
+            } else {
+                setFilterError('');
+                GetFilteredData(LgStartDateRange, LgEndDateRange);
+            }
+
+        } else {
+            setFilterError('')
+            GetFilteredData()
+        }
+    };
+
+
+    //// Get filtered data from API
+    const GetFilteredData = (startDate, endDate)=> {
         axiosInstance.post(`/api/v4/admin/filter/merchant/withdrawals/`, {
             date: filterDate,
             email: filterData.merchant_email,
-            status: filterData.status,
-            amount: filterData.withdrawalAmount
+            status: filterStatus,
+            amount: filterData.withdrawalAmount,
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
 
         }).then((res)=> {
-            // console.log(res)
-
+            // console.log(res);
             if (res.status === 200 && res.data.success === true) {
                 updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
                 setFilterError('')
+                updateTotalRows(res.data.paginated_count)
+                setFilterActive(true)
             }
 
         }).catch((error)=> {
-            // console.log(error)
+            // console.log(error);
+
+            setTimeout(() => {
+                setFilterError('');
+            }, 2000);
 
             if (error.response.data.message === 'No transaction found') {
                 setFilterError('No data found')
@@ -235,6 +294,68 @@ export default function AllMerchantPGWithdrawals({open}) {
             };
         })
     };
+
+    
+    //// Get filtered data from API
+    const GetFilteredPaginatedData = (startDate, endDate, limit, offset)=> {
+        axiosInstance.post(`/api/v4/admin/filter/merchant/withdrawals/?limit=${limit}&offset=${offset}`, {
+            date: filterDate,
+            email: filterData.merchant_email,
+            status: filterStatus,
+            amount: parseFloat(filterData.withdrawalAmount),
+            start_date: startDate ? startDate : LgStartDateRange,
+            end_date: endDate ? endDate : LgEndDateRange
+
+        }).then((res)=> {
+            // console.log(res);
+            if (res.status === 200 && res.data.success === true) {
+                updateMerchantWithdrawals(res.data.AdminMerchantWithdrawalRequests)
+                setFilterError('')
+                updateTotalRows(res.data.paginated_count)
+                setFilterActive(true)
+            }
+
+        }).catch((error)=> {
+            // console.log(error);
+            setTimeout(() => {
+                setFilterError('');
+            }, 2000);
+
+            if (error.response.data.message === 'No transaction found') {
+                setFilterError('No data found')
+            } else if (error.response.data.message === "Invalid Email") {
+                setFilterError('Invalid email address')
+            } else if (error.response.data.message === 'Invalid Currency') {
+                setFilterError('Invalid Currency')
+            } else {
+                setFilterError('')
+            };
+        })
+    };
+
+
+    // Reset Filter Method
+    const handleResetFilter = ()=> {
+        setFilterDate('');
+        setFilterStatus('');
+        updateFilterData({
+            merchant_email:'',
+            withdrawalAmount: ''
+        })
+
+        setFilterActive(false);
+        setLgStartDateRange('');
+        setLgEndDateRange('');
+        setShStartDateRange('');
+        setShEndDateRange('');
+    };
+
+    //// Call default pagination after filter mode off
+    useEffect(() => {
+        if (!filterActive) {
+            handlePaginatedData('e', 1);
+        }
+    }, [!filterActive]);
 
 
     return (
@@ -268,13 +389,6 @@ export default function AllMerchantPGWithdrawals({open}) {
                             >
                                 <b>All Merchant Withdrawals</b>
                             </Typography>
-                    {/* <div style={{ display: 'flex', alignItems: 'center', marginBottom: isSmallScreen ? '16px' : '0'}}>
-                        <Input placeholder="Type in here…" onChange={handleSearchInputChange} />
-
-                        <IconButton aria-label="Example" onClick={handleSearch}>
-                            <SearchIcon color='primary' />
-                        </IconButton>
-                    </div> */}
 
                     {/* For small screen sizes */}
                     {isSmallScreen ? (
@@ -283,14 +397,14 @@ export default function AllMerchantPGWithdrawals({open}) {
                                     <FileDownloadIcon color='primary' />
                                 </IconButton>
 
-                                <IconButton aria-label="filter" onClick={handleToggleFilters}>
+                                <IconButton aria-label="filter" onClick={()=> setShowFilters(!showFilters)}>
                                     <FilterAltIcon color='primary' />
                                 </IconButton>
                             </div>
                             ) : (
                             <div>
                                 <Button sx={{ mx: 1 }} onClick={handleDownloadWithdrawals}>Export</Button>
-                                <Button sx={{ mx: 1 }} onClick={handleToggleFilters} >Filter</Button>
+                                <Button sx={{ mx: 1 }} onClick={()=> setShowFilters(!showFilters)} >Filter</Button>
                             </div>
                         )}
                 </Box>
@@ -301,21 +415,44 @@ export default function AllMerchantPGWithdrawals({open}) {
                     <Grid container p={2} justifyContent="flex-end" spacing={2}>
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
-                            <Select
-                                label="date"
-                                placeholder='Date'
-                                id="date"
-                                name="date"
-                                value={filterDate}
-                                onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
-                            >
-                                <Option value="Today">Today</Option>
-                                <Option value="Yesterday">Yesterday</Option>
-                                <Option value="ThisWeek">This Week</Option>
-                                <Option value="ThisMonth">This Month</Option>
-                                <Option value="PreviousMonth">Previous Month</Option>
-                            </Select>
+                                <Select
+                                    label="date"
+                                    placeholder='Date'
+                                    id="date"
+                                    name="date"
+                                    value={filterDate}
+                                    onChange={(e, newValue) => setFilterDate(newValue)}
+                                    indicator={<KeyboardArrowDown />}
+                                    sx={{
+                                        [`& .${selectClasses.indicator}`]: {
+                                        transition: '0.2s',
+                                        [`&.${selectClasses.expanded}`]: {
+                                            transform: 'rotate(-180deg)',
+                                        },
+                                        },
+                                    }}
+                                >
+                                    <Option value="Today">Today</Option>
+                                    <Option value="Yesterday">Yesterday</Option>
+                                    <Option value="ThisWeek">This Week</Option>
+                                    <Option value="ThisMonth">This Month</Option>
+                                    <Option value="PreviousMonth">Previous Month</Option>
+                                    <Option value="CustomRange">Custom Range</Option>
+                                </Select>
                             </FormControl>
+
+                            {filterDate === "CustomRange" && (
+                                isSmallScreen ? (
+                                    <>
+                                        <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenStartDateRange} />
+                                        <DatePicker style={{ width: '100%', marginTop:5 }} onChange={handleSmallScreenEndDateRange} />
+                                    </>
+                                ) : (
+                                    <RangePicker 
+                                        style={{ width: '100%', marginTop:5 }} onChange={handelLargeScreenCustomDateRange} 
+                                        />
+                                )
+                            )}
                         </Grid>
 
                         <Grid item xs={12} sm={6} md={2.5}>
@@ -331,12 +468,27 @@ export default function AllMerchantPGWithdrawals({open}) {
 
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
-                                <Input 
-                                    name='status'
-                                    value={filterData.status}
-                                    onChange={handleFilterInputChange}
-                                    placeholder="Status" 
-                                    />
+                                <Select
+                                    placeholder='Status'
+                                    id="status"
+                                    name="status"
+                                    value={filterStatus}
+                                    onChange={(e, newValue) => setFilterStatus(newValue)}
+                                    indicator={<KeyboardArrowDown />}
+                                    sx={{
+                                        [`& .${selectClasses.indicator}`]: {
+                                        transition: '0.2s',
+                                        [`&.${selectClasses.expanded}`]: {
+                                            transform: 'rotate(-180deg)',
+                                        },
+                                        },
+                                    }}
+                                >
+                                    <Option value="Approved">Approved</Option>
+                                    <Option value="Pending">Pending</Option>
+                                    <Option value="Rejected">Rejected</Option>
+                                    <Option value="Hold">On Hold</Option>
+                                </Select>
                             </FormControl>
                         </Grid>
 

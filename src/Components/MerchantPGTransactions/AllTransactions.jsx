@@ -12,7 +12,6 @@ import { IOSSwitch } from '../Switch/TestProductionSwitch';
 import { useNavigate } from 'react-router-dom';
 import Button from '../MUIBaseButton/button';
 import Input from '@mui/joy/Input';
-import SearchIcon from '@mui/icons-material/Search';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { useTheme } from '@mui/material/styles';
@@ -43,8 +42,8 @@ export default function AllMerchantPGTransactions({open}) {
     const [transactionData, updateTransactionData] = useState([]); // All Transaction data state
     const [modeName, setModeName]            = useState('Production Mode');   // Mode Name
     const [exportData, updateExportData]     = useState([]);  // Excel data
-    const [searchedText, updateSearchedText] = useState('');  // Searched text
     const [totalRows, updateTotalRows]       = useState(0);
+
     const [showFilters, setShowFilters]      = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]        = useState('');  // Filter date state field
     const [filterError, setFilterError]      = useState('');  // Error message of filter
@@ -61,7 +60,7 @@ export default function AllMerchantPGTransactions({open}) {
 
 
     const countPagination = Math.ceil(totalRows);
-
+    
 
     /// Filter Date Range Selected in Large Screen
     const handelLargeScreenCustomDateRange = (date, dateString)=> {
@@ -238,31 +237,6 @@ export default function AllMerchantPGTransactions({open}) {
         let limit = 10;
         let offset = (value - 1) * limit;
 
-        // if (modeName === 'Production Mode') {
-        //     axiosInstance.get(`api/v2/admin/merchant/pg/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
-        //         // console.log(res)
-        //         if (res.status === 200 && res.data.success === true) {
-        //             updateTransactionData(res.data.AdminmerchantPGTransactions)
-        //             updateTotalRows(res.data.total_row_count)
-        //         };
-
-        //     }).catch((error)=> {
-        //         // console.log(error);
-
-        //     })
-        // } else if (modeName === 'Test Mode') {
-        //     axiosInstance.get(`api/v2/admin/merchant/pg/sandbox/transactions/?limit=${limit}&offset=${offset}`).then((res)=> {
-        //         // console.log(res)
-        //         if (res.status === 200 && res.data.success === true) {
-        //             updateTransactionData(res.data.AdminmerchantPGSandboxTransactions)
-        //         };
-
-        //     }).catch((error)=> {
-        //         console.log(error);
-
-        //     })
-        // }
-
         if (filterActive) {
             if (isSmallScreen && filterDate === 'CustomRange') {
                 if (!ShStartDateRange) {
@@ -292,7 +266,7 @@ export default function AllMerchantPGTransactions({open}) {
                 setFilterError('');
                 GetFilteredPaginatedData(LgStartDateRange, LgEndDateRange, limit, offset);
             }
-            
+
         } else {
             
             if (modeName === 'Production Mode') {
