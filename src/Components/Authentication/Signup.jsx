@@ -39,7 +39,7 @@ function Signup() {
       );
 
     const handleSubmit = async (e) => {
-		e.preventDefault();
+        e.preventDefault();
         let validationError = [];
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/;
 		// console.log(formData);
@@ -83,12 +83,12 @@ function Signup() {
         }
 
       await axiosInstance.post(`api/v1/admin/register/`, {
-            firstname:        formData.first_name,
-            lastname:         formData.last_name,
-            phone_no:         formData.contact_number,
-            email:            formData.email,
-            password:         formData.password,
-            confirm_password: formData.confirm_password,
+            // firstname:        formData.first_name,
+            // lastname:         formData.last_name,
+            // phone_no:         formData.contact_number,
+            // email:            formData.email,
+            // password:         formData.password,
+            // confirm_password: formData.confirm_password,
             // is_merchent: true
         })
         .then((res) => {
@@ -103,11 +103,9 @@ function Signup() {
         }).catch((error) => {
             if (error.response.status == 400) {
                 setError(error.response.data.msg)
-                return;
             }
             else if (error.response.data.msg == 'Password did not match') {
                 setError('Password did not match please try again')
-                return;
             }
             else {
                 setError('')
