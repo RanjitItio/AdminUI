@@ -23,12 +23,14 @@ import { saveAs } from 'file-saver';
 
 
 const IS_DEVELOPMENT = import.meta.env.VITE_IS_DEVELOPMENT;
+const PG_DOMAIN      = import.meta.env.PG_DOMAIN_NAME;
 let redirectUrl = '';
+
 
 if (IS_DEVELOPMENT === 'True') {
     redirectUrl = 'http://localhost:5173'
  } else {
-    redirectUrl = 'https://react-payment.oyefin.com'
+    redirectUrl = PG_DOMAIN
  };
 
 
