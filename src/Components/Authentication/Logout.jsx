@@ -5,7 +5,7 @@ import axiosInstance from "./axios";
 
 
 
-function Logout(){
+export default function Logout(){
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -18,7 +18,8 @@ function Logout(){
 		localStorage.removeItem('token');
 		axiosInstance.defaults.headers['Authorization'] = null;
 		navigate('/signin/');
-	});
+	}, []);
+
     return(
         <>
            <p className="text-success my-5">You have been Logged out Successfully</p>
@@ -27,5 +28,3 @@ function Logout(){
     );
 };
 
-
-export default Logout;
