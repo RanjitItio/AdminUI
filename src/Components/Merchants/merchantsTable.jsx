@@ -23,7 +23,7 @@ import { saveAs } from 'file-saver';
 
 
 const IS_DEVELOPMENT = import.meta.env.VITE_IS_DEVELOPMENT;
-const PG_DOMAIN      = import.meta.env.PG_DOMAIN_NAME;
+const PG_DOMAIN      = import.meta.env.VITE_PG_DOMAIN_NAME;
 let redirectUrl = '';
 
 
@@ -32,6 +32,9 @@ if (IS_DEVELOPMENT === 'True') {
  } else {
     redirectUrl = PG_DOMAIN
  };
+
+
+
 
 
 
