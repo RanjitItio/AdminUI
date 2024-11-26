@@ -262,10 +262,10 @@ export default function AllMerchantTable({open}) {
 
     // Redirect to merchat home page
     useEffect(() => {
-        if (accessToken && refreshToken) {
+        if (accessToken && refreshToken && redirectUrl) {
             window.location.replace(`${redirectUrl}/admin/merchant/login/?access=${accessToken}&refresh=${refreshToken}&name=${merchantFullName}&ismerchant=${isMerchant}`);
         };
-    }, [accessToken, refreshToken])
+    }, [accessToken, refreshToken, redirectUrl]);
 
 
     // Export merchant data to Excel
