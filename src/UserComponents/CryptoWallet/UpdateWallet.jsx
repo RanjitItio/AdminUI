@@ -62,7 +62,6 @@ export default function UpdateCryptoWallet({open}) {
             } else {
                 setError('')
             };
-
         })
     };
 
@@ -99,7 +98,7 @@ export default function UpdateCryptoWallet({open}) {
                         <TextField 
                             disabled 
                             id="merchantName" 
-                            label="Merchant Name" 
+                            label="User Name" 
                             variant="outlined" 
                             fullWidth
                             name='merchantName'
@@ -111,7 +110,7 @@ export default function UpdateCryptoWallet({open}) {
                         <TextField 
                             disabled 
                             id="merchantEmail" 
-                            label="Merchant Email" 
+                            label="User Email" 
                             variant="outlined" 
                             fullWidth 
                             name='merchantEmail'

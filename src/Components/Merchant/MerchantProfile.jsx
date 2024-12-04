@@ -6,7 +6,6 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import { Main, DrawerHeader } from "../Content"
-import MerchantPaymentTable from './MerchantPayment';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../Authentication/axios';
 import { Grid } from '@mui/material';
@@ -14,11 +13,12 @@ import { Link } from 'react-router-dom';
 import MerchantPaymentTableColumn from './ColumName';
 import { styled } from '@mui/material/styles';
 import Textarea from '@mui/joy/Textarea';
+// import MerchantPaymentTable from './MerchantPayment';
 
 
-const MerchantPaymentTableHead = MerchantPaymentTableColumn;
-const TransactionTableName = "Payments";
-const DemoMerchantPaymentData = []
+// const MerchantPaymentTableHead = MerchantPaymentTableColumn;
+// const TransactionTableName = "Payments";
+// const DemoMerchantPaymentData = []
 
 
 const BoldTextField = styled(TextField) ({
@@ -294,9 +294,9 @@ const getStatus = (status) => {
                                 <Nav.Link eventKey="profile">Profile</Nav.Link>
                             </Nav.Item>
 
-                            <Nav.Item>
+                            {/* <Nav.Item>
                                 <Nav.Link eventKey="transactions">Payments</Nav.Link>
-                            </Nav.Item>
+                            </Nav.Item> */}
                         </Nav>
                     </Col>
                 </Row>
@@ -478,9 +478,10 @@ const getStatus = (status) => {
                     </Row>
                 )}
 
-                {activeTab === 'transactions' && (
+                {/* Remove this Component */}
+                {/* {activeTab === 'transactions' && (
                     <MerchantPaymentTable headCells={MerchantPaymentTableHead} TableName={TransactionTableName} rows={DemoMerchantPaymentData} />
-                )}
+                )} */}
                 
             </Container>
         </Main>

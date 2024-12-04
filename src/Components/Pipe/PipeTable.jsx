@@ -61,10 +61,10 @@ export default function AllPipeTable({open}) {
         switch (status) {
             case 'Hold':
                  return 'primary'
-            case 'Rejected':
-                return 'error'
-            case 'Approved':
+            case 'Active':
                 return 'success'
+            case 'Inactive':
+                return 'error'
             case 'Pending':
                 return 'warning'
             default:

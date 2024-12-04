@@ -97,7 +97,7 @@ return (
                 <b style={{marginLeft:'6px'}}>Recent Transactions</b>
               </Typography>
 
-              <TableContainer component={Paper} sx={{maxHeight:'50rem', overflow:'auto'}}>
+              <TableContainer component={Paper} sx={{maxHeight:'50rem', overflow:'auto', '&::-webkit-scrollbar': {display: 'none'}, scrollbarWidth: 'none'}}>
                   <Table>
                     <TableHead>
                       <TableRow>

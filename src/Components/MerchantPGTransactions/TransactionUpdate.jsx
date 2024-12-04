@@ -416,7 +416,7 @@ export default function MerchantPGTransactionUpdate({open}) {
                             fullWidth 
                             name='merchantOrderID'
                             value={formData.merchantOrderID}
-                            onChange={handleChange}
+                            // onChange={handleChange}
                             />
                     </Grid>
 
