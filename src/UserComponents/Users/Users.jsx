@@ -130,7 +130,7 @@ export default function UsersTable({open}) {
         }
 
     }).catch((error)=> {
-        console.log(error)
+        // console.log(error)
     
         if (error.response.data.msg == 'Only admin can view all the KYC'){
             setError("Only admin can view the Users kyc")
@@ -276,21 +276,21 @@ export default function UsersTable({open}) {
                 flexWrap: 'wrap'
             }}>
 
-            <h5><b>All Users</b></h5>
-            <Box 
-                sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'end',
-                    alignItems: 'center',
-                    p:2
-                    }}>
-                <Input placeholder="Type in here…" onChange={handleSearchInputChange} />
-                <IconButton aria-label="Example" onClick={handleSearch}>
-                    <SearchIcon color='primary' />
-                </IconButton>
+                <h5><b>All Users</b></h5>
+                <Box 
+                    sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'end',
+                        alignItems: 'center',
+                        p:2
+                        }}>
+                    <Input placeholder="Type in here…" onChange={handleSearchInputChange} />
+                    <IconButton aria-label="Example" onClick={handleSearch}>
+                        <SearchIcon color='primary' />
+                    </IconButton>
 
-                <Button sx={{mx:1}} onClick={()=> {handleDownloadMerchantData();}}>Export</Button>
-            </Box>
+                    <Button sx={{mx:1}} onClick={()=> {handleDownloadMerchantData();}}>Export</Button>
+                </Box>
             </Box>
 
             <TableContainer>

@@ -22,16 +22,16 @@ import Chip from '@mui/material/Chip';
   // Transaction Label
   const getTransactionLabel = (status)=> {
     switch (status) {
-      case 'PAYMENT_SUCCESS':
+      case 'Success':
         return 'Success'
-      case 'PAYMENT_INITIATED':
-        return 'Initiated'
-      case 'PAYMENT_FAILED':
-        return 'Failed'
-      case 'PAYMENT_PENDING':
+      case 'Pending':
         return 'Pending'
-      case 'PAYMENT_HOLD':
-        return 'On Hold'
+      case 'Cancelled':
+        return 'Cancelled'
+      case 'Hold':
+        return 'Hold'
+      case 'Approved':
+        return 'Approved'
       default:
         return 'Unknown';
     }
@@ -41,13 +41,13 @@ import Chip from '@mui/material/Chip';
 // Transaction Status
 const getTransactionStatus = (status)=> {
   switch (status) {
-    case 'PAYMENT_SUCCESS':
+    case 'Approved':
       return 'success'
-    case 'PAYMENT_INITIATED':
+    case 'Hold':
       return 'primary'
-    case 'PAYMENT_FAILED':
+    case 'Cancelled':
       return 'error'
-    case 'PAYMENT_PENDING':
+    case 'Pending':
       return 'warning'
     case 'PAYMENT_HOLD':
       return 'primary'
@@ -72,7 +72,7 @@ export default function FiatTransactionTable({userID}) {
   useEffect(() => {
     axiosInstance.get(`/api/v4/admin/user/fiat/transactions/?query=${userID}`).then((res)=> {
       // console.log(res)
-      if (res.status === 200 && res.data.success === true) {
+      if (res.status === 200) {
         updateMerchantTransaction(res.data.all_user_fiat_transactions);
         setTotalRows(res.data.total_row_count)
       }
@@ -82,28 +82,27 @@ export default function FiatTransactionTable({userID}) {
       }
 
     }).catch((error)=> {
-      console.log(error)
+      // console.log(error)
       
     })
   }, []);
 
-console.log('merchantTransaction', merchantTransaction)
 
   // Get all the paginated data
   const handlePaginationData = (e, value)=> {
-    let limit = 15;
+    let limit = 5;
     let offset = (value - 1) * limit;
 
     axiosInstance.get(`/api/v4/admin/user/fiat/transactions/?query=${userID}&limit=${limit}&offset=${offset}`).then((res)=> {
       // console.log(res)
 
-      if (res.status === 200 && res.data.success === true) {
+      if (res.status === 200) {
         updateMerchantTransaction(res.data.all_user_fiat_transactions);
         setTotalRows(res.data.total_row_count)
       }
 
     }).catch((error)=> {
-      console.log(error)
+      // console.log(error)
       
     })
   };
@@ -111,7 +110,14 @@ console.log('merchantTransaction', merchantTransaction)
 
   // Method to handle Edit Button Clicked
   const handleEditButtonClicked = (event, transaction)=> {
-    
+       if (transaction.type === 'Deposit') {
+          // Navigate to the Deposit Transaction Page
+          navigate('/admin/deposits/update/', {state: {transactionID: transaction.data}});
+
+       } else if (transaction.type === 'Transfer') {
+          // Navigate to the Transfer Transaction Page
+          navigate('/admin/transfers/details/', {state: {transactionID: transaction.data}});
+       }
   };
 
 
@@ -134,6 +140,7 @@ console.log('merchantTransaction', merchantTransaction)
    };
 
 
+
   return (
     <Box sx={{ width: '100%' }}>
 
@@ -146,6 +153,7 @@ console.log('merchantTransaction', merchantTransaction)
                 <TableRow>
                     <TableCell align="center"><b>Sl No</b></TableCell>
                     <TableCell align="center"><b>Date</b></TableCell>
+                    <TableCell align="center"><b>Type</b></TableCell>
                     <TableCell align="center"><b>Merchant</b></TableCell>
                     <TableCell align="center"><b>Merchant Email</b></TableCell>
                     <TableCell align="center"><b>Transaction ID</b></TableCell>
@@ -160,36 +168,40 @@ console.log('merchantTransaction', merchantTransaction)
               return (
                   <TableRow sx={{padding:5 }} key={index}>
                         <TableCell component="th"  scope="row" align="right">
-                            {transaction.id}
+                            {transaction?.data?.id}
                         </TableCell>
 
                         <TableCell component="th"  scope="row" align="center">
-                            {transaction.createdAt ? transaction.createdAt.split('T')[0] : ''} <br />
-                            <small><i>{transaction.createdAt ? transaction.createdAt.split('T')[1] : ''}</i></small>
+                            {transaction.data.created_At ? transaction.data.created_At.split('T')[0] : ''} <br />
+                            <small><i>{transaction.data.created_At ? transaction.data.created_At.split('T')[1] : ''}</i></small>
                         </TableCell>
 
                         <TableCell  align="center" padding="none">
-                            {transaction?.merchant.merchant_name}
+                            {transaction?.type} 
+                        </TableCell>
+
+                        <TableCell  align="center" padding="none">
+                            {transaction?.user?.first_name} {transaction?.user?.lastname}
                         </TableCell>
 
                         <TableCell  align="center" padding="none">
                           <p style={{marginLeft:20}}>
-                              {transaction?.merchant.merchant_email}
+                              {transaction?.user?.email}
                           </p>
                         </TableCell>
                         
                         <TableCell align="left" padding="none">
                             <p style={{marginLeft:30}}>
-                              {transaction?.transaction_id}
+                              {transaction?.data?.transaction_id}
                             </p>
                         </TableCell>
 
                         <TableCell align="center" padding="none">
-                            {transaction?.amount} {transaction?.currency}
+                            {transaction?.data?.amount} {transaction?.currency?.name}
                         </TableCell>
 
                         <TableCell align="center" padding="none">
-                            <Chip label={getTransactionLabel(transaction?.status)} color={getTransactionStatus(transaction?.status)} />
+                            <Chip label={getTransactionLabel(transaction?.data?.status)} color={getTransactionStatus(transaction?.data?.status)} />
                         </TableCell>
                         
                         <TableCell align="center" padding="none">
@@ -210,6 +222,7 @@ console.log('merchantTransaction', merchantTransaction)
               onChange={(e, value) => handlePaginationData(e, value)}
               color="primary" 
               style={{padding:10}}
+              sx={{margin:1.6}}
               />
       </Paper>
     </Box>

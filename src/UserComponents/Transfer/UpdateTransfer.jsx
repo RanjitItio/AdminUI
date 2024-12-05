@@ -21,7 +21,7 @@ export default function UpdateTransferTransaction({open}) {
     const navigate = useNavigate();
 
     const Transaction     = location.state?.transactionID 
-    const transactionData  = Transaction?.transaction || '';
+    const transactionData  = Transaction?.transaction || Transaction || '';
     const TransactionID    = parseInt(transactionData.id)
 
 

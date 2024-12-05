@@ -18,7 +18,7 @@ export default function UpdateDepositTransaction({open}) {
 
     const location = useLocation();
     const navigate = useNavigate();
-    const Transaction    = location.state.transactionID 
+    const Transaction    = location.state?.transactionID || '';
     const TransactionID = parseInt(Transaction.id)
 
     const [transactionDetail, updateTransactionDetail] = useState([]);  // Transaction Data
