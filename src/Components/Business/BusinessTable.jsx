@@ -541,7 +541,7 @@ export default function MerchantBusinessTable({open}) {
                             <TableCell align="center"><b>Merchant</b></TableCell>
                             <TableCell align="left"><b>Business</b></TableCell>
                             <TableCell align="left"><b>Date</b></TableCell>
-                            <TableCell align="center"><b>Group</b></TableCell>
+                            {/* <TableCell align="center"><b>Group</b></TableCell> */}
                             <TableCell align="center"><b>URL</b></TableCell>
                             <TableCell align="right"><b>Logo</b></TableCell>
                             <TableCell align="right"><b>Status</b></TableCell>
@@ -576,22 +576,22 @@ export default function MerchantBusinessTable({open}) {
                                 </TableCell>
 
                                 {/* Group Name */}
-                                <TableCell align="left">
+                                {/* <TableCell align="left">
                                     {row.group ? row.group.name : 'NA'}
-                                </TableCell>
+                                </TableCell> */}
 
                                 {/* Merchant URL */}
-                                <TableCell align="left">
+                                <TableCell align="center">
                                     <a href={row.merchant.bsn_url}>{row.merchant.bsn_url}</a>
                                 </TableCell>
 
                                 {/* Merchant Logo */}
-                                <TableCell align="left">
+                                <TableCell align="center">
                                     <img src={row.merchant.logo} alt="Merchant Logo" style={{maxWidth: '50px', maxHeight: '50px'}}/>
                                 </TableCell>
 
                                 
-                                <TableCell align="left" style={{color: getStatusColor(row.merchant.status)}}>
+                                <TableCell align="center" style={{color: getStatusColor(row.merchant.status)}}>
                                     {row.merchant.status === 'Cancelled' ? 'Rejected': row.merchant.status}
                                 </TableCell>
 
@@ -612,6 +612,7 @@ export default function MerchantBusinessTable({open}) {
                     </TableBody>
                 </Table>
             </Box>
+
 
             <Box sx={{display:'flex', justifyContent:'space-between'}}>
                 <Pagination 

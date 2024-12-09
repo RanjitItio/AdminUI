@@ -345,7 +345,7 @@ const getStatus = (status) => {
                                                       value={formData.business_name}
                                                       variant="outlined"  
                                                       fullWidth 
-                                                      onChange={handleMerchantDetailChange}
+                                                    //   onChange={handleMerchantDetailChange}
                                                     />
                                             </Form.Group>
                                         </Grid>
@@ -358,7 +358,7 @@ const getStatus = (status) => {
                                                     label="Business URL"
                                                     name='business_url'
                                                     value={formData.business_url}
-                                                    onChange={handleMerchantDetailChange}
+                                                    // onChange={handleMerchantDetailChange}
                                                     fullWidth
                                                 />
                                             </Form.Group>
@@ -371,7 +371,10 @@ const getStatus = (status) => {
                         
                                                     <Select
                                                         value={selectedCurrency}
-                                                        onChange={(event)=> {handleMerchantDetailChange(event), handleSelctedCurrencyChange(event)}}
+                                                        onChange={(event)=> {
+                                                            handleMerchantDetailChange(event), 
+                                                            handleSelctedCurrencyChange(event)
+                                                        }}
                                                         label="Currency"
                                                         name='currency'
                                                         >
@@ -386,7 +389,7 @@ const getStatus = (status) => {
                                             </Form.Group>
                                         </Grid>
 
-                                        <Grid item xs={12} md={4}>
+                                        {/* <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
                                                 <FormControl fullWidth variant="outlined">
                                                     <InputLabel>Group</InputLabel>
@@ -406,7 +409,7 @@ const getStatus = (status) => {
                                             
                                                 </FormControl>
                                             </Form.Group>
-                                        </Grid>
+                                        </Grid> */}
 
                                         <Grid item xs={12} md={4}>
                                             <Form.Group className="mb-3">
