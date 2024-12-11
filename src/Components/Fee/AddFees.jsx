@@ -243,7 +243,7 @@ export default function AddFees({open}) {
                             endIcon={<BackupIcon />}
                             onClick={handleSubmitCreateData}
                             >
-                            Update
+                            Submit
                         </Button>
 
                         <Button 

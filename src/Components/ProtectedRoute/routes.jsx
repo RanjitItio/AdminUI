@@ -97,6 +97,7 @@ const AuthRoutes = () => {
     };
   
     setBar();
+    
     // Adding event listener for window resize to handle dynamic resizing
     window.addEventListener('resize', setBar);
 

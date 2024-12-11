@@ -223,7 +223,7 @@ export default function UsersTable({open}) {
 
     // Get the paginated data
     const handlePaginatedData = (e, value)=> {
-        let limit = 20;
+        let limit = 10;
         let offset = (value - 1) * limit;
 
         axiosInstance.get(`/api/v2/crypto/user/kyc/?limit=${limit}&offset=${offset}`).then((res)=> {

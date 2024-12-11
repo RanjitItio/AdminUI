@@ -83,6 +83,9 @@ const getCryptoIcons = (icon)=> {
         case 'SOL':
             return '/cryptoicons/SOL.png'
 
+        case 'BNB':
+            return '/cryptoicons/BNB.png'
+
         default:
             '';
     }

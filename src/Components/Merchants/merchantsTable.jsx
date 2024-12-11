@@ -182,7 +182,7 @@ export default function AllMerchantTable({open}) {
         }
       };
 
-
+    
     // Search Merchant users
     const handleSearch = ()=> {
         axiosInstance.get(`api/v1/admin/user/search/?query=${searchQuery}`).then((res)=> {
@@ -193,7 +193,7 @@ export default function AllMerchantTable({open}) {
             };
 
         }).catch((error)=> {
-            console.log(error)
+            // console.log(error)
         })
     };
 
@@ -206,7 +206,7 @@ export default function AllMerchantTable({open}) {
  
     // Get the paginated data
     const handlePaginatedData = (e, value)=> {
-        let limit = 20;
+        let limit = 10;
         let offset = (value - 1) * limit;
 
         axiosInstance.get(`api/v1/user/kyc/?limit=${limit}&offset=${offset}`).then((res)=> {

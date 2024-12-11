@@ -41,67 +41,73 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 
 
 const UserNavContent = [
-  { text: 'Dashboard', subItems: [
-    {text: 'Dashboard', icon: <DashboardCustomizeOutlinedIcon />, url: '/user/dashboard/'}
-  ],
-  icon: <DashboardCustomizeOutlinedIcon />
-},
-
-  { text: 'Users', subItems: [
-    {text:'Users', icon: <Person2OutlinedIcon />, url: '/admin/users/data/'}, 
-    {text: 'Admins', icon: <SupervisorAccountOutlinedIcon />, url: '/admin/admin-user/'}, 
-  ],
-  icon: <AccountCircleOutlinedIcon />},
-
-  { text: 'Fee', subItems: [
-    {text:'All Fees', icon: <SellIcon />, url: '/admin/fees/'}, 
-  ],
-  icon: <MoneyIcon />},
-
-  { text: 'Transactions', subItems: [
-      // {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/fiat/transactions/'},
-      {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
-      {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
-      {text: 'Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
-      {text: 'Exchange Money', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/all/exchange/money/'},
-  ],
-  icon: <ReceiptLongOutlinedIcon />},
-
-
-  { text: 'Crypto Transactions', subItems: [
-      {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/user/crypto/transactions/'},
-      {text: 'Crypto Swap', icon: <SwapVerticalCircleIcon />, url: '/admin/user/crypto/swap/'},
-      {text: 'Crypto Exchange', icon: <CurrencyExchangeIcon />, url: '/admin/user/crypto/exchange/'},
+    { text: 'Dashboard', subItems: [
+      {text: 'Dashboard', icon: <DashboardCustomizeOutlinedIcon />, url: '/user/dashboard/'}
     ],
-    icon: <CurrencyBitcoinIcon />
+    icon: <DashboardCustomizeOutlinedIcon />
   },
 
-
-  { text: 'Crypto', subItems: [
-      {text: 'Wallet Requests', icon: <HistoryOutlinedIcon />, url: '/admin/user/wallets/'},
+    { 
+      text: 'Users', subItems: [
+      {text:'Users', icon: <Person2OutlinedIcon />, url: '/admin/users/data/'}, 
+      {text: 'Admins', icon: <SupervisorAccountOutlinedIcon />, url: '/admin/admin-user/'}, 
     ],
-    icon: <CurrencyBitcoinIcon />
+    icon: <AccountCircleOutlinedIcon />
   },
 
-
-  { text: 'Addons', subItems: [
-      {text: 'Crypto Exchange', icon: <HistoryOutlinedIcon />, url: ''},
-      {text: 'Investments', icon: <HistoryOutlinedIcon />, url: ''},
+    { 
+      text: 'Fee', subItems: [
+      {
+        text:'All Fees', icon: <SellIcon />, url: '/admin/fees/'}, 
     ],
-    icon: <ReceiptIcon />
+    icon: <MoneyIcon />
   },
 
+    { 
+      text: 'Transactions', subItems: [
+        // {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/fiat/transactions/'},
+        {text: 'Deposits', icon: <NorthOutlinedIcon />, url: '/admin/deposits/'},
+        {text: 'Transfers', icon: <SwapHorizOutlinedIcon />, url: '/admin/transfers/'},
+        {text: 'Withdrawls', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/withdrawls/'},
+        {text: 'Exchange Money', icon: <ArrowDownwardOutlinedIcon />, url: '/admin/all/exchange/money/'},
+    ],
+    icon: <ReceiptLongOutlinedIcon />},
 
-  { text: '-Revenues', subItems: [
-    {text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: '/admin/revenues/'},],
-    icon: <AccountBalanceOutlinedIcon />
-  },
+    { 
+      text: 'Crypto Transactions', subItems: [
+        {text: 'All Transactions', icon: <HistoryOutlinedIcon />, url: '/admin/user/crypto/transactions/'},
+        {text: 'Crypto Swap', icon: <SwapVerticalCircleIcon />, url: '/admin/user/crypto/swap/'},
+        {text: 'Crypto Exchange', icon: <CurrencyExchangeIcon />, url: '/admin/user/crypto/exchange/'},
+      ],
+      icon: <CurrencyBitcoinIcon />
+    },
 
-  
-  { text: '-Disputes', subItems: [
-    {text: '-Disputes', icon: <ConfirmationNumberOutlined />, url: '/admin/dispute/'},],
-    icon: <ConfirmationNumberOutlined />
-  },
+    { 
+      text: 'Crypto', subItems: [
+        {text: 'Wallet Requests', icon: <HistoryOutlinedIcon />, url: '/admin/user/wallets/'},
+      ],
+      icon: <CurrencyBitcoinIcon />
+    },
+
+    { text: 'Addons', subItems: [
+        {text: 'Crypto Exchange', icon: <HistoryOutlinedIcon />, url: ''},
+        {text: 'Investments', icon: <HistoryOutlinedIcon />, url: ''},
+      ],
+      icon: <ReceiptIcon />
+    },
+
+    { text: '-Revenues', subItems: [
+      {
+        text: '-Revenues', icon: <AccountBalanceOutlinedIcon />, url: '/admin/revenues/'},],
+        icon: <AccountBalanceOutlinedIcon />
+    },
+
+    
+    { text: '-Disputes', subItems: [
+      {
+        text: '-Disputes', icon: <ConfirmationNumberOutlined />, url: '/admin/dispute/'},],
+        icon: <ConfirmationNumberOutlined />
+    },
 ];
 
 
@@ -222,7 +228,7 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
         <Divider />
 
         {merchantContent ? 
-           <div style={{height:'200%', backgroundColor:'#0f3785'}}>
+           <div style={{height:'200%', backgroundColor:'#0f3785', scrollbarWidth:'none', '&::-webkit-scrollbar': {display:'none'}, overflow:'auto'}}>
            
            <List style={{backgroundColor: '#0f3785', color: '#e7ebf2'}}>
                 {MerchantNavContent.map((item, index) => (
@@ -264,7 +270,7 @@ export default function LeftNavbar({handleDrawerClose, open, merchantContent}) {
         </List>
            </div>
         : 
-          <div style={{height:'200%', backgroundColor:'#0f3785'}}>
+          <div style={{height:'200%', backgroundColor:'#0f3785', scrollbarWidth:'none', '&::-webkit-scrollbar': {display:'none'}, overflow:'auto'}}>
             
           <List style={{backgroundColor: '#0f3785', color: '#e7ebf2'}}>
                 {UserNavContent.map((item, index) => (

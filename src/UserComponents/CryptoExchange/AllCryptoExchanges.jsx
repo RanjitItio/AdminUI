@@ -75,6 +75,9 @@ const getCryptoIcons = (icon)=> {
         case 'SOL':
             return '/cryptoicons/SOL.png'
 
+        case 'BNB':
+            return '/cryptoicons/BNB.png'
+
         default:
             '';
     }
@@ -681,7 +684,7 @@ export default function AllCryptoExchangeTable({open}) {
                                     <TableCell align="center"><b>User</b></TableCell>
                                     <TableCell align="center"><b>Email</b></TableCell>
                                     <TableCell align="center"><b>From Crypto</b></TableCell>
-                                    <TableCell align="center"><b>FIAT Amount</b></TableCell>
+                                    <TableCell align="center"><b>FIAT Currency</b></TableCell>
                                     <TableCell align="center"><b>Amount</b></TableCell>
                                     <TableCell align="center"><b>Status</b></TableCell>
                                     <TableCell align="center"><b>Edit</b></TableCell>

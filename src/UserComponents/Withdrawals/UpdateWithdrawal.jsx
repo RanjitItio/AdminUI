@@ -74,7 +74,7 @@ export default function UpdateFIATWithdrawals({open}) {
                 }
 
             }).catch((error)=> {
-                console.log(error)
+                // console.log(error)
                 setDisablebutton(false);
 
                 if (error.response.data.message === 'User do not have any existing wallet') {
@@ -128,7 +128,7 @@ export default function UpdateFIATWithdrawals({open}) {
                 }}
                 >
                 <Typography variant="h5" gutterBottom sx={{mb:3}}>
-                    Update User's Withdrawal Request
+                    Update User's FIAT Withdrawal Request
                 </Typography>
 
                 <Grid container spacing={3}>

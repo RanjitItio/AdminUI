@@ -17,11 +17,13 @@ import { useTheme } from '@mui/material/styles';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useMediaQuery } from '@mui/material';
-import Select from '@mui/joy/Select';
+import Select, {selectClasses} from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import {Button as JoyButton} from '@mui/joy';
 import FormControl from '@mui/material/FormControl';
 import Tooltip from '@mui/material/Tooltip';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+
 
 
 
@@ -66,6 +68,9 @@ const getCryptoIcons = (icon)=> {
         case 'SOL':
             return '/cryptoicons/SOL.png'
 
+        case 'BNB':
+            return '/cryptoicons/BNB.png'
+
         default:
             '';
     }
@@ -83,11 +88,12 @@ export default function UserWalletRequests({open}) {
     const [totalRows, updateTotalRows]         = useState(0);  // Paginated value
     const [showFilters, setShowFilters]        = useState(false);  // Filter fileds state
     const [filterDate, setFilterDate]          = useState('');  // Filter date state field
+    const [filterStatus, setFilterStatus]      = useState(''); // Filter status state field
+    const [filterCrypto, setFilterCrypto]      = useState(''); // Filter crypto name field
     const [filterError, setFilterError]        = useState('');  // Error message of filter
     const [filterData, updateFilterData]       = useState({
         user_email: '',
         crypto_name: '',
-        status: ''
     });  // Filter filed data state
 
     const counPagination = Math.ceil(totalRows);   // Total pagination count
@@ -101,6 +107,10 @@ export default function UserWalletRequests({open}) {
      /// Get selected date range
      const handleFilterDateChange = (e, newValue)=> {
         setFilterDate(newValue)
+    };
+
+    const handleFilterStatusChange = (newValue)=> {
+        setFilterStatus(newValue);
     };
 
 
@@ -189,7 +199,7 @@ export default function UserWalletRequests({open}) {
             }
 
         }).catch((error)=> {
-            console.log(error);
+            // console.log(error);
 
         })
     };
@@ -200,10 +210,10 @@ export default function UserWalletRequests({open}) {
         setFilterDate('');
         updateFilterData({
             user_email:'',
-            crypto_name: '',
-            status: ''
         })
         handlePaginatedData('e', 1)
+        setFilterStatus('');
+        setFilterCrypto('');
     };
 
 
@@ -212,8 +222,8 @@ export default function UserWalletRequests({open}) {
         axiosInstance.post(`/api/v2/admin/crypto/wallets/`, {
             date_range: filterDate,
             email: filterData.user_email,
-            crypto_name: filterData.crypto_name,
-            status: filterData.status
+            crypto_name: filterCrypto,
+            status: filterStatus
 
         }).then((res)=> {
             // console.log(res);
@@ -238,6 +248,7 @@ export default function UserWalletRequests({open}) {
             }
         })
     };
+
 
 
     return (
@@ -298,6 +309,15 @@ export default function UserWalletRequests({open}) {
                                 name="date"
                                 value={filterDate}
                                 onChange={(e, newValue) => handleFilterDateChange(e, newValue)}
+                                indicator={<KeyboardArrowDown />}
+                                sx={{
+                                    [`& .${selectClasses.indicator}`]: {
+                                      transition: '0.2s',
+                                      [`&.${selectClasses.expanded}`]: {
+                                        transform: 'rotate(-180deg)',
+                                      },
+                                    },
+                                  }}
                             >
                                 <Option value="Today">Today</Option>
                                 <Option value="Yesterday">Yesterday</Option>
@@ -321,23 +341,57 @@ export default function UserWalletRequests({open}) {
 
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
-                                <Input 
-                                    name='crypto_name'
-                                    value={filterData.crypto_name}
-                                    onChange={handleFilterInputChange}
-                                    placeholder="Crypto Name" 
-                                    />
+                               
+                                    <Select
+                                        placeholder='Crypto'
+                                        id="crypto"
+                                        name="crypto"
+                                        value={filterCrypto}
+                                        onChange={(e, newValue) => setFilterCrypto(newValue)}
+                                        indicator={<KeyboardArrowDown />}
+                                        sx={{
+                                            [`& .${selectClasses.indicator}`]: {
+                                              transition: '0.2s',
+                                              [`&.${selectClasses.expanded}`]: {
+                                                transform: 'rotate(-180deg)',
+                                              },
+                                            },
+                                          }}
+                                    >
+                                        <Option value="BTC">BTC</Option>
+                                        <Option value="ETH">ETH</Option>
+                                        <Option value="SOL">SOL</Option>
+                                        <Option value="XRP">XRP</Option>
+                                        <Option value="LTC">LTC</Option>
+                                        <Option value="BNB">BNB</Option>
+                                        <Option value="DOGE">DOGE</Option>
+                                    </Select>
                             </FormControl>
                         </Grid>
 
                         <Grid item xs={12} sm={6} md={2.5}>
                             <FormControl fullWidth>
-                                <Input 
-                                    placeholder="Status"
-                                    name='status'
-                                    value={filterData.status} 
-                                    onChange={handleFilterInputChange}
-                                    />
+                                <Select
+                                    placeholder='Status'
+                                    id="status"
+                                    name="status"
+                                    value={filterStatus}
+                                    onChange={(e, newValue) => handleFilterStatusChange(newValue)}
+                                    indicator={<KeyboardArrowDown />}
+                                    sx={{
+                                        [`& .${selectClasses.indicator}`]: {
+                                          transition: '0.2s',
+                                          [`&.${selectClasses.expanded}`]: {
+                                            transform: 'rotate(-180deg)',
+                                          },
+                                        },
+                                      }}
+                                >
+                                    <Option value="Pending">Pending</Option>
+                                    <Option value="Approved">Approved</Option>
+                                    <Option value="Rejected">Rejected</Option>
+                                    <Option value="Hold">On Hold</Option>
+                                </Select>
                             </FormControl>
                         </Grid>
                         
